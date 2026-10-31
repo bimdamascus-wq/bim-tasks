@@ -78,6 +78,14 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   still running): either an old instance started before the install still waits on the removed `pause`, or a run takes
   longer than 5 minutes. Report now lists sync processes with start times and the last SUMMARY_*.json runs to tell which.
   The 02:00 off-site backup has not had a chance yet: `telegram_backup` was installed 10:31, first automatic run 2026-11-01 02:00.
+- Report 13:50 answered all three:
+  * Full sync stuck: `cmd.exe` pid 2052 started 07:57:05 = the last pre-install run (finished 08:01, then sat on `pause`).
+    Given the owner `deploy/fix_sheet_sync/` (kills sync processes older than 20 min). Runs take 4-11 min on a 5-minute
+    schedule, so an occasional 0x800710E0 ("already running, refused") is expected even when healthy; judge by SUMMARY_*.json.
+  * Failed Telegram rows #6/#7 (2026-10-29 13:00, "timed out" / "getaddrinfo failed", 5 tries over 26 min): the server had
+    no internet/DNS then. Not a code fault; nothing changed.
+  * The Apps Script ALREADY sends `X-BIM-Sync-Secret` (header seen 13:50 on /api/sync/tasks-page, `?secret=` not seen).
+    No Apps Script change needed. Remove `?secret=` in package 2 once a later report still shows it "not seen yet".
 
 ## Open items (agreed with the owner, not started)
 1. (in `gateway_staging`) external process ran the workers too. 2. (in `gateway_staging`) staging copy.
