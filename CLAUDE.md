@@ -92,7 +92,9 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   task count unchanged 310). Cause unknown yet; report now breaks duplicates and activity down per task/kind/source.
   Full sync uploads every table in full every 5 min in batches of 20 — it cannot keep up as log tables grow.
   Proposal for package 2 (owner decision): hourly schedule and/or no log tables / incremental upload.
-  `main` NOT merged yet: wait until the duplicate burst is explained (could it be from package 1?).
+  Owner: the team was working in the system at that time. Package 1 diff touches no task-notification code
+  (only `_sync_auth` and the shift lists in workers). Install confirmed -> `main` fast-forwarded (server = 5123848).
+  Still read the duplicate breakdown in the next report; normal work (assign then edit) can produce pairs.
 
 ## Open items (agreed with the owner, not started)
 1. (in `gateway_staging`) external process ran the workers too. 2. (in `gateway_staging`) staging copy.
