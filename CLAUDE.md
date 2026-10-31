@@ -44,3 +44,15 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 
 ## Deployment log
 - 2026-10-31: security update installed on the server with `deploy/security_update` (v2). Repository `main` matches the server code.
+- 2026-10-31: update `telegram_backup` (branch `next-update`, package built with `deploy/build_update.py`) given to the owner.
+  NOT yet confirmed installed. Ask the owner first; if it succeeded, merge `next-update` into `main` and log it here.
+
+## Open items (agreed with the owner, not started)
+1. `RUN_EXTERNAL.cmd` never sets `BIM_GATEWAY=external` / `BIM_COOKIE_SECURE=1`, so the external process also starts
+   the workers (reminders, Telegram queue, backups run twice → possible duplicate messages). External detection itself works
+   through Cloudflare headers. Fix: set both variables in `RUN_EXTERNAL.cmd` (and `BIM_GATEWAY=lan` in `RUN_LAN.cmd`).
+2. Staging copy on the server (e.g. `C:\BIM_Tasks_Test`, port 8799, copy of data) created by a double-click file, to try updates first.
+3. Google Sheet sync sends its secret in the URL query (`?secret=`); move to the `X-BIM-Sync-Secret` header (needs the Apps Script changed too).
+4. Feature ideas offered, owner has not chosen yet: supervisor dashboard for their team, daily Telegram summary for supervisors,
+   per-team performance report. Ask the owner what slows down their daily work before building anything.
+
