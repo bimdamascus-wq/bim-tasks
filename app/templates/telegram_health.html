@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="page-shell">
+<section class="page-title"><div><h1>🩺 Telegram Health</h1><p>هوية البوت، الموظفون المسجلون، آخر نجاح وخطأ، وطابور Retry.</p></div><div class="toolbar"><button onclick="loadHealth()">تحديث</button><button class="btn-light" onclick="retryAll()">إعادة محاولة الفاشل</button></div></section>
+<div class="kpi-grid">
+ <div class="kpi"><span>اسم البوت</span><b id="botName">—</b></div><div class="kpi"><span>Username</span><b id="botUser">—</b></div>
+ <div class="kpi"><span>حالة البوت</span><b id="botState">—</b></div><div class="kpi"><span>Webhook</span><b id="webhookState">—</b></div>
+ <div class="kpi"><span>موظفون مربوطون</span><b id="linkedEmployees">0</b></div><div class="kpi"><span>مجموعات مربوطة</span><b id="linkedGroups">0</b></div>
+ <div class="kpi"><span>بانتظار الإرسال</span><b id="pendingCount">0</b></div><div class="kpi"><span>فشل نهائي</span><b id="failedCount">0</b></div>
+</div>
+<section class="panel"><h2>آخر حالة</h2><div class="notice" id="lastState">—</div></section>
+<section class="panel"><h2>الموظفون المسجلون في البوت</h2><div class="scroll-box"><table class="sticky-table"><thead><tr><th>الموظف</th><th>القسم</th><th>Chat ID</th><th>تاريخ الربط</th></tr></thead><tbody id="empRows"></tbody></table></div></section>
+<section class="panel"><h2>Queue / Retry</h2><div class="scroll-box"><table class="sticky-table"><thead><tr><th>#</th><th>الوقت</th><th>Chat ID</th><th>النوع</th><th>الحالة</th><th>المحاولات</th><th>آخر خطأ</th><th>إجراء</th></tr></thead><tbody id="queueRows"></tbody></table></div></section>
+</main>
+{% endblock %}
+{% block scripts %}
+<script>
+const $=id=>document.getElementById(id);
+async function loadHealth(){try{const h=await bimRequest('/api/telegram-health');const bi=h.bot_identity||{};$('botName').textContent=bi.first_name||'—';$('botUser').textContent=bi.username?'@'+bi.username:'—';$('botState').textContent=h.bot?.ok?'✅ يعمل':'❌ مشكلة';$('webhookState').textContent=h.webhook?.ok?'✅ يعمل':'❌ مشكلة';$('linkedEmployees').textContent=h.linked_employees||0;$('linkedGroups').textContent=h.linked_groups||0;$('pendingCount').textContent=(h.queue.pending||0)+(h.queue.retrying||0);$('failedCount').textContent=h.queue.failed||0;$('lastState').textContent=`آخر نجاح: ${h.last_success?.at||'—'} | آخر خطأ: ${h.last_error?.at||'لا يوجد'} ${h.last_error?.error?'— '+h.last_error.error:''}`;$('empRows').innerHTML=(h.linked_employee_rows||[]).map(e=>`<tr><td class="name-red">${bimEsc(e.name)}</td><td>${bimEsc(e.department||'—')}</td><td>${bimEsc(e.telegram_chat_id)}</td><td>${bimEsc(e.telegram_linked_at||'—')}</td></tr>`).join('');const rows=await bimRequest('/api/telegram-queue?limit=200');$('queueRows').innerHTML=rows.map(x=>`<tr><td>${x.id}</td><td>${bimEsc(x.created_at)}</td><td>${bimEsc(x.chat_id)}</td><td>${bimEsc(x.source_type||'text')}</td><td>${bimEsc(x.status)}</td><td>${x.attempts||0}/${x.max_attempts||5}</td><td>${bimEsc(x.last_error||'—')}</td><td>${x.status==='failed'?`<button class="btn-sm" onclick="retryOne(${x.id})">إعادة المحاولة</button>`:'—'}</td></tr>`).join('')}catch(e){bimToast(e.message,'err')}}
+async function retryOne(id){await bimRequest('/api/telegram-queue/'+id+'/retry',{method:'POST'});bimToast('أعيدت الرسالة للطابور');loadHealth()}
+async function retryAll(){const r=await bimRequest('/api/telegram-queue/retry-failed',{method:'POST'});bimToast('تمت إعادة '+(r.count||0)+' رسالة');loadHealth()}
+loadHealth();
+</script>{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="page-shell">
+<section class="page-title">
+ <div><h1>🤖 مركز Telegram والإعدادات</h1><p>هوية البوت، الموظفون المربوطون، Webhook، وإعدادات الرسائل والتذكير في مكان واحد.</p></div>
+ <div class="toolbar"><button onclick="setupWebhook()">تفعيل Webhook</button><button class="btn-light" onclick="loadAll()">تحديث</button></div>
+</section>
+<div class="kpi-grid">
+ <div class="kpi"><span>اسم البوت</span><b id="botName">—</b></div>
+ <div class="kpi"><span>Username</span><b id="botUser">—</b></div>
+ <div class="kpi"><span>Bot ID</span><b id="botId">—</b></div>
+ <div class="kpi"><span>الموظفون المربوطون</span><b id="linked">—</b></div>
+ <div class="kpi"><span>Webhook</span><b id="webhook">—</b></div>
+</div>
+
+<section class="panel">
+ <h2>إعدادات Telegram والتذكيرات</h2>
+ <div class="form-grid">
+  <div class="field"><label>إرسال مهام اليوم عند بداية الشيفت</label><select id="shift_start_tasks_enabled"><option value="1">نعم</option><option value="0">لا</option></select></div>
+  <div class="field"><label>تذكير قبل موعد المهمة</label><select id="shift_due_soon_enabled"><option value="1">نعم</option><option value="0">لا</option></select></div>
+  <div class="field"><label>قبل الموعد بكم دقيقة؟</label><input id="shift_due_soon_minutes" type="number" min="0"></div>
+  <div class="field"><label>تذكير المهام المتأخرة</label><select id="shift_overdue_enabled"><option value="1">نعم</option><option value="0">لا</option></select></div>
+  <div class="field"><label>ملخص قبل نهاية الشيفت</label><select id="shift_end_summary_enabled"><option value="1">نعم</option><option value="0">لا</option></select></div>
+  <div class="field"><label>قبل النهاية بكم دقيقة؟</label><input id="shift_end_summary_minutes" type="number" min="0"></div>
+ </div>
+ <div class="toolbar" style="justify-content:flex-end"><button onclick="saveSettings()">حفظ الإعدادات</button></div>
+ <p class="muted-mini">Token لا يظهر هنا لأسباب أمنية. يظهر فقط إن كان مضبوطاً أو غير مضبوط من حالة البوت.</p>
+</section>
+
+<section class="panel"><h2>الموظفون المسجلون في البوت</h2>
+<p class="muted-mini">هذا النظام يستخدم بوت Telegram واحداً، وكل موظف يرتبط بنفس البوت عبر Chat ID خاص به.</p>
+<div class="scroll-box"><table class="sticky-table"><thead><tr><th>الموظف</th><th>القسم</th><th>الحالة</th><th>Chat ID</th><th>تاريخ الربط</th><th>إجراء</th></tr></thead><tbody id="rows"></tbody></table></div>
+</section>
+</main>
+{% endblock %}
+{% block scripts %}
+<script>
+const $=id=>document.getElementById(id); let employees=[];
+async function loadAll(){
+ try{
+  const [s,settings,emps]=await Promise.all([
+    bimRequest('/api/telegram/status'),bimRequest('/api/shift-settings'),bimRequest('/api/employees?all=1')
+  ]);
+  $('botName').textContent=s.bot?.first_name||'—'; $('botUser').textContent=s.bot?.username?'@'+s.bot.username:'—'; $('botId').textContent=s.bot?.id||'—';
+  $('linked').textContent=(s.linked||0)+' / '+(s.total||0); $('webhook').textContent=s.webhook?.url?'✅ مفعّل':'غير مفعّل';
+  for(const k of ['shift_start_tasks_enabled','shift_due_soon_enabled','shift_due_soon_minutes','shift_overdue_enabled','shift_end_summary_enabled','shift_end_summary_minutes']) if($(k)) $(k).value=settings[k]??'';
+  employees=emps;
+  $('rows').innerHTML=employees.map(e=>`<tr><td class="name-red">${bimEsc(e.name)}</td><td>${bimEsc(e.department||'—')}</td><td>${e.telegram_chat_id?'✅ مربوط':'⚠️ غير مربوط'}</td><td>${bimEsc(e.telegram_chat_id||'—')}</td><td>${bimEsc(e.telegram_linked_at||'—')}</td><td><button class="btn-sm" onclick="makeLink(${e.id})">🔗 رابط ربط</button>${e.telegram_chat_id?` <button class="btn-sm btn-light" onclick="unlink(${e.id})">فك الربط</button>`:''}</td></tr>`).join('');
+ }catch(e){bimToast(e.message||'تعذر التحميل','err')}
+}
+async function saveSettings(){const p={};for(const k of ['shift_start_tasks_enabled','shift_due_soon_enabled','shift_due_soon_minutes','shift_overdue_enabled','shift_end_summary_enabled','shift_end_summary_minutes'])p[k]=$(k).value;try{await bimRequest('/api/shift-settings',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});bimToast('تم حفظ إعدادات Telegram والتذكير')}catch(e){bimToast(e.message,'err')}}
+async function setupWebhook(){try{await bimRequest('/api/telegram/setup-webhook',{method:'POST'});bimToast('تم تفعيل Webhook');loadAll()}catch(e){bimToast(e.message,'err')}}
+async function makeLink(id){try{const r=await bimRequest('/api/employees/'+id+'/telegram-link',{method:'POST'});prompt('رابط الربط صالح 24 ساعة:',r.link);try{await navigator.clipboard.writeText(r.link)}catch(_){}}catch(e){bimToast(e.message,'err')}}
+async function unlink(id){if(!confirm('فك ربط الموظف من Telegram؟'))return;try{await bimRequest('/api/employees/'+id+'/telegram-unlink',{method:'POST'});bimToast('تم فك الربط');loadAll()}catch(e){bimToast(e.message,'err')}}
+loadAll();
+</script>
+{% endblock %}

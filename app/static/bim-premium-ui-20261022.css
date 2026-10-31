@@ -1,0 +1,15 @@
+/* BIM Damascus UI enhancement. Keeps routes, controls and brand assets unchanged. */
+:root{--bim-premium-ink:#172b46;--bim-premium-border:#dce4ed;--bim-premium-bg:#f6f8fb}
+body{font-family:"Tajawal","Cairo",system-ui,sans-serif;letter-spacing:0;background:var(--bim-premium-bg)}
+.page-shell,.v6-page{max-width:none}
+.page-title h1,.v6-intro h1{font-weight:800;letter-spacing:0}
+.panel,.v6-panel,.kpi,.v6-metric{border-radius:14px;border:1px solid var(--bim-premium-border);box-shadow:0 3px 14px rgba(28,48,76,.04)}
+button,input,select,textarea{font-family:inherit}
+button,a,.bim-kpi-click{transition:background-color .13s ease,border-color .13s ease}
+button:focus-visible,a:focus-visible,.bim-kpi-click:focus-visible{outline:3px solid #3b82f6;outline-offset:2px}
+.kpi-grid{gap:12px}.kpi{padding:16px}.kpi b{font-weight:800}
+.bim-kpi-click{cursor:pointer}.bim-kpi-click:hover{border-color:#809ac1;background:#f5f9ff}
+.sticky-table th{font-weight:800}.sticky-table td{font-weight:600}
+.v510-sidebar-scroll{overscroll-behavior:contain}
+@media(max-width:800px){.kpi-grid{gap:8px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){button,a,.bim-kpi-click{transition:none}}

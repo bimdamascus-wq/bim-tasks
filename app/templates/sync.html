@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="page-shell">
+<section class="page-title">
+  <div>
+    <h1>مركز المزامنة</h1>
+    <p>مزامنة ثنائية الاتجاه بين BIM Tasks وGoogle Sheet مع كشف التعارضات.</p>
+    <p class="muted"><b>Sync Engine V4.0.6</b></p>
+  </div>
+  <div class="toolbar"><button onclick="refreshSync()">تحديث الحالة</button></div>
+</section>
+
+<div class="kpi-grid">
+  <div class="kpi"><span>مهام بانتظار المزامنة</span><b id="dirty">-</b></div>
+  <div class="kpi"><span>تعارضات مفتوحة</span><b id="conflicts">-</b></div>
+  <div class="kpi"><span>آخر رقم حدث</span><b id="cursor">-</b></div>
+  <div class="kpi"><span>الدفع الفوري</span><b id="instantReady">-</b></div>
+</div>
+
+<section class="panel">
+  <h2>Google Sheet</h2>
+  <p>مهام الموظفين - بيم دمشق</p>
+
+  <div class="form-grid">
+    <div class="field full">
+      <label>Apps Script Web App URL للدفع الفوري من السيرفر إلى الشيت</label>
+      <input id="webapp" placeholder="https://script.google.com/macros/s/.../exec">
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <button onclick="saveUrl()">حفظ الرابط</button>
+    <button class="btn-light" id="testBtn" onclick="testWebApp()">فحص فعلي</button>
+    <button class="btn-light" id="retryBtn" onclick="retryDirty()">فحص ومزامنة المهام المنتظرة</button>
+  </div>
+
+  <div id="syncProgress" class="notice" style="margin-top:12px">
+    جاهز. لم تبدأ إعادة مزامنة المهام المنتظرة بعد.
+  </div>
+
+  <p class="muted">
+    إعادة المزامنة تتم على دفعات صغيرة، وتعرض عدد المهام المفحوصة والناجحة والفاشلة والمتبقية.
+  </p>
+</section>
+
+<section class="panel">
+  <h2>التعارضات</h2>
+  <div id="conflictList">لا توجد بيانات بعد.</div>
+</section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const esc = bimEsc;
+const $ = (id) => document.getElementById(id);
+
+async function refreshSync(){
+  try{
+    const s = await bimRequest('/api/sync/status');
+    $('dirty').textContent = Number(s.dirty_tasks || 0);
+    $('conflicts').textContent = Number(s.open_conflicts || 0);
+    $('cursor').textContent = Number(s.last_event_id || 0);
+    $('webapp').value = s.webapp_url || '';
+    $('instantReady').textContent = s.instant_push_ready ? '✅ جاهز' : '❌ إعداد ناقص';
+
+    const a = await bimRequest('/api/sync/conflicts');
+    $('conflictList').innerHTML = a.length
+      ? a.map(x => '<div class="notice error"><b>Task '+esc(x.entity_key)+
+          '</b> — نسخة السيرفر '+esc(x.server_version)+
+          ' / الشيت '+esc(x.sheet_version)+'</div>').join('')
+      : 'لا توجد تعارضات مفتوحة.';
+  }catch(e){
+    bimToast(e.message || 'تعذر قراءة حالة المزامنة','err');
+  }
+}
+
+async function saveUrl(){
+  try{
+    await bimRequest('/api/sync/settings',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({webapp_url:$('webapp').value.trim()})
+    });
+    bimToast('تم حفظ رابط المزامنة');
+    await refreshSync();
+  }catch(e){
+    bimToast(e.message || 'فشل الحفظ','err');
+  }
+}
+
+async function testWebApp(){
+  const btn = $('testBtn');
+  btn.disabled = true;
+  btn.textContent = 'جارٍ الفحص...';
+  $('syncProgress').className = 'notice';
+  $('syncProgress').textContent = 'جارٍ إجراء فحص فعلي مع Apps Script...';
+
+  try{
+    const r = await bimRequest('/api/sync/test-webapp');
+    if(r.compatible){
+      $('syncProgress').className = 'notice';
+      $('syncProgress').innerHTML =
+        '✅ <b>المزامنة الفورية متوافقة.</b><br>'+esc(r.message || '');
+      bimToast('فحص المزامنة نجح');
+    }else{
+      $('syncProgress').className = 'notice error';
+      let extra = '';
+      if(r.response){
+        extra = '<br><small>استجابة Apps Script: '+
+          esc(typeof r.response === 'string' ? r.response : JSON.stringify(r.response))+
+          '</small>';
+      }
+      $('syncProgress').innerHTML =
+        '❌ <b>المزامنة الفورية غير متوافقة.</b><br>'+
+        esc(r.message || '')+extra;
+      bimToast('تم العثور على مشكلة في Apps Script','err');
+    }
+  }catch(e){
+    $('syncProgress').className = 'notice error';
+    $('syncProgress').textContent = '❌ '+(e.message || 'فشل الفحص');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'فحص فعلي';
+  }
+}
+
+async function retryDirty(){
+  const btn = $('retryBtn');
+  if(!confirm('سيتم فحص وإعادة إرسال كل المهام المنتظرة على دفعات صغيرة. هل تريد المتابعة؟')){
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'جارٍ فحص المهام...';
+
+  let after = 0;
+  let attempted = 0;
+  let synced = 0;
+  let failed = 0;
+  let failures = [];
+  let loops = 0;
+
+  $('syncProgress').className = 'notice';
+  $('syncProgress').innerHTML =
+    'بدأت العملية... تم فحص <b>0</b> — نجح <b>0</b> — فشل <b>0</b>.';
+
+  try{
+    while(loops < 100){
+      loops++;
+
+      const r = await bimRequest(
+        '/api/sync/retry-dirty?after_id='+encodeURIComponent(after)+'&limit=5',
+        {method:'POST'}
+      );
+
+      attempted += Number(r.attempted || 0);
+      synced += Number(r.synced || 0);
+      failed += Number(r.failed || 0);
+      failures = failures.concat(r.failures || []);
+      after = Number(r.next_after_id || after);
+
+      $('syncProgress').className = 'notice';
+      $('syncProgress').innerHTML =
+        'جارٍ العمل... تم فحص <b>'+attempted+
+        '</b> — نجح <b>'+synced+
+        '</b> — فشل <b>'+failed+
+        '</b> — المتبقي حالياً <b>'+Number(r.remaining || 0)+'</b>.';
+
+      await refreshSync();
+
+      if(!r.has_more || !r.attempted){
+        break;
+      }
+    }
+
+    if(failures.length === 0){
+      $('syncProgress').className = 'notice';
+      $('syncProgress').innerHTML =
+        '✅ <b>انتهت العملية.</b><br>'+
+        'تم فحص <b>'+attempted+'</b> مهمة، ونجح <b>'+synced+
+        '</b>، وفشل <b>'+failed+'</b>.';
+      bimToast('اكتملت معالجة المهام المنتظرة');
+    }else{
+      const detail = failures.map(x => {
+        let resp = '';
+        if(x.response){
+          resp = '<br><small>الرد: '+
+            esc(typeof x.response === 'string' ? x.response : JSON.stringify(x.response))+
+            '</small>';
+        }
+        return '<div style="margin:8px 0;padding:10px;border:1px solid #ddd;border-radius:8px">'+
+          '<b>#'+esc(x.id)+' — '+esc(x.title || x.task_code || 'مهمة')+'</b><br>'+
+          'المرحلة: '+esc(x.stage || '')+'<br>'+
+          'السبب: '+esc(x.message || 'سبب غير معروف')+
+          resp+
+          '</div>';
+      }).join('');
+
+      $('syncProgress').className = 'notice error';
+      $('syncProgress').innerHTML =
+        '⚠️ <b>انتهت العملية.</b><br>'+
+        'تم فحص <b>'+attempted+'</b> — نجح <b>'+synced+
+        '</b> — فشل <b>'+failed+'</b>.<br>'+
+        '<b>أسباب الفشل:</b>'+detail;
+      bimToast('ظهرت أسباب فشل المزامنة','err');
+    }
+
+    await refreshSync();
+  }catch(e){
+    $('syncProgress').className = 'notice error';
+    $('syncProgress').textContent =
+      '❌ تعذر إكمال العملية: '+(e.message || 'خطأ غير معروف');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'فحص ومزامنة المهام المنتظرة';
+  }
+}
+
+refreshSync();
+</script>
+{% endblock %}

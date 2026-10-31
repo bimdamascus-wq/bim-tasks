@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="page-shell">
+<section class="page-title">
+  <div><h1>🛡️ النسخ الاحتياطي والطوارئ</h1><p>حماية قاعدة البيانات والمرفقات، مع Google Sheet كخطة تشغيل طوارئ مستقلة.</p></div>
+  <div class="toolbar">
+    {% if 'users.manage' in permissions %}
+    <button onclick="runBackup('db')">💾 نسخة قاعدة البيانات الآن</button>
+    <button class="btn-light" onclick="runBackup('full')">📦 نسخة كاملة الآن</button>
+    {% endif %}
+  </div>
+</section>
+<div class="kpi-grid">
+  <div class="kpi"><span>آخر نسخة قاعدة بيانات</span><b id="lastDb">—</b></div>
+  <div class="kpi"><span>آخر نسخة كاملة</span><b id="lastFull">—</b></div>
+  <div class="kpi"><span>مجلد النسخ</span><b style="font-size:14px" id="backupDir">—</b></div>
+</div>
+<section class="panel">
+  <h2>خطة الطوارئ</h2>
+  <div class="notice">
+    <b>إذا توقف BIM Tasks:</b> استمروا بالعمل على Google Sheet. عند عودة النظام تتم إعادة المزامنة، وتبقى نسخ قاعدة البيانات والمرفقات محفوظة بشكل مستقل.
+  </div>
+</section>
+<section class="panel">
+  <h2>آخر النسخ المحفوظة</h2>
+  <div id="backupList">جاري القراءة...</div>
+</section>
+</main>
+{% endblock %}
+{% block scripts %}
+<script>
+const e=bimEsc;
+function humanSize(n){n=Number(n||0);if(n<1024)return n+' B';if(n<1048576)return (n/1024).toFixed(1)+' KB';if(n<1073741824)return (n/1048576).toFixed(1)+' MB';return (n/1073741824).toFixed(1)+' GB'}
+async function loadBackups(){
+  try{
+    const s=await bimRequest('/api/backup/status');
+    lastDb.textContent=s.latest_db?new Date(s.latest_db.modified).toLocaleString('ar'):'لا توجد';
+    lastFull.textContent=s.latest_full?new Date(s.latest_full.modified).toLocaleString('ar'):'لا توجد';
+    backupDir.textContent=s.backup_dir||'—';
+    backupList.innerHTML=(s.files||[]).length?`<table class="table"><thead><tr><th>الملف</th><th>الحجم</th><th>التاريخ</th></tr></thead><tbody>${
+      s.files.map(x=>`<tr><td>${e(x.name)}</td><td>${humanSize(x.size)}</td><td>${e(new Date(x.modified).toLocaleString('ar'))}</td></tr>`).join('')
+    }</tbody></table>`:'لا توجد نسخ بعد.';
+  }catch(err){backupList.innerHTML='<div class="notice error">'+e(err.message)+'</div>'}
+}
+async function runBackup(kind){
+  bimToast('جاري إنشاء النسخة...');
+  try{
+    await bimRequest('/api/backup/run?kind='+encodeURIComponent(kind),{method:'POST'});
+    bimToast('تم إنشاء النسخة الاحتياطية');
+    loadBackups();
+  }catch(err){bimToast(err.message,'err')}
+}
+loadBackups();
+</script>
+{% endblock %}

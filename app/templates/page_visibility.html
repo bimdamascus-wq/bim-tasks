@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block head %}<style>
+.pv-wrap{max-width:900px;margin:auto;padding:20px}
+.pv-group{background:#fff;border:1px solid #e6e8ec;border-radius:16px;padding:6px 18px;margin-bottom:14px}
+.pv-group h2{font-size:16px;margin:12px 0 4px;color:#6b7280}
+.pv-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-top:1px solid #f2f3f5;font-size:17px}
+.pv-row:first-of-type{border:0}.pv-row b{font-weight:700;flex:1}
+.pv-row a{font-size:14px;color:#6b7280}
+.pv-sw{position:relative;width:52px;height:30px;flex:none}.pv-sw input{opacity:0;width:0;height:0}
+.pv-sw span{position:absolute;inset:0;background:#d5d8de;border-radius:99px;transition:.15s;cursor:pointer}
+.pv-sw span:before{content:"";position:absolute;width:24px;height:24px;top:3px;right:3px;background:#fff;border-radius:50%;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.pv-sw input:checked+span{background:#0f7b4b}.pv-sw input:checked+span:before{right:25px}
+.pv-state{font-size:14px;width:56px;color:#6b7280}.pv-bar{position:sticky;bottom:0;background:#fff;border-top:1px solid #e6e8ec;padding:12px 0;display:flex;gap:10px}
+</style>{% endblock %}
+{% block content %}
+<main class="pv-wrap">
+<section class="page-title"><div><h1>الصفحات الظاهرة</h1><p>اختر الصفحات التي تظهر في القائمة. الصفحة المخفية لا تُحذف وبياناتها تبقى كما هي، ويمكنك فتحها من هنا متى احتجتها.</p></div></section>
+<p style="background:#fff4e0;color:#7a4500;border-radius:12px;padding:10px 14px;font-size:15px">تنبيه: إخفاء الصفحة يزيلها من القائمة فقط، ولا يوقف عملها التلقائي (مثل رسائل الشيفتات أو التذكيرات).</p>
+<div id="pvGroups">جاري التحميل...</div>
+<div class="pv-bar"><button type="button" id="pvSave">حفظ</button><button type="button" class="btn-light" id="pvAll">إظهار كل الصفحات</button><button type="button" class="btn-light" id="pvDefault">الإعداد المقترح</button></div>
+</main>
+{% endblock %}
+{% block scripts %}<script>
+(()=>{let cfg=null;
+const draw=()=>{pvGroups.innerHTML=cfg.groups.map(g=>`<section class="pv-group"><h2>${bimEsc(g.label)}</h2>${g.pages.map(p=>`<label class="pv-row"><span class="pv-sw"><input type="checkbox" data-path="${bimEsc(p.path)}" ${p.hidden?'':'checked'}><span></span></span><span class="pv-state">${p.hidden?'مخفية':'ظاهرة'}</span><b>${bimEsc(p.label)}</b><a href="${bimEsc(p.path)}" target="_blank" rel="noopener">فتح ↗</a></label>`).join('')}</section>`).join('');
+  pvGroups.querySelectorAll('input').forEach(i=>i.onchange=()=>{i.closest('.pv-row').querySelector('.pv-state').textContent=i.checked?'ظاهرة':'مخفية'})};
+const save=async hidden=>{try{await bimRequest('/api/page-visibility',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({hidden})});bimToast('تم الحفظ — حدّث الصفحة لترى القائمة الجديدة');load()}catch(e){bimToast(e.message,'err')}};
+const load=async()=>{cfg=await fetch('/api/page-visibility').then(r=>r.json());draw()};
+pvSave.onclick=()=>save([...pvGroups.querySelectorAll('input')].filter(i=>!i.checked).map(i=>i.dataset.path));
+pvAll.onclick=()=>save([]);pvDefault.onclick=()=>save(cfg.defaults);
+load();})();
+</script>{% endblock %}

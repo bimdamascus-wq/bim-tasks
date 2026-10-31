@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block content %}{% if 'users.manage' in permissions %}<p style="padding:12px"><a href="/record-management?entity=telegram_groups">تعطيل أو حذف السجلات واستعادة المحذوفات</a></p>{% endif %}
+<main class="page-shell">
+<section class="page-title">
+  <div><h1>👥 مجموعات Telegram</h1><p>ربط مجموعات الأقسام وإدارة الرسائل والتذكيرات الجماعية المجدولة.</p></div>
+  <div class="toolbar"><button onclick="openGroup()">＋ مجموعة</button><button class="btn-light" onclick="openReminder()">＋ تذكير جماعي</button></div>
+</section>
+
+<div class="kpi-grid">
+  <div class="kpi"><span>المجموعات</span><b id="kGroups">0</b></div>
+  <div class="kpi"><span>المربوطة</span><b id="kLinked">0</b></div>
+  <div class="kpi"><span>التذكيرات الفعالة</span><b id="kReminders">0</b></div>
+</div>
+
+<section class="panel">
+<h2>المجموعات</h2>
+<div class="scroll-box"><table class="sticky-table">
+<thead><tr><th>الاسم</th><th>القسم</th><th>Telegram</th><th>التذكيرات</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+<tbody id="groupsBody"></tbody>
+</table></div>
+</section>
+
+<section class="panel">
+<h2>التذكيرات الجماعية</h2>
+<div class="scroll-box"><table class="sticky-table">
+<thead><tr><th>المجموعة</th><th>العنوان</th><th>التكرار</th><th>الوقت</th><th>آخر إرسال</th><th>الإرسال القادم</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+<tbody id="remBody"></tbody>
+</table></div>
+</section>
+
+<section class="panel">
+<h2>آخر عمليات الإرسال</h2>
+<div class="scroll-box"><table class="sticky-table">
+<thead><tr><th>الوقت</th><th>المجموعة</th><th>التذكير</th><th>الحالة</th><th>الخطأ</th></tr></thead>
+<tbody id="logBody"></tbody>
+</table></div>
+</section>
+</main>
+
+<div class="modal-backdrop" id="groupModal"><div class="modal-card">
+<div class="modal-head"><h2 id="groupTitle">مجموعة جديدة</h2><button class="xbtn btn-light" onclick="closeGroup()">×</button></div>
+<div class="form-grid">
+ <div class="field"><label>اسم المجموعة داخل BIM Tasks</label><input id="gName"></div>
+ <div class="field"><label>القسم / الفريق</label><input id="gDepartment"></div>
+ <div class="field"><label>الحالة</label><select id="gActive"><option value="1">مفعلة</option><option value="0">موقوفة</option></select></div>
+</div>
+<div class="toolbar" style="justify-content:flex-end;margin-top:10px"><button onclick="saveGroup()">حفظ</button></div>
+</div></div>
+
+<div class="modal-backdrop" id="remModal"><div class="modal-card">
+<div class="modal-head"><h2 id="remTitle">تذكير جماعي</h2><button class="xbtn btn-light" onclick="closeReminder()">×</button></div>
+<div class="form-grid">
+ <div class="field" style="grid-column:1/-1"><label>المجموعات المستهدفة</label><div id="rGroup" style="max-height:200px;overflow:auto;border:1px solid #d8dde4;border-radius:8px;padding:10px"></div><small id="rGroupHelp">اختر مجموعة أو أكثر. يُحفظ تذكير مستقل لكل مجموعة بنفس النص والموعد، ويمكن تعديل كل واحد أو إيقافه لاحقاً.</small></div>
+ <div class="field"><label>عنوان اختياري</label><input id="rTitle"></div>
+ <div class="field" style="grid-column:1/-1"><label>نص الرسالة</label><textarea id="rText" rows="5"></textarea></div>
+ <div class="field"><label>التكرار</label><select id="rType" onchange="toggleRecurrence()">
+   <option>مرة واحدة</option><option>يومي</option><option>أسبوعي</option><option>كل X أيام</option><option>شهري</option><option>تاريخ محدد</option>
+ </select></div>
+ <div class="field" id="fTime"><label>وقت الإرسال</label><input id="rTime" type="time" value="09:00"></div>
+ <div class="field" id="fSpecific"><label>التاريخ والوقت</label><input id="rSpecific" type="datetime-local"></div>
+ <div class="field" id="fEvery"><label>كل كم يوم؟</label><input id="rEvery" type="number" min="1" value="20"></div>
+ <div class="field" id="fWeek"><label>يوم الأسبوع</label><select id="rWeek">
+   <option value="0">الأحد</option><option value="1">الاثنين</option><option value="2">الثلاثاء</option>
+   <option value="3">الأربعاء</option><option value="4">الخميس</option><option value="5">الجمعة</option><option value="6">السبت</option>
+ </select></div>
+ <div class="field" id="fMonth"><label>يوم الشهر</label><input id="rMonth" type="number" min="1" max="31" value="1"></div>
+ <div class="field"><label>تاريخ البداية</label><input id="rStart" type="date"></div>
+ <div class="field"><label>تاريخ النهاية</label><input id="rEnd" type="date"></div>
+ <div class="field"><label>الحالة</label><select id="rActive"><option value="1">مفعّل</option><option value="0">موقوف</option></select></div>
+</div>
+<div class="toolbar" style="justify-content:flex-end;margin-top:10px"><button id="saveReminderBtn" onclick="saveReminder()">حفظ</button></div>
+</div></div>
+{% endblock %}
+
+{% block scripts %}
+<style>body #remModal [hidden]{display:none!important}</style>
+<script>
+const $=id=>document.getElementById(id);
+let groups=[],rems=[],editGroupId=null,editRemId=null;
+
+async function load(){
+  try{
+    [groups,rems]=await Promise.all([bimRequest('/api/telegram-groups'),bimRequest('/api/group-reminders')]);
+    const logs=await bimRequest('/api/group-dispatch-log?limit=100');
+    $('kGroups').textContent=groups.length;
+    $('kLinked').textContent=groups.filter(g=>g.chat_id).length;
+    $('kReminders').textContent=rems.filter(r=>r.is_active).length;
+    $('groupsBody').innerHTML=groups.map(g=>`<tr>
+      <td class="name-red">${bimEsc(g.name)}</td><td>${bimEsc(g.department||'—')}</td>
+      <td>${g.chat_id?'✅ مربوط':'غير مربوط'}${g.telegram_title?`<small style="display:block">${bimEsc(g.telegram_title)}</small>`:''}</td>
+      <td>${g.active_reminders||0}</td><td>${g.is_active?'مفعلة':'موقوفة'}</td>
+      <td><div class="toolbar">
+        <button class="btn-sm" onclick="editGroup(${g.id})">✏️ تعديل</button>
+        <button class="btn-sm btn-light" onclick="linkGroup(${g.id})">🔗 ${g.chat_id?'ربط جديد':'ربط المجموعة'}</button>
+        ${g.chat_id?`<button class="btn-sm btn-light" onclick="unlinkGroup(${g.id})">⛓️‍💥 فك الربط</button>`:''}
+        <button class="btn-sm btn-light" onclick="deleteGroup(${g.id})">🗑️</button>
+      </div></td></tr>`).join('');
+    $('remBody').innerHTML=rems.map(r=>`<tr>
+      <td>${bimEsc(r.group_name)}</td><td>${bimEsc(r.title||'—')}</td><td>${bimEsc(r.recurrence_type)}</td>
+      <td>${bimEsc(r.send_time||r.specific_at||'—')}</td><td>${bimEsc(r.last_sent_at||'—')}</td>
+      <td>${bimEsc(r.next_send_at||'—')}</td><td>${r.is_active?'مفعّل':'موقوف'}</td><td><div class="toolbar">
+        <button class="btn-sm" onclick="editReminder(${r.id})">✏️ تعديل</button>
+        <button class="btn-sm btn-light" onclick="toggleReminder(${r.id},${r.is_active?0:1})">${r.is_active?'⏸️ إيقاف':'▶️ تفعيل'}</button>
+        <button class="btn-sm btn-light" onclick="deleteReminder(${r.id})">🗑️</button>
+      </div></td></tr>`).join('');
+    $('logBody').innerHTML=logs.map(x=>`<tr><td>${bimEsc(x.sent_at||x.created_at||'—')}</td>
+      <td>${bimEsc(x.group_name||'—')}</td><td>${bimEsc(x.reminder_title||'—')}</td>
+      <td>${x.status==='sent'?'✅ تم':'❌ '+bimEsc(x.status)}</td><td>${bimEsc(x.error||'—')}</td></tr>`).join('');
+  }catch(e){bimToast(e.message,'err')}
+}
+
+function openGroup(){editGroupId=null;$('groupTitle').textContent='مجموعة جديدة';$('gName').value='';$('gDepartment').value='';$('gActive').value='1';$('groupModal').classList.add('show')}
+function closeGroup(){$('groupModal').classList.remove('show')}
+function editGroup(id){const g=groups.find(x=>x.id===id);if(!g)return;editGroupId=id;$('groupTitle').textContent='تعديل المجموعة';$('gName').value=g.name||'';$('gDepartment').value=g.department||'';$('gActive').value=g.is_active?'1':'0';$('groupModal').classList.add('show')}
+async function saveGroup(){const p={name:$('gName').value.trim(),department:$('gDepartment').value.trim(),is_active:$('gActive').value==='1'};try{if(editGroupId)await bimRequest('/api/telegram-groups/'+editGroupId,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});else await bimRequest('/api/telegram-groups',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});closeGroup();bimToast('تم الحفظ');load()}catch(e){bimToast(e.message,'err')}}
+async function linkGroup(id){try{const r=await bimRequest('/api/telegram-groups/'+id+'/link-code',{method:'POST'});try{await navigator.clipboard.writeText(r.command)}catch(_){}prompt('أضف البوت إلى مجموعة Telegram ثم أرسل هذا الأمر داخل المجموعة. صالح 24 ساعة:',r.command);bimToast('تم إنشاء رمز الربط')}catch(e){bimToast(e.message,'err')}}
+async function unlinkGroup(id){if(!confirm('فك ربط هذه المجموعة من Telegram؟'))return;try{await bimRequest('/api/telegram-groups/'+id+'/unlink',{method:'POST'});bimToast('تم فك الربط');load()}catch(e){bimToast(e.message,'err')}}
+async function deleteGroup(id){if(!confirm('حذف المجموعة وتذكيراتها من BIM Tasks؟'))return;try{await bimRequest('/api/telegram-groups/'+id,{method:'DELETE'});bimToast('تم الحذف');load()}catch(e){bimToast(e.message,'err')}}
+
+function toggleRecurrence(){
+  const t=$('rType').value;
+  $('fSpecific').hidden=!(t==='مرة واحدة'||t==='تاريخ محدد');
+  $('fTime').hidden=(t==='مرة واحدة'||t==='تاريخ محدد');
+  $('fEvery').hidden=t!=='كل X أيام';
+  $('fWeek').hidden=t!=='أسبوعي';
+  $('fMonth').hidden=t!=='شهري';
+}
+function drawReminderGroups(selected=[],editing=false){
+ $('rGroup').replaceChildren();
+ for(const g of groups){const label=document.createElement('label');label.style.cssText='display:flex;align-items:center;gap:8px;padding:6px';const input=document.createElement('input');input.type=editing?'radio':'checkbox';input.name='reminderGroup';input.value=String(g.id);input.checked=selected.includes(g.id);label.append(input,document.createTextNode(g.name+(!g.is_active?' — موقوفة':!g.chat_id?' — غير مربوطة':' تدعم الإرسال')));$('rGroup').append(label)}
+ $('rGroupHelp').textContent=editing?'هذا التذكير خاص بمجموعة واحدة. لإنشاء تذكير لعدة مجموعات استخدم «تذكير جماعي جديد».':'اختر مجموعة أو أكثر. يُحفظ تذكير مستقل لكل مجموعة بنفس النص والموعد، ويمكن تعديل كل واحد أو إيقافه لاحقاً.';
+}
+function openReminder(){
+  if(!groups.length){bimToast('أضف مجموعة أولاً','err');return}
+  editRemId=null;$('remTitle').textContent='تذكير جماعي جديد';
+  drawReminderGroups([],false);
+  $('rTitle').value='';$('rText').value='';$('rType').value='مرة واحدة';$('rTime').value='09:00';$('rSpecific').value='';
+  $('rEvery').value='20';$('rWeek').value='0';$('rMonth').value='1';$('rStart').value='';$('rEnd').value='';$('rActive').value='1';
+  toggleRecurrence();$('remModal').classList.add('show');
+}
+function closeReminder(){$('remModal').classList.remove('show')}
+function editReminder(id){
+  const r=rems.find(x=>x.id===id);if(!r)return;editRemId=id;$('remTitle').textContent='تعديل التذكير';
+  drawReminderGroups([r.group_id],true);
+  $('rTitle').value=r.title||'';$('rText').value=r.message_text||'';$('rType').value=r.recurrence_type||'مرة واحدة';
+  $('rTime').value=r.send_time||'09:00';$('rSpecific').value=(r.specific_at||'').replace(' ','T').slice(0,16);
+  $('rEvery').value=r.every_n_days||20;$('rWeek').value=r.week_day??0;$('rMonth').value=r.month_day||1;
+  $('rStart').value=(r.start_date||'').slice(0,10);$('rEnd').value=(r.end_date||'').slice(0,10);$('rActive').value=r.is_active?'1':'0';
+  toggleRecurrence();$('remModal').classList.add('show');
+}
+async function saveReminder(){
+  const chosen=[...$('rGroup').querySelectorAll('input:checked')].map(x=>Number(x.value));
+  if(!chosen.length){bimToast('اختر مجموعة واحدة على الأقل','err');return}
+  const p={...(editRemId?{group_id:chosen[0]}:{group_ids:chosen}),title:$('rTitle').value.trim(),message_text:$('rText').value.trim(),
+    recurrence_type:$('rType').value,send_time:$('rTime').value||null,specific_at:$('rSpecific').value||null,
+    every_n_days:+$('rEvery').value||null,week_day:+$('rWeek').value,month_day:+$('rMonth').value||null,
+    start_date:$('rStart').value||null,end_date:$('rEnd').value||null,is_active:$('rActive').value==='1'};
+  if(!p.message_text){bimToast('نص الرسالة مطلوب','err');return}
+  if($('saveReminderBtn').disabled)return;$('saveReminderBtn').disabled=true;
+  try{
+    if(editRemId)await bimRequest('/api/group-reminders/'+editRemId,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+    else await bimRequest('/api/group-reminders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+    closeReminder();bimToast(editRemId?'تم حفظ التذكير':'تم حفظ التذكير لـ '+chosen.length+' مجموعات');load();
+  }catch(e){bimToast(e.message,'err')}finally{$('saveReminderBtn').disabled=false}
+}
+async function toggleReminder(id,on){try{await bimRequest('/api/group-reminders/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({is_active:!!on})});load()}catch(e){bimToast(e.message,'err')}}
+async function deleteReminder(id){if(!confirm('حذف هذا التذكير؟'))return;try{await bimRequest('/api/group-reminders/'+id,{method:'DELETE'});bimToast('تم الحذف');load()}catch(e){bimToast(e.message,'err')}}
+load();
+</script>
+{% endblock %}

@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% block content %}{% if 'users.manage' in permissions %}<p style="padding:12px"><a href="/record-management?entity=employees">تعطيل أو حذف السجلات واستعادة المحذوفات</a></p>{% endif %}
+<main class="page-shell">
+<section class="page-title">
+  <div><h1>الموظفون</h1><p>بيانات الموظف، وظائفه وتعليماته، والمهام الثابتة.</p><small>تحديث الموظفين R4</small></div>
+  {% if 'employees.edit' in permissions %}<button onclick="openAdd()">＋ موظف جديد</button>{% endif %}
+</section>
+<div class="toolbar" style="margin-bottom:14px">
+{% if 'recurring.view' in permissions %}<a class="btn" href="/recurring">المهام الثابتة / المتكررة</a>{% endif %}
+{% if 'users.manage' in permissions %}<a class="btn btn-light" href="/job-profiles">تعريف الوظائف والتعليمات</a>{% endif %}
+</div>
+<div class="bim-section"><div class="scroll-box">
+<table class="sticky-table">
+<thead><tr><th>الاسم</th><th>القسم</th><th>المهام المفتوحة</th><th>Telegram</th><th>WhatsApp</th><th>الشيفت</th><th>الحالة</th>{% if 'employees.edit' in permissions %}<th>الإجراءات</th>{% endif %}</tr></thead>
+<tbody id="body"></tbody>
+</table></div></div>
+</main>
+
+<div class="modal-backdrop" id="modal">
+ <div class="modal-card">
+  <div class="modal-head"><h2 id="modalTitle">إضافة موظف</h2><button class="xbtn btn-light" onclick="closeModal()">×</button></div>
+  <div class="form-grid">
+   <div class="field"><label>الاسم</label><input id="name"></div>
+   <div class="field"><label>القسم</label><input id="department" list="companyDepartments"><datalist id="companyDepartments">{% for d in company.departments %}<option value="{{ d }}">{% endfor %}</datalist></div>
+   <div class="field"><label>WhatsApp</label><input id="whatsapp"></div><div class="field"><label>الشيفت</label><select id="shift_type"><option value="بدون">بدون</option><option value="صباحي">صباحي</option><option value="مسائي">مسائي</option></select></div><div class="field"><label>بداية الشيفت</label><input id="shift_start" type="time"></div><div class="field"><label>نهاية الشيفت</label><input id="shift_end" type="time"></div><div class="field" style="grid-column:1/-1"><label>أيام العمل</label><div id="workDays" class="toolbar" style="flex-wrap:wrap"></div></div>
+   <div class="field"><label>الحالة</label><select id="is_active"><option value="1">نشط</option><option value="0">موقوف</option></select></div>
+   <div class="field"><label>إرسال Telegram</label><select id="telegram_enabled"><option value="1">مفعّل</option><option value="0">موقوف</option></select></div>
+   <div class="field"><label>إرسال WhatsApp</label><select id="whatsapp_enabled"><option value="1">مفعّل</option><option value="0">موقوف</option></select></div>
+  </div>
+  {% if 'users.manage' in permissions %}
+  <section class="bim-section" style="margin-top:12px">
+    <h3>الوظائف وتعليمات العمل</h3>
+    <p>يمكن اختيار أكثر من وظيفة للموظف. <a href="/job-profiles" target="_blank" rel="noopener">تعريف وظيفة وتعليماتها</a></p>
+    <div id="employeeJobs" class="toolbar" style="flex-wrap:wrap"></div>
+    <label for="employeeInstructionMode">عرض التعليمات للموظف</label>
+    <select id="employeeInstructionMode"><option value="">حسب إعداد الوظيفة</option><option value="auto">عند فتح المهمة</option><option value="on_demand">عند الطلب</option><option value="once">مرة واحدة</option></select>
+    <p><a href="/template-library" target="_blank" rel="noopener">قوالب المهام والتعليمات المستقلة وربطها بالموظف</a></p><label>قناة الاستخدام <select id="staffChannel"><option value="both">الويب وTelegram</option><option value="web">الويب فقط</option><option value="telegram">Telegram فقط</option></select></label><label>السعة اليومية المقدرة بالدقائق <input id="staffCapacity" type="number" min="1" max="1440" value="480"></label><div id="employeeWorkEditor"></div><p id="profileError" role="status"></p>
+  </section>
+  {% endif %}
+  <div id="telegramInfo" class="notice" style="margin-top:10px;display:none"></div>
+  <div class="toolbar" style="justify-content:flex-end;margin-top:10px"><button id="saveEmployeeButton" onclick="saveEmployee(event)">حفظ</button></div>
+ </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% include "work_editor.html" %}
+<script>document.documentElement.dataset.bimExcelPage="employees";</script>
+
+
+<script>
+let rows=[],editingId=null,profileReady=false,profileLoadId=0;
+const canManageJobs={{ ('users.manage' in permissions)|tojson }};
+const dayNames=[['0','الأحد'],['1','الاثنين'],['2','الثلاثاء'],['3','الأربعاء'],['4','الخميس'],['5','الجمعة'],['6','السبت']];
+const $=id=>document.getElementById(id);
+
+function renderWorkDays(selected='0,1,2,3,4,5,6'){
+  const q=new Set(String(selected||'').split(','));
+  $('workDays').innerHTML=dayNames.map(d=>`<label style="display:flex;gap:5px;align-items:center">
+    <input type="checkbox" class="wd" value="${d[0]}" ${q.has(d[0])?'checked':''}>${d[1]}
+  </label>`).join('');
+}
+function selectedDays(){
+  return [...document.querySelectorAll('.wd:checked')].map(x=>x.value).join(',');
+}
+
+async function load(){
+  try{
+    rows=await bimRequest('/api/employees?all=1');
+    $('body').innerHTML=rows.map(e=>`<tr>
+      <td class="name-red">${bimEsc(e.name)}</td>
+      <td>${bimEsc(e.department||'—')}</td>
+      <td>${bimArDigits(e.open_tasks||0)}</td>
+      <td>${e.telegram_chat_id?'✅ مربوط':'غير مربوط'}${e.telegram_chat_id?`<small style="display:block">${bimEsc(e.telegram_chat_id)}</small>`:''}</td>
+      <td>${bimEsc(e.whatsapp||'—')}</td>
+      <td>${bimEsc(e.shift_type||'بدون')}<small style="display:block">${bimEsc(e.shift_start||'—')} → ${bimEsc(e.shift_end||'—')}</small></td>
+      <td>${e.is_active?'نشط':'موقوف'}</td>
+      {% if 'employees.edit' in permissions %}
+      <td><div class="toolbar">
+        <button class="btn-sm" onclick="openEdit(${e.id})">✏️ تعديل</button>
+        {% if 'recurring.view' in permissions %}<a class="btn btn-sm" href="/recurring?employee_id=${e.id}">المهام الثابتة</a>{% endif %}
+        <button class="btn-sm btn-light" onclick="makeLink(${e.id})">🔗 ${e.telegram_chat_id?'رابط ربط جديد':'ربط Telegram'}</button>
+        ${e.telegram_chat_id?`<button class="btn-sm btn-light" onclick="unlinkTelegram(${e.id})">⛓️‍💥 فك الربط</button>`:''}
+      </div></td>
+      {% endif %}
+    </tr>`).join('');
+  }catch(e){
+    bimToast(e.message||'تعذر تحميل الموظفين','err');
+  }
+}
+function closeModal(){$('modal').classList.remove('show')}
+function openAdd(){
+  editingId=null;$('modalTitle').textContent='إضافة موظف';
+  $('name').value='';$('department').value='';$('whatsapp').value='';
+  $('is_active').value='1';$('telegram_enabled').value='1';$('whatsapp_enabled').value='1';
+  $('shift_type').value='بدون';$('shift_start').value='';$('shift_end').value='';
+  renderWorkDays((window.companyBrand?.work_days||[0,1,2,3,4,5,6]).join(","));
+  $('telegramInfo').style.display='none';$('modal').classList.add('show');loadEmployeeJobs(null);
+}
+function openEdit(id){
+  const e=rows.find(x=>x.id===id);if(!e)return;
+  editingId=id;$('modalTitle').textContent='تعديل الموظف';
+  $('name').value=e.name||'';$('department').value=e.department||'';$('whatsapp').value=e.whatsapp||'';
+  $('is_active').value=e.is_active?'1':'0';
+  $('telegram_enabled').value=e.telegram_enabled?'1':'0';
+  $('whatsapp_enabled').value=e.whatsapp_enabled?'1':'0';
+  $('shift_type').value=e.shift_type||'بدون';
+  $('shift_start').value=e.shift_start||'';
+  $('shift_end').value=e.shift_end||'';
+  renderWorkDays(e.work_days||'0,1,2,3,4,5,6');
+  $('telegramInfo').style.display='block';
+  $('telegramInfo').innerHTML=e.telegram_chat_id
+    ?`Telegram مربوط حالياً بـ <b>${bimEsc(e.telegram_chat_id)}</b>. لتغيير الحساب استخدم «فك الربط» ثم أنشئ رابط ربط جديد.`
+    :'Telegram غير مربوط لهذا الموظف.';
+  $('modal').classList.add('show');loadEmployeeJobs(id);
+}
+async function loadEmployeeJobs(employeeId){
+  if(!canManageJobs)return;
+  const requestId=++profileLoadId;
+  profileReady=false;$('saveEmployeeButton').disabled=true;
+  $('employeeJobs').textContent='جارٍ تحميل الوظائف…';$('profileError').textContent='';
+  try{
+    const [catalog,profile,staffCfg]=await Promise.all([
+      bimRequest('/api/bim-job-profiles'),
+      employeeId?bimRequest('/api/bim-employee-profile/'+employeeId):Promise.resolve({jobs:[],display_mode_override:null}),
+      employeeId?bimRequest('/api/staff/'+employeeId+'/settings'):Promise.resolve({channel:'both',capacity_minutes:480})
+    ]);
+    if(requestId!==profileLoadId)return;
+    $('staffChannel').value=staffCfg.channel;$('staffCapacity').value=staffCfg.capacity_minutes;
+    const selected=new Set(profile.jobs.map(j=>j.id));
+    const jobs=catalog.jobs.filter(j=>j.is_active||selected.has(j.id));
+    $('employeeJobs').innerHTML=jobs.length?jobs.map(j=>`<label><input type="checkbox" class="employee-job" value="${j.id}" ${selected.has(j.id)?'checked':''}> ${bimEsc(j.name)}${j.is_active?'':' (موقوفة)'}</label>`).join(''):'لم تُعرّف وظائف بعد. يمكنك حفظ الموظف ثم تعريف الوظائف لاحقاً.';
+    $('employeeInstructionMode').value=profile.display_mode_override||'';
+    drawWorkEditor('employeeWorkEditor',profile.config_override||{},true);
+    profileReady=true;
+  }catch(err){if(requestId===profileLoadId){$('employeeJobs').textContent='';$('profileError').textContent=err.message||'تعذر تحميل الوظائف؛ أغلق النموذج وافتحه للمحاولة مجدداً.'}}
+  finally{if(requestId===profileLoadId)$('saveEmployeeButton').disabled=!profileReady}
+}
+async function saveEmployee(event){
+  const btn=event?.currentTarget;
+  if(canManageJobs&&!profileReady){bimToast('انتظر تحميل إعدادات الوظائف','err');return}
+  const payload={
+    name:$('name').value.trim(),
+    department:$('department').value.trim(),
+    whatsapp:$('whatsapp').value.trim(),
+    is_active:$('is_active').value==='1',
+    telegram_enabled:$('telegram_enabled').value==='1',
+    whatsapp_enabled:$('whatsapp_enabled').value==='1',
+    shift_type:$('shift_type').value,
+    shift_start:$('shift_start').value||null,
+    shift_end:$('shift_end').value||null,
+    work_days:selectedDays()
+  };
+  if(!payload.name){bimToast('اسم الموظف مطلوب','err');return}
+  try{
+    if(btn){btn.disabled=true;btn.textContent='جارٍ الحفظ...'}
+    if(editingId){
+      await bimRequest('/api/employees/'+editingId,{
+        method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)
+      });
+    }else{
+      const created=await bimRequest('/api/employees',{
+        method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)
+      });
+      editingId=created.id; // Retain the new ID if saving its job profile needs a retry.
+      $('modalTitle').textContent='تعديل الموظف';
+    }
+    if(canManageJobs){
+      try{
+        await bimRequest('/api/staff/'+editingId+'/settings',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({channel:$('staffChannel').value,capacity_minutes:Number($('staffCapacity').value)})});
+        await bimRequest('/api/bim-employee-profile/'+editingId,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+          job_ids:[...document.querySelectorAll('.employee-job:checked')].map(x=>+x.value),
+          config_override:readWorkEditor('employeeWorkEditor'),display_mode_override:$('employeeInstructionMode').value||null
+        })});
+      }catch(err){await load();throw new Error('تم حفظ بيانات الموظف، لكن لم تُحفظ الوظائف: '+err.message+' — اضغط حفظ للمحاولة مجدداً.')}
+    }
+    bimToast('✅ تم حفظ الموظف وإعداداته');
+    closeModal();
+    await load();
+  }catch(e){
+    bimToast(e.message||'تعذر حفظ الموظف','err');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='حفظ'}
+  }
+}
+async function makeLink(id){
+  try{
+    const r=await bimRequest('/api/employees/'+id+'/telegram-link',{method:'POST'});
+    try{await navigator.clipboard.writeText(r.link)}catch(_){}
+    prompt('رابط الربط صالح 24 ساعة. أرسله للموظف وافتحه من Telegram ثم اضغط Start:',r.link);
+    bimToast('تم إنشاء رابط الربط');
+  }catch(e){bimToast(e.message,'err')}
+}
+async function unlinkTelegram(id){
+  const e=rows.find(x=>x.id===id);if(!e)return;
+  if(!confirm('فك ربط Telegram عن '+e.name+'؟ لن تُرسل المهام الجديدة إلى الحساب القديم بعد ذلك.'))return;
+  try{
+    await bimRequest('/api/employees/'+id+'/telegram-unlink',{method:'POST'});
+    bimToast('تم فك ربط Telegram');await load();
+  }catch(e){bimToast(e.message,'err')}
+}
+renderWorkDays();load();
+</script>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block head %}<style>
+.detail-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:10px}.detail-card{background:#fff;border:1px solid var(--bim-line);border-radius:14px;padding:14px}.detail-row{display:grid;grid-template-columns:110px 1fr;gap:8px;padding:7px 0;border-bottom:1px solid #edf0f3}.detail-row:last-child{border:0}.comments{display:grid;gap:8px;max-height:360px;overflow:auto}.comment{border:1px solid #e5e9ef;border-radius:12px;padding:9px;background:#fafbfc}.comment b{display:block}.comment small{color:#667085}.attachments{display:grid;gap:7px}.attachment{display:flex;justify-content:space-between;gap:8px;align-items:center;border:1px solid #e5e9ef;padding:8px;border-radius:10px}.voice-player{width:100%;margin-top:6px}@media(max-width:900px){.detail-grid{grid-template-columns:1fr}}</style>{% endblock %}
+{% block content %}
+<main class="page-shell">
+<section class="page-title"><div><h1 id="taskTitle">تفاصيل المهمة</h1><p id="taskCode">...</p></div><div class="toolbar"><a href="/tasks" class="btn btn-light">رجوع للمهام</a></div></section>
+{% include 'employee_work_panel.html' %}
+<div class="toolbar" id="detailStatusActions"></div><div class="detail-grid">
+  <section class="detail-card"><h2>المهمة</h2><div id="taskInfo"></div></section>
+  <section class="detail-card"><h2>المرفقات</h2><div class="attachments" id="attachments"></div><div class="field" style="margin-top:10px"><label>إضافة ملف</label><input id="fileInput" type="file"><button class="btn-sm" style="margin-top:6px" onclick="uploadFile()">رفع المرفق</button></div></section>
+</div>
+<section class="detail-card" style="margin-top:10px"><h2>سجل المهمة والإنجاز</h2><div id="taskHistory"></div></section><section class="detail-card" id="participationBlock" style="margin-top:10px;display:none"><h2>متابعة المشاركين في المهمة الجماعية</h2><div id="participationList"></div></section>
+<section class="detail-card" style="margin-top:10px"><h2>الملاحظات والتعليقات</h2><div class="comments" id="comments"></div><div class="toolbar" style="margin-top:10px"><input id="commentText" style="flex:1" placeholder="اكتب ملاحظة أو تعليقًا على المهمة"><button onclick="addComment()">إرسال</button></div></section>
+</main>
+{% endblock %}
+{% block scripts %}<script>
+const TID={{ task_id }};
+async function loadDetail(){const t=await fetch('/api/tasks/'+TID).then(r=>r.json());taskTitle.textContent=t.title;taskCode.textContent=t.task_code||'';taskInfo.innerHTML=[
+['المصدر',t.origin_label||'—'],['الموظف',t.employee_name],['الحالة',t.status],['الأولوية',t.priority],['الموعد',bimDate(t.due_at)],['الملاحظات',t.notes||'—'],['أنشئت',bimDate(t.created_at)]
+].concat((t.delegations||[]).length?[['وُزّعت إلى',(t.delegations||[]).map(d=>d.employee_name+' عبر '+(d.channel==='whatsapp'?'واتساب':'Telegram')+(d.note?' — '+d.note:'')+' ('+bimDate(d.created_at)+')').join('\n')]]:[]).map(x=>`<div class="detail-row"><b>${bimEsc(x[0])}</b><span style="white-space:pre-line">${bimEsc(x[1]??'—')}</span></div>`).join('');
+detailStatusActions.innerHTML=(!t.is_group&&!['تم','ملغاة'].includes(t.status)?['بدأت','قيد التنفيذ','تم'].map(st=>`<button onclick="detailStatus('${st}')">${bimEsc(st)}</button>`).join(''):'')+(!['تم','ملغاة'].includes(t.status)?`<button class="btn-light" onclick="bimDelegate(TID)">↪ توزيع المهمة على موظف</button>`:'');
+taskHistory.innerHTML=(t.events||[]).map(x=>`<p>${bimEsc(x.event_type==='delegated'?'توزيع':x.event_type)} · ${bimEsc(x.new_status||x.note||'')} · ${bimEsc(x.created_at)}</p>`).join('')+(t.completion_entries||[]).map(x=>`<p>إنجاز: ${bimEsc(x.created_at)} — ${bimEsc(Object.entries(JSON.parse(x.values_json)).map(([k,v])=>k+': '+v).join('، '))}</p>`).join('');
+const people=t.participants||[];participationBlock.style.display=people.length?'block':'none';
+participationList.innerHTML=people.map(p=>`<div class="detail-row" style="grid-template-columns:1fr 160px"><b>${bimEsc(p.name)}</b><select aria-label="حالة ${bimEsc(p.name)}" data-employee="${p.employee_id}" onchange="updateParticipant(${p.employee_id},this.value)">${['جديدة','بدأت','قيد التنفيذ','بانتظار','تم'].map(st=>`<option value="${st}" ${st===(p.status||'جديدة')?'selected':''}>${st}</option>`).join('')}</select></div>`).join('');
+comments.innerHTML=(t.comments||[]).map(c=>`<div class="comment"><b>${bimEsc(c.username_snapshot||'النظام')}</b><div>${bimEsc(c.body)}</div><small>${bimDate(c.created_at)}</small></div>`).join('')||'<div class="empty">لا توجد تعليقات بعد</div>';
+attachments.innerHTML=(t.attachments||[]).map(a=>`<div class="attachment"><div style="flex:1"><b>${bimEsc(a.original_name)}</b><small>مرفق · ${bimArDigits(Math.ceil((a.size_bytes||0)/1024))} KB</small></div><a class="btn btn-sm btn-light" href="/api/attachments/${a.id}">فتح</a></div>`).join('')||'<div class="empty">لا توجد مرفقات</div>';
+}
+async function updateParticipant(eid,status){try{const completion=status==='تم'&&window.collectCompletion?await collectCompletion(TID):{};if(completion===null)return;await bimRequest('/api/tasks/'+TID+'/participants/'+eid+'/status',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status,completion})});bimToast('تم تحديث حالة المشارك');loadDetail()}catch(e){bimToast(e.message,'err');loadDetail()}}
+async function addComment(){const body=commentText.value.trim();if(!body)return;try{const r=await bimRequest('/api/tasks/'+TID+'/comments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({body})});commentText.value='';bimToast(r.telegram&&r.telegram.ok?'تم حفظ الملاحظة وإرسالها على Telegram':'تم حفظ الملاحظة');loadDetail()}catch(e){bimToast(e.message,'err')}}
+async function uploadFile(){if(!fileInput.files[0])return bimToast('اختر ملفًا','err');const fd=new FormData();fd.append('file',fileInput.files[0]);try{const r=await fetch('/api/tasks/'+TID+'/attachments',{method:'POST',body:fd});const x=await r.json();if(!r.ok)throw new Error(x.detail||'فشل الرفع');fileInput.value='';bimToast(x.telegram&&x.telegram.ok?'تم رفع المرفق وإرساله إلى Telegram':'تم رفع المرفق داخل BIM Tasks');loadDetail()}catch(e){bimToast(e.message,'err')}}
+async function detailStatus(status){try{const completion=status==='تم'&&window.collectCompletion?await collectCompletion(TID):{};if(completion===null)return;await bimRequest('/api/tasks/'+TID+'/status',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status,completion})});await loadDetail()}catch(e){bimToast(e.message,'err')}}
+loadDetail();
+document.addEventListener('bim:delegated',()=>loadDetail());
+setInterval(()=>{if(!document.hidden)loadDetail().catch(()=>{})},3000);
+</script>{% endblock %}

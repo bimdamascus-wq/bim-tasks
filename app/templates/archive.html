@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block content %}<main class="page-shell"><section class="page-title"><div><h1>أرشيف المهام</h1><p>المهام المؤرشفة لا تُحذف من قاعدة البيانات ويمكن استعادتها.</p></div></section><div class="bim-section"><div class="scroll-box"><table class="sticky-table"><thead><tr><th>#</th><th>الموظف</th><th>المهمة</th><th>الحالة</th><th>تاريخ الأرشفة</th><th>إجراء</th></tr></thead><tbody id="body"></tbody></table></div></div></main>{% endblock %}
+{% block scripts %}<script>
+async function load(){const rows=await fetch('/api/tasks?archived=1').then(r=>r.json());body.innerHTML=rows.map(t=>`<tr><td>${bimArDigits(t.id)}</td><td class="name-red">${bimEsc(t.employee_name)}</td><td><a href="/task/${t.id}">${bimEsc(t.title)}</a></td><td>${bimEsc(t.status)}</td><td>${bimDate(t.archived_at)}</td><td><button class="btn-sm" onclick="restoreTask(${t.id})">استعادة</button></td></tr>`).join('')||'<tr><td colspan="6" class="empty">الأرشيف فارغ</td></tr>'}
+async function restoreTask(id){try{await bimRequest('/api/tasks/'+id+'/restore',{method:'POST'});bimToast('تمت استعادة المهمة');load()}catch(e){bimToast(e.message,'err')}}load();
+</script>{% endblock %}

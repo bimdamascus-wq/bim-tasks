@@ -1,0 +1,11 @@
+/* BIM Tasks V8.1 - presentation-only, all numbers western; do not override typography */
+:root {font-variant-numeric:lining-nums tabular-nums}
+/* all tables - exact middle alignment, no extra table dimensions */
+table th,table td,[role="table"] [role="cell"],[role="table"] [role="columnheader"],.table th,.table td{ text-align:center!important;vertical-align:middle!important;}
+table td button,table td a,table td .btn{vertical-align:middle!important}
+table th *,table td *{max-width:100%}
+/* KPI values immediately beneath their labels, without enlarging cards */
+.kpi,.stat-card,.stat,.metric,.dashboard-stat,[class*="kpi-card"],[class*="stat-card"]{text-align:center!important}
+.kpi .value,.stat-card .value,.stat .value,.metric .value,[class*="stat-card"] .value{display:block;text-align:center!important}
+/* Only headings/labels of table and stats. Never change RTL of paragraphs or form editing. */
+[dir="rtl"] table{direction:rtl}

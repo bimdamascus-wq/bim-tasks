@@ -1,0 +1,29 @@
+BIM TASKS SERVER V1.1 — QA
+===========================
+Date: 2026-10-07
+Domain target: task.bimdamascus.com
+
+PASS - Python compileall
+PASS - SQLite schema initializes with WAL and foreign keys
+PASS - Seed creates 4 roles and admin user
+PASS - /health
+PASS - Login session
+PASS - Dashboard page
+PASS - Tasks grouped page
+PASS - Tasks table page
+PASS - Force task-management page
+PASS - Employees page/API
+PASS - Recurring tasks page/API
+PASS - Integrations page
+PASS - Audit page
+PASS - Users page
+PASS - System-health page
+PASS - iPhone Form POST with X-BIM-Secret
+PASS - Unknown employee remains "بدون موظف"
+PASS - Reminder engine: once/hour/2hours/weekly/monthly/specific date
+PASS - LAN gateway and External gateway can run as separate processes sharing SQLite WAL
+
+Not performed here:
+- Live Telegram API send (requires user's real token/chat IDs)
+- Live DNS/HTTPS validation for task.bimdamascus.com (requires DNS/proxy setup on user's network/provider)
+- Full migration against the production Google Sheet export (migration utility included)

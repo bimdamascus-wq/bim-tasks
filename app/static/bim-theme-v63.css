@@ -1,0 +1,70 @@
+/* BIM Tasks V6.3.1 — one look for every page (matches the manager command center).
+   Loaded last on every page; overrides the older theme layers. */
+:root{--t-red:#d0121b;--t-red-50:#fff1f1;--t-ink:#17181c;--t-ink-2:#3d414a;--t-ink-3:#6b7280;--t-muted:#9aa0aa;--t-line:#ebecef;--t-line-2:#f2f3f5;--t-bg:#fafafa;--t-ok:#0f7b4b;--t-ok-50:#e8f6ef;--t-warn:#a65d00;--t-warn-50:#fff4e0}
+html body,html body *:not(i):not(.v510-nav-ico):not([class*="icon"]){font-family:Plex,Tahoma,sans-serif!important}
+html body{background:#fff!important;color:var(--t-ink)!important;font-size:16px!important;line-height:1.55}
+html body h1{font-size:28px!important;font-weight:700!important;color:var(--t-ink)!important;letter-spacing:0!important}
+html body h2{font-size:19px!important;font-weight:700!important;color:var(--t-ink)!important}
+html body h3{font-weight:700!important;color:var(--t-ink)!important}
+html body p,html body small{color:var(--t-ink-3)}
+
+/* sidebar */
+html body .v510-sidebar{background:var(--t-bg)!important;color:var(--t-ink-2)!important;border:0!important;border-left:1px solid var(--t-line)!important;border-radius:0!important;box-shadow:none!important;width:260px!important}
+@media(min-width:1001px){html body .v510-sidebar{position:fixed!important;inset:0 0 0 auto!important;top:0!important;bottom:0!important;right:0!important;height:100vh!important;transform:none!important}}
+html body .v510-brand{display:flex!important;justify-content:center!important;align-items:center!important;padding:18px 0 14px!important;background:none!important;border:0!important;margin:0!important}
+html body .v510-brand-mark{width:auto!important;height:auto!important;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;border-radius:0!important}
+html body .v510-brand-mark img{height:96px!important;width:auto!important;max-width:180px!important;object-fit:contain!important;border-radius:0!important;background:none!important}
+html body .v510-brand-copy{display:none!important}
+html body .v510-nav-label{color:var(--t-muted)!important;font-size:12.5px!important;font-weight:600!important;margin:14px 12px 4px!important;padding:0!important;text-transform:none!important;letter-spacing:0!important;opacity:1!important}
+html[lang=ar] body .v510-sidebar .v510-nav a,html body .v510-nav a{display:flex!important;align-items:center!important;gap:12px!important;padding:9px 12px!important;margin:1px 0!important;border-radius:10px!important;color:var(--t-ink-2)!important;background:none!important;font-weight:500!important;font-size:15.5px!important;box-shadow:none!important;border:0!important;min-height:0!important}
+html body .v510-nav a:hover{background:#f0f1f3!important;color:var(--t-ink)!important}
+html[lang=ar] body .v510-sidebar .v510-nav a.active,html body .v510-sidebar .v510-nav a.active{background:#fff!important;color:var(--t-ink)!important;font-weight:700!important;box-shadow:0 1px 2px rgba(0,0,0,.06),0 0 0 1px var(--t-line)!important}
+html[lang=ar] body .v510-sidebar .v510-nav a.active:before,html[lang=ar] body .v510-sidebar .v510-nav a.active:after{display:none!important}
+html body .v510-nav-ico{color:var(--t-ink-3)!important;background:none!important;width:20px!important;min-width:20px!important;height:auto!important;font-size:15px!important;box-shadow:none!important;border:0!important}
+html body .v510-nav a.active .v510-nav-ico{color:var(--t-red)!important}
+html body .v510-side-user{background:none!important;border-top:1px solid var(--t-line)!important;padding:12px!important}
+html body .v510-user-card{background:none!important;border:0!important;box-shadow:none!important;color:var(--t-ink)!important;padding:4px 0!important}
+html body .v510-user-card b{color:var(--t-ink)!important;font-weight:600!important}html body .v510-user-card span span{color:var(--t-ink-3)!important}
+html body .v510-avatar{background:var(--t-ink-2)!important;color:#fff!important;border-radius:50%!important;border:0!important}
+html body .v510-logout{background:#fff!important;color:var(--t-ink-2)!important;border:1px solid var(--t-line)!important;border-radius:10px!important;box-shadow:none!important}
+
+/* top bar */
+html body .v510-topbar{background:rgba(255,255,255,.94)!important;backdrop-filter:blur(6px);border:0!important;border-bottom:1px solid var(--t-line)!important;box-shadow:none!important;border-radius:0!important;color:var(--t-ink)!important}
+@media(min-width:1001px){html body{padding-right:260px!important}html body .v510-topbar{right:260px!important;left:0!important;top:0!important}}
+html body .v510-page-name b,html body .v510-page-name strong{color:var(--t-ink)!important;font-weight:700!important}
+html body .v510-search,html body .bim-global-search{background:var(--t-bg)!important;border:1px solid var(--t-line)!important;border-radius:12px!important;color:var(--t-ink)!important;box-shadow:none!important}
+
+/* content */
+html body .page-shell,html body main{color:var(--t-ink)}
+html body .card,html body .panel,html body .bim-section,html body .employee-card,html body .detail-card,html body .kpi,html body .stat,html body section.card,html body .bim-card,html body .modal-card,html body .bim-deleg-card{background:#fff!important;border:1px solid var(--t-line)!important;border-radius:16px!important;box-shadow:0 1px 2px rgba(16,24,40,.04)!important}
+html body .employee-card-head,html body .bim-section-head{background:#fff!important;border-bottom:1px solid var(--t-line-2)!important}
+html body .employee-card-head button,html body .name-red{color:var(--t-ink)!important;font-weight:700!important}
+
+/* buttons */
+html[lang=ar] body button:not(.xbtn):not(.btn-light):not(.btn-danger):not(.ck):not(.tm):not(.mem):not(.tg):not(.wa):not(.bim-filter-toggle):not(.bim-sort-btn),html[lang=ar] body .btn:not(.btn-light):not(.btn-danger),html[lang=ar] body a.btn:not(.btn-light){background:var(--t-ink)!important;border:1px solid var(--t-ink)!important;color:#fff!important;border-radius:10px!important;font-weight:600!important;box-shadow:none!important}
+html[lang=ar] body button:not(.xbtn):not(.btn-light):not(.btn-danger):not(.ck):not(.tm):not(.mem):not(.tg):not(.wa):not(.bim-filter-toggle):not(.bim-sort-btn):hover{background:#2c2e34!important}
+html[lang=ar] body .btn-light,html[lang=ar] body button.btn-light,html[lang=ar] body .xbtn{background:#fff!important;color:var(--t-ink-2)!important;border:1px solid var(--t-line)!important;border-radius:10px!important}
+html[lang=ar] body .btn-danger,html[lang=ar] body button.btn-danger{background:var(--t-red-50)!important;color:var(--t-red)!important;border:1px solid #fbd5d6!important;border-radius:10px!important}
+html[lang=ar] body .login-panel button{background:var(--t-red)!important;border-color:var(--t-red)!important}
+
+/* forms */
+html body input:not([type=checkbox]):not([type=radio]):not([type=file]),html body select,html body textarea{border:1px solid #dfe1e6!important;border-radius:10px!important;background:#fff!important;color:var(--t-ink)!important;box-shadow:none!important}
+html body input:focus,html body select:focus,html body textarea:focus{outline:0!important;border-color:#b9bdc6!important;box-shadow:0 0 0 4px #f1f2f4!important}
+html body label{color:var(--t-ink-2)}
+
+/* tables */
+html body table{border-collapse:collapse!important;background:#fff!important}
+html body thead th,html body th{background:var(--t-bg)!important;color:var(--t-ink-3)!important;font-weight:600!important;font-size:13.5px!important;border-bottom:1px solid var(--t-line)!important;border-top:0!important}
+html body td{border-color:var(--t-line-2)!important;color:var(--t-ink)!important;font-size:15.5px}
+html body tbody tr:hover td{background:#fcfcfd!important}
+
+/* pills */
+html body .status-pill,html body .prio-pill,html body .badge,html body .bim-pill{border-radius:8px!important;font-weight:600!important}
+html body .status-pill.done{background:var(--t-ok-50)!important;color:var(--t-ok)!important}
+html body .status-pill.wait{background:var(--t-warn-50)!important;color:var(--t-warn)!important}
+html body .prio-pill.high{background:var(--t-red-50)!important;color:var(--t-red)!important}
+
+/* login */
+html body.bim-login-page{background:var(--t-bg)!important}
+html body .login-panel{background:#fff!important;border:1px solid var(--t-line)!important;border-radius:20px!important;box-shadow:0 10px 40px rgba(16,24,40,.08)!important;color:var(--t-ink)!important}
+html body .login-panel *{color:inherit}

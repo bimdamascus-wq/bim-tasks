@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="page-shell" style="max-width:1180px;margin:auto;padding:20px" dir="rtl">
+  <section class="page-title"><div><h1>مهامي</h1><p>مهامك الشخصية فقط. أنجز العمل ثم اضغط «مكتملة» مرة واحدة.</p></div><div class="toolbar"><button type="button" onclick="reloadMine()" class="btn-light">تحديث</button><a href="/logout">تسجيل الخروج</a></div></section>
+  <div id="mineNotice" role="status" class="notice">جاري تحميل مهامك...</div>
+  {% include 'employee_work_panel.html' %}
+  <div id="mineCards" class="grid-cards"></div>
+</main>
+{% endblock %}
+{% block scripts %}<script>
+const mineEsc=(s)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let lastMineData="";
+async function reloadMine(silent=false){
+ const n=document.getElementById('mineNotice'),cards=document.getElementById('mineCards');
+ if(!silent){n.style.display='block';n.textContent='جاري تحميل المهام...';}
+ try{
+  const r=await fetch('/api/tasks',{credentials:'same-origin',cache:'no-store'});
+  if(!r.ok)throw Error('تعذر جلب مهامك ('+r.status+')');
+  const rows=await r.json();const signature=JSON.stringify(rows);if(silent&&signature===lastMineData)return;lastMineData=signature;
+  n.style.display=rows.length?'none':'block';n.textContent='لا توجد مهام حالياً';
+  cards.innerHTML=rows.map(t=>`<article class="employee-card" style="padding:16px;min-width:0">
+  <div style="margin-bottom:6px">${window.bimOriginBadge?bimOriginBadge(t):''}</div>
+  <h3 style="font-size:18px;font-weight:800">${mineEsc(t.title)}</h3>
+  <p style="font-size:15px">${mineEsc(t.notes||'')}</p>
+  <p>الحالة: <strong>${mineEsc(t.status)}</strong> · الأولوية: ${mineEsc(t.priority)}</p>
+  ${window.bimDelegationText&&t.last_delegation?`<p class="muted-mini">${bimDelegationText(t)}</p>`:''}
+  <div class="toolbar"><a href="/task/${Number(t.id)}">تفاصيل المهمة</a>${['تم','ملغاة'].includes(t.status)?'':`<button type="button" class="btn-light" onclick="bimDelegate(${Number(t.id)})">↪ توزيع</button>`}
+  ${['تم','ملغاة'].includes(t.status)?'':t.is_group?' <a href="/task/'+Number(t.id)+'">تحديث المشاركة</a>':`<button type="button" onclick="finishMine(${Number(t.id)},this,'بدأت')">بدأت</button><button type="button" onclick="finishMine(${Number(t.id)},this,'قيد التنفيذ')">جاري العمل</button><button type="button" onclick="finishMine(${Number(t.id)},this)">مكتملة</button>`}</div>
+  </article>`).join('');
+ }catch(e){n.style.display='block';n.textContent=e.message;}
+}
+async function finishMine(id,btn,status="تم"){
+ window.workBusy=true;
+ btn.disabled=true;
+ try{
+  let completion=status==='تم'?await collectCompletion(id):{};if(completion===null){btn.disabled=false;return}
+  const r=await fetch('/api/tasks/'+id+'/status',{method:'PATCH',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({status,completion})});
+  if(!r.ok){let x={};try{x=await r.json()}catch(_){}throw Error(x.detail||'فشل تحديث الحالة')}
+  await reloadMine();
+ }catch(e){alert(e.message);btn.disabled=false}finally{window.workBusy=false}
+}
+reloadMine();
+document.addEventListener('bim:delegated',()=>reloadMine());
+setInterval(()=>{if(!document.hidden&&!window.workBusy)reloadMine(true)},3000);
+</script>{% endblock %}

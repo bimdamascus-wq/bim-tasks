@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ company.name }} | {{ title }}</title>
+<link rel="stylesheet" href="/static/bim-plex.css?v=6.3.1">
+<link rel="stylesheet" href="/static/bim-system-v510.css?v=6.3.0">
+<script src="/static/bim-ui-v510.js?v=6.3.0"></script>
+<script defer src="/static/bim-delegate.js?v=6.3.0"></script>
+{% block head %}{% endblock %}
+
+<script defer src="/static/bim-v73-live.js?v=6.3.0"></script>
+<link rel="stylesheet" href="/static/bim-v81-center-ar.css?v=6.3.0">
+<script defer src="/static/bim-v81-center-ar.js?v=6.3.0"></script>
+<link rel="stylesheet" href="/static/bim-readable-font.css?v=6.3.0">
+<link rel="stylesheet" href="/static/bim-premium-ui-20261022.css?v=6.3.0">
+<script defer src="/static/bim-arabic-date-labels-v1.js?v=6.3.0"></script>
+<link rel="stylesheet" href="/static/bim-mytask-rtl.css?v=6.3.0">
+<script defer src="/static/bim-mytask-rtl.js?v=6.3.0"></script>
+<script defer src="/static/bim-activity.js?v=6.3.0"></script>
+<link rel="stylesheet" href="/static/bim-brand-red.css?v=6.3.0">
+<link rel="stylesheet" href="/static/bim-excel-filter-v2.css?v=6.3.0">
+<script defer src="/static/bim-excel-filter-v2.js?v=6.3.0"></script>
+</head>
+<body data-bim-page="{{ title|default('') }}">
+{% if user %}<nav class="toolbar" style="padding:10px 20px;flex-wrap:wrap" aria-label="روابط العمل">{% if user['role_code']=='employee' %}<a href="/my-work">مهامي</a>{% else %}<a href="/tasks">المهام</a>{% if 'employees.view' in permissions %}<a href="/employees">الموظفون</a>{% endif %}{% if 'recurring.view' in permissions %}<a href="/recurring">المهام الثابتة</a>{% endif %}{% if 'users.manage' in permissions %}<a href="/record-management">إدارة السجلات والحذف</a><a href="/company">إعداد الشركة</a><a href="/template-library">قوالب العمل</a><a href="/access-control">الصلاحيات والقنوات</a><a href="/handover">تسليم الأعمال</a><a href="/job-profiles">الوظائف والإعدادات</a><a href="/notification-center">مركز الإشعارات</a>{% endif %}{% if 'dashboard.view' in permissions %}<a href="/workload">عبء العمل</a><a href="/operations-reports">التقارير</a>{% endif %}{% endif %}</nav>{% endif %}
+{% if user and 'audit.view' in permissions %}<nav id="activityNav" class="toolbar"><a href="/activity-log">السجل الشامل للمستخدمين</a></nav>{% endif %}
+{% block content %}{% endblock %}
+<script>window.companyBrand={{ company|tojson }};document.addEventListener('DOMContentLoaded',()=>{const c=window.companyBrand;document.querySelectorAll('.v510-brand-copy b').forEach(e=>e.textContent=c.name);document.querySelectorAll('.v510-brand-copy span').forEach(e=>e.textContent='إدارة العمل');if(c.logo)document.querySelectorAll('.v510-brand-mark img').forEach(e=>{e.src='/company-logo';e.alt=c.name})});</script>
+<script src="/static/record-management.js?v=6.3.0"></script>
+<link rel="stylesheet" href="/static/bim-theme-v63.css?v=6.3.1">
+{% block scripts %}{% endblock %}
+</body>
+</html>

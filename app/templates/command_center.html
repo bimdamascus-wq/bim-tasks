@@ -1,0 +1,184 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ company.name }} | لوحة المدير</title>
+<link rel="stylesheet" href="/static/bim-plex.css?v=6.3.0"><link rel="manifest" href="/manifest.webmanifest">
+<style>
+:root{--red:#d0121b;--red-50:#fff1f1;--red-100:#fbd5d6;--ink:#17181c;--ink-2:#3d414a;--ink-3:#6b7280;--muted:#9aa0aa;--line:#ebecef;--line-2:#f2f3f5;--bg:#fafafa;
+--ok:#0f7b4b;--ok-50:#e8f6ef;--warn:#a65d00;--warn-50:#fff4e0;--info:#2459c5;--info-50:#eef3ff}
+*{box-sizing:border-box}html{-webkit-font-smoothing:antialiased}
+body{margin:0;font-family:Plex,Tahoma,sans-serif;color:var(--ink);background:#fff;direction:rtl;font-size:16px;line-height:1.55}
+a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}
+.num{font-variant-numeric:tabular-nums}
+.app{display:grid;grid-template-columns:260px minmax(0,1fr) 340px;min-height:100vh}
+/* sidebar */
+.side{background:var(--bg);border-inline-start:1px solid var(--line);padding:18px 14px;display:flex;flex-direction:column;gap:2px;position:sticky;top:0;height:100vh;overflow:auto}
+.side .logo{display:flex;justify-content:center;padding:6px 0 16px}.side .logo img{height:104px}
+.side a,.side button.mem{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:var(--ink-2);font-weight:500;font-size:15.5px;background:none;border:0;width:100%;text-align:right}
+.side a:hover,.side button.mem:hover{background:#f0f1f3}
+.side .on{background:#fff!important;color:var(--ink);font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.06),0 0 0 1px var(--line)}
+.side .n{margin-inline-start:auto;font-size:13px;color:var(--ink-3)}.side .n.r{color:var(--red);font-weight:700}
+.side h6{margin:16px 12px 4px;font-size:12.5px;color:var(--muted);font-weight:600}
+.side .ico{width:20px;text-align:center;color:var(--ink-3)}
+.side .out{margin-top:auto;color:var(--ink-3)}
+/* main */
+.main{padding:22px 34px 40px;min-width:0}
+.cmd{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:14px;padding:6px 8px 6px 16px;box-shadow:0 1px 3px rgba(0,0,0,.04);background:#fff}
+.cmd:focus-within{border-color:#c9ccd2;box-shadow:0 0 0 4px #f1f2f4}
+.cmd .spark{color:var(--red);font-size:18px}
+.cmd input{flex:1;border:0;outline:0;font:inherit;font-size:16.5px;padding:8px 0;background:transparent;min-width:0}
+.cmd .pv{font-size:13.5px;color:var(--ink-3);white-space:nowrap}
+.cmd .go{background:var(--red);color:#fff;border:0;border-radius:10px;height:40px;padding:0 18px;font-weight:600}
+.cmd .go:disabled{opacity:.4}
+.kbd{font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:1px 6px;color:var(--ink-3)}
+.hd{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:26px 0 6px;flex-wrap:wrap}.hd h1{margin:0;font-size:28px;font-weight:700}.hd p{margin:2px 0 0;color:var(--ink-3)}
+.seg{display:flex;background:var(--line-2);border-radius:10px;padding:3px}.seg button{padding:6px 14px;border-radius:8px;font-size:14px;font-weight:600;color:var(--ink-3);border:0;background:none}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.filter{display:inline-flex;align-items:center;gap:8px;margin-top:10px;background:var(--line-2);border-radius:999px;padding:4px 6px 4px 12px;font-size:14px;font-weight:600}
+.filter button{border:0;background:#fff;border-radius:50%;width:22px;height:22px;line-height:1}
+.grp{margin-top:20px}.grp h3{display:flex;align-items:center;gap:8px;margin:0 0 4px;font-size:14px;font-weight:600;color:var(--ink-3)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.row{display:grid;grid-template-columns:24px minmax(0,1fr) auto 150px 116px;align-items:center;gap:14px;padding:12px 10px;border-bottom:1px solid var(--line-2);font-size:16.5px;border-radius:8px}
+.row:hover{background:var(--bg)}
+.ck{width:20px;height:20px;border-radius:6px;border:2px solid #c3c7ce;background:#fff;padding:0}.ck:hover{border-color:var(--ok);background:var(--ok-50)}
+.ck.u{border-color:var(--red)}
+.ck.d{background:var(--ok);border-color:var(--ok)}
+.t{font-weight:600;color:var(--ink);min-width:0}.t span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.t small{display:block;font-weight:400;color:var(--ink-3);font-size:13.5px;margin-top:1px}
+.done .t{color:var(--ink-3);text-decoration:line-through}.done{opacity:.75}
+.chip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap}
+.c-manager{background:var(--red-50);color:var(--red)}.c-self{background:var(--info-50);color:var(--info)}.c-assigned,.c-system{background:var(--line-2);color:var(--ink-2)}
+.who{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--ink-2);min-width:0}.who b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.av{width:32px;height:32px;border-radius:50%;display:inline-grid;place-items:center;font-weight:700;font-size:14px;color:#fff;flex:none}
+.due{font-size:14.5px;color:var(--ink-3);text-align:left}.due.r{color:var(--red);font-weight:600}
+.empty{padding:14px 10px;color:var(--muted);font-size:15px}
+/* panel */
+.panel{border-inline-end:1px solid var(--line);padding:22px;background:#fff;position:sticky;top:0;height:100vh;overflow:auto}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}.stats div{border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.stats b{font-size:26px;font-weight:700;display:block;line-height:1.25}.stats small{color:var(--ink-3);font-size:13px}.stats .r b{color:var(--red)}
+.panel h4{margin:0 0 10px;font-size:15px;font-weight:700;display:flex;justify-content:space-between}.panel h4 span{color:var(--ink-3);font-weight:500;font-size:13px}
+.tm{display:flex;align-items:center;gap:12px;padding:9px 6px;border-radius:10px;width:100%;border:0;background:none;text-align:right}.tm:hover{background:var(--bg)}
+.tm b{font-weight:600;font-size:15.5px;display:block;line-height:1.3}.tm small{color:var(--ink-3);font-size:13px}
+.load{margin-inline-start:auto;width:86px}.load .bar{height:6px;border-radius:9px;background:var(--line-2);overflow:hidden}.load .bar i{display:block;height:100%;background:var(--ink-2);border-radius:9px}.load small{display:block;text-align:left;font-size:12.5px}
+.feed{margin-top:22px;border-top:1px solid var(--line);padding-top:18px}
+.ev{display:flex;gap:10px;padding:8px 0;font-size:14.5px;color:var(--ink-2)}.ev .av{width:26px;height:26px;font-size:12px}.ev time{display:block;color:var(--muted);font-size:12.5px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:12px;font-weight:600;z-index:50;opacity:0;transition:opacity .2s}.toast.show{opacity:1}.toast.err{background:var(--red)}
+@media(max-width:1180px){.app{grid-template-columns:240px minmax(0,1fr)}.panel{grid-column:1/-1;position:static;height:auto;border:0;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}.feed{margin:0;border:0;padding:0}.stats{margin:0}}
+.side .menu{display:none}.t .mw{display:none}
+@media(max-width:760px){.app{display:block}.side{position:static;height:auto;padding:10px 14px}.side .logo{justify-content:space-between;align-items:center;padding:0}.side .logo img{height:56px}
+.side .menu{display:block;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 14px;font-weight:600}
+.side>a,.side>h6,.side>#sTeam{display:none}.side.open>a,.side.open>h6{display:flex}.side.open>h6{display:block}
+.main{padding:16px}.row{grid-template-columns:24px minmax(0,1fr) auto;row-gap:4px}.row .who,.row .chip{display:none}.t .mw{display:block}.cmd .pv,.cmd .kbd{display:none}.panel{display:block}}
+</style></head><body>
+<div class="app">
+<nav class="side" aria-label="القائمة">
+  <div class="logo"><img src="/static/bim-logo-trim.png" alt="{{ company.name }}"><button type="button" class="menu" id="menuBtn" aria-expanded="false">☰ القائمة</button></div>
+  <a class="on" href="/"><span class="ico">◉</span>لوحة المدير<span class="n r num" id="sLate"></span></a>
+  {% for label,items in cc_nav %}<h6>{{ label }}</h6>{% for p,l in items %}<a href="{{ p }}"><span class="ico">›</span>{{ l }}</a>{% endfor %}{% endfor %}
+  <h6>الفريق</h6><div id="sTeam"></div>
+  <a class="out" href="/logout"><span class="ico">⎋</span>تسجيل الخروج</a>
+</nav>
+<main class="main">
+  <form class="cmd" id="cmd" autocomplete="off">
+    <span class="spark">✦</span>
+    <input id="q" placeholder="اكتب مهمة جديدة… مثال: «سامر يجرد مستودع الزبلطاني عاجل»" aria-label="مهمة جديدة">
+    <span class="pv" id="pv"></span><span class="kbd" dir="ltr">Ctrl K</span>
+    <button class="go" id="go" disabled>إضافة</button>
+  </form>
+  <div class="hd"><div><h1 id="title">اليوم</h1><p id="sub"></p></div>
+    <div class="seg" id="seg"><button data-s="today" class="on">اليوم</button><button data-s="week">هذا الأسبوع</button><button data-s="all">الكل</button></div></div>
+  <div id="filter"></div>
+  <section class="grp"><h3><span class="dot" style="background:var(--red)"></span>يحتاج انتباهك · <span class="num" id="cA">٠</span></h3><div id="gA"></div></section>
+  <section class="grp"><h3><span class="dot" style="background:var(--warn)"></span><span id="dueLabel">مستحقة اليوم</span> · <span class="num" id="cD">٠</span></h3><div id="gD"></div></section>
+  <section class="grp"><h3><span class="dot" style="background:var(--ok)"></span><span id="doneLabel">أُنجزت اليوم</span> · <span class="num" id="cO">٠</span></h3><div id="gO"></div></section>
+</main>
+<aside class="panel">
+  <div class="stats"><div><b class="num" id="kOpen">—</b><small>مفتوحة</small></div><div class="r"><b class="num" id="kLate">—</b><small>متأخرة</small></div>
+  <div><b class="num" id="kDone">—</b><small>أُنجزت اليوم</small></div><div><b class="num" id="kRate">—</b><small>بالوقت آخر ٧ أيام</small></div></div>
+  <div><h4>الفريق <span>الحمل الحالي</span></h4><div id="team"></div></div>
+  <div class="feed"><h4>النشاط المباشر</h4><div id="feed"></div></div>
+</aside>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ar=v=>String(v??'').replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+// Avatar colours: fixed order by team position (never red/green, which mean late/done).
+const COLORS=['#3d414a','#2459c5','#8a4b0f','#6b3fa0','#0e6e7a','#7a5c00','#5b6475','#9c3d6b'];
+let teamOrder=[];
+const colorOf=name=>{const i=teamOrder.indexOf(name);if(i>=0)return COLORS[i%COLORS.length];let h=0;for(const ch of String(name||''))h=(h*31+ch.charCodeAt(0))>>>0;return COLORS[h%COLORS.length]};
+const av=(name,sz)=>`<span class="av" style="background:${colorOf(name)}${sz?`;width:${sz}px;height:${sz}px;font-size:${Math.round(sz/2)}px`:''}">${esc(String(name||'؟').trim().slice(0,1))}</span>`;
+const parseD=v=>{if(!v)return null;const d=new Date(String(v).replace(' ','T'));return isNaN(d)?null:d};
+const utc=v=>parseD(String(v||'').includes('T')?v:String(v||'').replace(' ','T')+'Z');
+const fmtTime=d=>new Intl.DateTimeFormat('ar-SY',{hour:'numeric',minute:'2-digit'}).format(d);
+const fmtDay=d=>new Intl.DateTimeFormat('ar-SY',{weekday:'long',day:'numeric',month:'long'}).format(d);
+function lateText(d){const m=Math.max(1,Math.round((Date.now()-d)/60000));if(m<60)return `متأخرة ${ar(m)} د`;const h=Math.round(m/60);if(h<24)return `متأخرة ${ar(h)} س`;return `متأخرة ${ar(Math.round(h/24))} يوم`}
+function dueText(t,kind){
+  if(kind==='done'){const d=utc(t.completed_at);return d?fmtTime(d):''}
+  const d=parseD(t.due_at);if(!d)return '<span style="color:var(--muted)">بدون موعد</span>';
+  if(kind==='late')return lateText(d);
+  const today=new Date();return d.toDateString()===today.toDateString()?fmtTime(d):fmtDay(d);
+}
+function ago(v){const d=utc(v);if(!d)return '';const m=Math.round((Date.now()-d)/60000);if(m<1)return 'الآن';if(m<60)return `قبل ${ar(m)} دقيقة`;const h=Math.round(m/60);if(h<24)return `قبل ${ar(h)} ساعة`;return `قبل ${ar(Math.round(h/24))} يوم`}
+function toast(msg,err){const t=$('toast');t.textContent=msg;t.className='toast show'+(err?' err':'');clearTimeout(t._h);t._h=setTimeout(()=>t.className='toast',3200)}
+let scope='today',emp=null,data=null,busy=false;
+function row(t,kind){
+  const dl=t.last_delegation?`<small>↪ وُزّعت إلى ${esc(t.last_delegation.employee_name)} عبر ${t.last_delegation.channel==='whatsapp'?'واتساب':'Telegram'}</small>`:'';
+  const urgent=['عاجلة','عالية'].includes(t.priority);
+  return `<div class="row ${kind==='done'?'done':''}" data-id="${t.id}">
+    <button class="ck ${kind==='done'?'d':urgent?'u':''}" ${kind==='done'?'disabled':''} data-done="${t.id}" title="${kind==='done'?'منجزة':'تحديد كمنجزة'}" aria-label="تحديد كمنجزة"></button>
+    <a class="t" href="/task/${t.id}"><span>${esc(t.title)}</span>${dl}<small class="mw">${esc(t.employee_name)} · ${esc(t.origin_label)}</small></a>
+    <span class="chip c-${esc(t.origin)}">${esc(t.origin_label)}</span>
+    <span class="who">${av(t.employee_name)}<b>${esc(t.employee_name)}</b></span>
+    <span class="due ${kind==='late'?'r':''}">${dueText(t,kind)}</span></div>`;
+}
+function list(el,rows,kind,empty){$(el).innerHTML=rows.length?rows.map(t=>row(t,kind)).join(''):`<div class="empty">${empty}</div>`}
+function render(){
+  const s=data.stats,g=data.groups;teamOrder=data.team.map(m=>m.name);
+  $('kOpen').textContent=ar(s.open);$('kLate').textContent=ar(s.late);$('kDone').textContent=ar(s.done_today);$('kRate').textContent=s.on_time==null?'—':ar(s.on_time)+'٪';
+  $('sLate').textContent=s.late?ar(s.late):'';
+  const labels={today:['اليوم','مستحقة اليوم','أُنجزت اليوم'],week:['هذا الأسبوع','مستحقة خلال ٧ أيام','أُنجزت هذا الأسبوع'],all:['كل المهام المفتوحة','باقي المهام المفتوحة','أُنجزت آخر ٣٠ يوم']}[data.scope];
+  $('title').textContent=labels[0];$('dueLabel').textContent=labels[1];$('doneLabel').textContent=labels[2];
+  $('sub').textContent=fmtDay(new Date())+' · '+ar(g.attention.length+g.due.length)+' مهمة تحتاج متابعتك';
+  $('cA').textContent=ar(g.attention.length);$('cD').textContent=ar(g.due.length);$('cO').textContent=ar(g.done.length);
+  list('gA',g.attention,'late','لا يوجد شيء متأخر 👌');list('gD',g.due,'due','لا توجد مهام مستحقة');list('gO',g.done,'done','لم يُنجز شيء بعد');
+  const member=data.team.find(m=>m.id===emp);
+  $('filter').innerHTML=member?`<span class="filter">${av(member.name)} مهام ${esc(member.name)} فقط <button type="button" id="clr" aria-label="إلغاء الفلتر">×</button></span>`:'';
+  if(member)$('clr').onclick=()=>{emp=null;load()};
+  $('sTeam').innerHTML=data.team.map(m=>`<button class="mem ${m.id===emp?'on':''}" data-emp="${m.id}">${av(m.name,22)}<span>${esc(m.name)}</span><span class="n num ${m.late?'r':''}">${ar(m.late||m.open)}</span></button>`).join('');
+  $('team').innerHTML=data.team.map(m=>`<button class="tm" data-emp="${m.id}">${av(m.name)}<div><b>${esc(m.name)}</b><small>${ar(m.open)} مفتوحة${m.late?' · '+ar(m.late)+' متأخرة':''}</small></div><div class="load"><div class="bar"><i style="width:${m.load}%"></i></div><small>${m.load>=75?'مرتفع':m.load>=40?'متوسط':'خفيف'}</small></div></button>`).join('')||'<div class="empty">اربط حسابات المسؤولين بأسمائهم ليظهروا هنا</div>';
+  $('feed').innerHTML=data.feed.map(e=>`<a class="ev" href="/task/${e.task_id}">${av(e.name||'إ',26)}<div>${esc(e.text)}<time>${ago(e.at)}</time></div></a>`).join('')||'<div class="empty">لا يوجد نشاط بعد</div>';
+  document.querySelectorAll('[data-emp]').forEach(b=>b.onclick=()=>{emp=+b.dataset.emp===emp?null:+b.dataset.emp;load()});
+  document.querySelectorAll('[data-done]').forEach(b=>b.onclick=()=>done(+b.dataset.done,b));
+}
+async function load(){
+  if(busy)return;busy=true;
+  try{const r=await fetch(`/api/v2/dashboard?scope=${scope}`+(emp?`&employee_id=${emp}`:''),{cache:'no-store'});
+    if(r.status===401){location.href='/login';return}
+    if(!r.ok)throw new Error('تعذر تحميل اللوحة');data=await r.json();render()}
+  catch(e){toast(e.message,true)}finally{busy=false}
+}
+async function done(id,btn){
+  btn.disabled=true;
+  try{const r=await fetch(`/api/tasks/${id}/status`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'تم',completion:{}})});
+    const x=await r.json().catch(()=>({}));if(!r.ok)throw new Error(x.detail||'تعذر إنجاز المهمة');toast('✓ تم إنجاز المهمة');load()}
+  catch(e){btn.disabled=false;toast(e.message,true)}
+}
+document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>{scope=b.dataset.s;document.querySelectorAll('#seg button').forEach(x=>x.classList.toggle('on',x===b));load()});
+// quick add
+let parsed=null,pt=null;
+$('q').addEventListener('input',()=>{const v=$('q').value.trim();$('go').disabled=!v;clearTimeout(pt);if(!v){$('pv').textContent='';parsed=null;return}
+  pt=setTimeout(async()=>{try{const r=await fetch('/api/v2/parse-task?text='+encodeURIComponent(v));parsed=await r.json();parsed._for=v;
+    $('pv').textContent=(parsed.employee?'📌 ل'+parsed.employee:'بدون موظف')+' · '+parsed.priority}catch{}},250)});
+$('cmd').addEventListener('submit',async e=>{e.preventDefault();const v=$('q').value.trim();if(!v)return;$('go').disabled=true;
+  try{if(!parsed||parsed._for!==v){const r=await fetch('/api/v2/parse-task?text='+encodeURIComponent(v));parsed=await r.json();parsed._for=v}
+    const r=await fetch('/api/tasks',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({employee_id:parsed.employee_id,title:parsed.title||v,priority:parsed.priority||'عادي',reminder:{type:'بدون'}})});
+    const x=await r.json().catch(()=>({}));if(!r.ok)throw new Error(x.detail||'تعذر حفظ المهمة');
+    $('q').value='';$('pv').textContent='';parsed=null;toast('✓ تمت إضافة المهمة'+(x.telegram&&x.telegram.ok?' وإرسالها':''));load()}
+  catch(err){toast(err.message,true);$('go').disabled=false}});
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('q').focus()}});
+$('menuBtn').onclick=()=>{const o=document.querySelector('.side').classList.toggle('open');$('menuBtn').setAttribute('aria-expanded',o)};
+load();setInterval(()=>{if(!document.hidden&&document.activeElement!==$('q'))load()},30000);
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/service-worker.js',{scope:'/'}).catch(()=>{});
+})();
+</script></body></html>

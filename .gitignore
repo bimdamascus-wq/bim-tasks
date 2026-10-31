@@ -1,0 +1,17 @@
+# Never in the repository: secrets, live data, employee files, backups, logs
+.env
+.env.*
+!.env.example
+data/
+backups/
+_safe_patch_backups/
+_mytask_update/
+ui_backups/
+logs/
+sync_full_logs/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+BACKUP_PASSWORD_KEEP_OUTSIDE.txt
+*.bimbak

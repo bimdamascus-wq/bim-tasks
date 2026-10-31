@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="page-shell">
+<section class="page-title">
+  <div>
+    <h1>📊 Telegram Dashboard</h1>
+    <p>لوحة موحدة للربط، الإرسال، الأعطال، المجموعات والتقارير.</p>
+  </div>
+  <div class="toolbar">
+    <select id="days" onchange="loadDash()">
+      <option value="7">آخر 7 أيام</option>
+      <option value="14">آخر 14 يوم</option>
+      <option value="30">آخر 30 يوم</option>
+      <option value="90">آخر 90 يوم</option>
+    </select>
+    <button onclick="loadDash()">تحديث</button>
+    <button class="btn-light" onclick="downloadCsv()">تنزيل CSV</button>
+  </div>
+</section>
+
+<div class="kpi-grid">
+  <div class="kpi"><span>البوت</span><b id="kBot">—</b></div>
+  <div class="kpi"><span>Webhook</span><b id="kWebhook">—</b></div>
+  <div class="kpi"><span>موظفون مربوطون</span><b id="kEmpLinked">0</b></div>
+  <div class="kpi"><span>غير مربوطين</span><b id="kEmpUnlinked">0</b></div>
+  <div class="kpi"><span>مجموعات مربوطة</span><b id="kGroups">0</b></div>
+  <div class="kpi"><span>تذكيرات مجموعات فعالة</span><b id="kReminders">0</b></div>
+  <div class="kpi"><span>Queue انتظار/إعادة</span><b id="kQueue">0</b></div>
+  <div class="kpi"><span>فشل نهائي</span><b id="kFailed">0</b></div>
+  <div class="kpi"><span>بدأ اليوم</span><b id="kStarted">0</b></div>
+  <div class="kpi"><span>قيد التنفيذ اليوم</span><b id="kProgress">0</b></div>
+  <div class="kpi"><span>تم اليوم</span><b id="kDone">0</b></div>
+  <div class="kpi"><span>متأخر الآن</span><b id="kOverdue">0</b></div>
+  <div class="kpi"><span>مشاكل اليوم</span><b id="kProblems">0</b></div>
+  <div class="kpi"><span>مجموعات لها إرسال اليوم</span><b id="kGroupsToday">0</b></div>
+</div>
+
+<section class="panel">
+  <div class="section-head"><div><h2>ملخص الإرسال</h2><p id="periodText">—</p></div></div>
+  <div class="kpi-grid">
+    <div class="kpi"><span>فردي ناجح</span><b id="nSent">0</b></div>
+    <div class="kpi"><span>فردي فاشل</span><b id="nFailed">0</b></div>
+    <div class="kpi"><span>جماعي ناجح</span><b id="gSent">0</b></div>
+    <div class="kpi"><span>جماعي فاشل</span><b id="gFailed">0</b></div>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>الحركة اليومية</h2>
+  <div class="scroll-box"><table class="sticky-table">
+    <thead><tr><th>اليوم</th><th>فردي ناجح</th><th>فردي فاشل</th><th>نجح بعد Retry</th><th>جماعي ناجح</th></tr></thead>
+    <tbody id="dailyRows"></tbody>
+  </table></div>
+</section>
+
+<section class="panel">
+  <div class="section-head">
+    <div><h2>الموظفون وTelegram</h2><p>اعرف فوراً من تم ربطه ومن يحتاج ربطاً.</p></div>
+    <input id="empSearch" placeholder="بحث باسم الموظف أو القسم..." oninput="renderEmployees()">
+  </div>
+  <div class="scroll-box"><table class="sticky-table">
+    <thead><tr><th>الموظف</th><th>القسم</th><th>الشيفت</th><th>Telegram</th><th>تاريخ الربط</th></tr></thead>
+    <tbody id="employeeRows"></tbody>
+  </table></div>
+</section>
+
+<section class="panel">
+  <div class="section-head">
+    <div><h2>مجموعات Telegram</h2><p>الربط، عدد التذكيرات، آخر إرسال، والأخطاء الحديثة.</p></div>
+  </div>
+  <div class="scroll-box"><table class="sticky-table">
+    <thead><tr><th>المجموعة</th><th>القسم</th><th>Telegram</th><th>تذكيرات فعالة</th><th>آخر إرسال</th><th>أخطاء</th></tr></thead>
+    <tbody id="groupRows"></tbody>
+  </table></div>
+</section>
+
+<section class="panel">
+  <div class="section-head">
+    <div><h2>آخر حالات الفشل</h2><p>تعرض الأخطاء التي تحتاج مراجعة فعلية فقط.</p></div>
+    <a class="btn-light" href="/telegram-health">فتح Telegram Health / Queue</a>
+  </div>
+  <div class="scroll-box"><table class="sticky-table">
+    <thead><tr><th>الوقت</th><th>المصدر</th><th>الهدف</th><th>النوع</th><th>الخطأ</th></tr></thead>
+    <tbody id="failureRows"></tbody>
+  </table></div>
+</section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const $=id=>document.getElementById(id);
+let DATA={employees:[],groups:[]};
+function arState(ok){return ok?'✅ يعمل':'❌ مشكلة'}
+function safe(v){return bimEsc(v??'—')}
+function downloadCsv(){window.location='/api/telegram-report.csv?days='+encodeURIComponent($('days').value||30)}
+function renderEmployees(){
+  const q=($('empSearch').value||'').trim().toLowerCase();
+  const rows=(DATA.employees||[]).filter(e=>!q||(`${e.name||''} ${e.department||''}`).toLowerCase().includes(q));
+  $('employeeRows').innerHTML=rows.map(e=>`<tr>
+    <td class="name-red">${safe(e.name)}</td>
+    <td>${safe(e.department)}</td>
+    <td>${safe(e.shift_type||'بدون')}</td>
+    <td>${e.telegram_chat_id?'✅ مربوط':'⚠️ غير مربوط'}</td>
+    <td>${safe(e.telegram_linked_at)}</td>
+  </tr>`).join('')||'<tr><td colspan="5">لا توجد نتائج.</td></tr>';
+}
+function renderGroups(){
+  $('groupRows').innerHTML=(DATA.groups||[]).map(g=>`<tr>
+    <td class="name-red">${safe(g.name)}</td>
+    <td>${safe(g.department)}</td>
+    <td>${g.chat_id?'✅ مربوط':'⚠️ غير مربوط'}</td>
+    <td>${g.active_reminders||0}</td>
+    <td>${safe(g.last_sent_at)}</td>
+    <td>${g.recent_failures?`❌ ${g.recent_failures}`:'✅ 0'}</td>
+  </tr>`).join('')||'<tr><td colspan="6">لا توجد مجموعات.</td></tr>';
+}
+async function loadDash(){
+  try{
+    const days=+$('days').value||7;
+    const d=await bimRequest('/api/telegram-dashboard?days='+days);
+    DATA=d;
+    $('kBot').textContent=arState(d.bot&&d.bot.ok);
+    $('kWebhook').textContent=arState(d.webhook&&d.webhook.ok);
+    $('kEmpLinked').textContent=d.linked_employees||0;
+    $('kEmpUnlinked').textContent=d.unlinked_employees||0;
+    $('kGroups').textContent=d.linked_groups||0;
+    $('kReminders').textContent=d.active_group_reminders||0;
+    $('kQueue').textContent=(d.queue.pending||0)+(d.queue.retrying||0);
+    $('kFailed').textContent=d.queue.failed||0;
+    const ts=d.today_status||{};$('kStarted').textContent=ts.started||0;$('kProgress').textContent=ts.in_progress||0;$('kDone').textContent=ts.completed||0;$('kOverdue').textContent=ts.overdue||0;$('kProblems').textContent=ts.problems||0;$('kGroupsToday').textContent=ts.groups_today||0;
+    $('nSent').textContent=d.notifications.sent||0;
+    $('nFailed').textContent=d.notifications.failed||0;
+    $('gSent').textContent=d.group_dispatch.sent||0;
+    $('gFailed').textContent=d.group_dispatch.failed||0;
+    $('periodText').textContent='الفترة: آخر '+days+' يوم';
+    $('dailyRows').innerHTML=(d.daily||[]).map(x=>`<tr>
+      <td>${safe(x.day)}</td><td>${x.notification_sent||0}</td><td>${x.notification_failed||0}</td>
+      <td>${x.queue_recovered||0}</td><td>${x.group_sent||0}</td></tr>`).join('');
+    $('failureRows').innerHTML=(d.failures||[]).map(x=>`<tr>
+      <td>${safe(x.created_at)}</td><td>${safe(x.source)}</td><td>${safe(x.target)}</td>
+      <td>${safe(x.kind)}</td><td>${safe(x.error)}</td></tr>`).join('')
+      ||'<tr><td colspan="5">✅ لا توجد حالات فشل مسجلة.</td></tr>';
+    renderEmployees(); renderGroups();
+  }catch(e){bimToast(e.message||'تعذر تحميل Dashboard','err')}
+}
+loadDash();
+</script>
+{% endblock %}

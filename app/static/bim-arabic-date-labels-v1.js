@@ -1,0 +1,6 @@
+/* Display-only localization: preserve configured ISO timestamps and raw input values. */
+(()=>{'use strict';const map={'Jan':'كانون الثاني','Feb':'شباط','Mar':'آذار','Apr':'نيسان','May':'أيار','Jun':'حزيران','Jul':'تموز','Aug':'آب','Sep':'أيلول','Oct':'تشرين الأول','Nov':'تشرين الثاني','Dec':'كانون الأول'};
+const words={'No due date':'بدون موعد محدد','No date':'بدون تاريخ','Not set':'غير محدد','Never':'لم يحدث','None':'غير محدد'};
+const regex=/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/g;
+function run(root){const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while(n=walker.nextNode()){if(n.parentElement?.closest('script,style,textarea,input,select,[contenteditable=true],.bim-excel-menu'))continue;let s=n.nodeValue;if(!s||!regex.test(s)&&!Object.keys(words).some(w=>s.includes(w)))continue;regex.lastIndex=0;const out=s.replace(regex,w=>map[w]).replace(/No due date|No date|Not set|Never|None/g,w=>words[w]);if(out!==s)n.nodeValue=out}}
+let busy=false;const obs=new MutationObserver(()=>{if(busy)return;busy=true;obs.disconnect();run(document.body);obs.observe(document.body,{childList:true,subtree:true});busy=false});function start(){run(document.body);obs.observe(document.body,{childList:true,subtree:true})}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();})();

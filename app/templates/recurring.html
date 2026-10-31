@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}{% if 'users.manage' in permissions %}<p style="padding:12px"><a href="/record-management?entity=recurring">تعطيل أو حذف السجلات واستعادة المحذوفات</a></p>{% endif %}
+<main class="page-shell">
+<section class="page-title"><div><h1>المهام الثابتة / المتكررة</h1><p>أضف المهمة مرة واحدة، وسيُنشئ النظام مهمة جديدة للموظف في كل موعد محدد.</p></div>
+{% if 'recurring.edit' in permissions %}<button onclick="openRecurring()">＋ مهمة ثابتة</button>{% endif %}</section>
+<div class="bim-section"><div class="toolbar"><a href="/employees">العودة إلى الموظفين</a><label for="employeeFilter">عرض مهام الموظف</label><select id="employeeFilter" onchange="renderRows()"></select></div>
+<p id="pageError" role="status"></p>
+<div class="scroll-box"><table class="sticky-table"><thead><tr><th>الموظف</th><th>المهمة</th><th>التكرار</th><th>الوقت</th><th>الحالة</th><th>آخر إنشاء</th><th>إجراء</th></tr></thead><tbody id="recurringBody"></tbody></table></div></div>
+</main>
+{% if 'recurring.edit' in permissions %}
+<div class="modal-backdrop" id="recurringModal"><div class="modal-card"><div class="modal-head"><h2>إضافة مهمة ثابتة</h2><button class="xbtn btn-light" onclick="closeRecurring()">×</button></div>
+<div class="form-grid">
+<div class="field"><label>الموظف</label><select id="recEmployee"></select></div>
+<div class="field"><label>الأولوية</label><select id="recPriority"><option>عادي</option><option>عالية</option><option>عاجلة</option><option>منخفضة</option></select></div>
+<div class="field full"><label>عنوان المهمة</label><input id="recTitle" placeholder="مثال: تدقيق الفواتير اليومية" maxlength="500"></div>
+<div class="field full"><label>تفاصيل وتعليمات المهمة</label><textarea id="recNotes" rows="3"></textarea></div>
+<div class="field"><label>التكرار</label><select id="recType" onchange="extraUI()"><option>يومي</option><option>أسبوعي</option><option>شهري</option></select></div>
+<div class="field"><label>وقت إنشاء المهمة بتوقيت السيرفر</label><input id="recTime" type="time" value="09:00"></div>
+<div class="field full" id="recExtra"></div></div>
+<label><input type="checkbox" id="recWorkdays" checked> أيام دوام الموظف فقط مع مراعاة الإجازات</label><p>عند إلغاء الخيار يشمل التكرار جميع الأيام. إذا مضى موعد اليوم، قد تُنشأ المهمة خلال دورة التشغيل التالية ما دام النظام يعمل.</p>
+<p id="saveError" role="status"></p><div class="toolbar"><button id="saveRecurringButton" onclick="saveRecurring()">حفظ المهمة الثابتة</button></div>
+</div></div>
+{% endif %}
+{% endblock %}
+{% block scripts %}<script>
+const el=id=>document.getElementById(id);
+const canEdit={{ ('recurring.edit' in permissions)|tojson }};
+const requestedEmployee=new URLSearchParams(location.search).get('employee_id')||'';
+let recurringRows=[],employees=[],editingRecurring=null;
+async function loadRecurring(){
+  try{
+    const [tasks,staff]=await Promise.all([bimRequest('/api/recurring'),bimRequest('/api/employees?all=1')]);
+    recurringRows=tasks;employees=staff;
+    const selected=el('employeeFilter').value||requestedEmployee;
+    const options=staff.map(e=>`<option value="${e.id}">${bimEsc(e.name)}${e.is_active?'':' (موقوف)'}</option>`).join('');
+    el('employeeFilter').innerHTML='<option value="">كل الموظفين</option>'+options;
+    el('employeeFilter').value=selected;
+    if(canEdit)el('recEmployee').innerHTML='<option value="">اختر الموظف</option>'+options;
+    el('pageError').textContent='';renderRows();
+  }catch(err){el('pageError').textContent=err.message||'تعذر تحميل المهام الثابتة'}
+}
+function renderRows(){
+  const id=el('employeeFilter').value;
+  const rows=recurringRows.filter(r=>!id||String(r.employee_id)===id);
+  el('recurringBody').innerHTML=rows.length?rows.map(r=>`<tr><td>${bimEsc(r.employee_name)}</td><td>${bimEsc(r.title)}</td><td>${bimEsc(r.recurrence_type)}</td><td>${bimEsc(r.run_time)}</td><td>${r.is_active?'مفعلة':'موقوفة'}</td><td>${bimEsc(r.last_run_key||'لم يحن الموعد بعد')}</td><td>${canEdit?`<button class="btn-sm" onclick="openRecurring(${r.id})">تعديل</button> <button class="btn-sm" onclick="toggleRecurring(${r.id},${r.is_active?0:1})">${r.is_active?'إيقاف':'تفعيل'}</button> <button class="btn-sm btn-danger" onclick="deleteRecurring(${r.id})">حذف</button>`:'—'}</td></tr>`).join(''):'<tr><td colspan="7">لا توجد مهام ثابتة لهذا الاختيار. اضغط «＋ مهمة ثابتة» لإضافة أول مهمة.</td></tr>';
+}
+function openRecurring(id=null){
+  editingRecurring=id;
+  if(!canEdit)return;
+  el('recEmployee').value=el('employeeFilter').value;
+  el('recTitle').value='';el('recNotes').value='';el('saveError').textContent='';
+  const r=recurringRows.find(x=>x.id===id);if(r){el('recEmployee').value=r.employee_id;el('recTitle').value=r.title;el('recNotes').value=r.notes||'';el('recType').value=r.recurrence_type;el('recTime').value=r.run_time;el('recPriority').value=r.priority;el('recWorkdays').checked=!!r.workdays_only}else{el('recWorkdays').checked=true}
+  extraUI();if(r){if(el('recWeek'))el('recWeek').value=r.week_day;if(el('recMonth'))el('recMonth').value=r.month_day}el('recurringModal').classList.add('show');
+}
+function closeRecurring(){el('recurringModal').classList.remove('show')}
+function extraUI(){
+  const days=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  el('recExtra').innerHTML=el('recType').value==='أسبوعي'?'<label>يوم الأسبوع</label><select id="recWeek">'+days.map((d,i)=>`<option value="${i}">${d}</option>`).join('')+'</select>':el('recType').value==='شهري'?'<label>يوم الشهر</label><input id="recMonth" type="number" min="1" max="31" value="1">':'';
+}
+async function saveRecurring(){
+  const payload={workdays_only:el('recWorkdays').checked,employee_id:+el('recEmployee').value,title:el('recTitle').value.trim(),notes:el('recNotes').value.trim(),priority:el('recPriority').value,recurrence_type:el('recType').value,run_time:el('recTime').value,week_day:el('recWeek')?+el('recWeek').value:null,month_day:el('recMonth')?+el('recMonth').value:null};
+  if(!payload.employee_id||!payload.title||!payload.run_time){el('saveError').textContent='اختر الموظف وأدخل عنوان المهمة ووقتها.';return}
+  if(payload.recurrence_type==='شهري'&&(!Number.isInteger(payload.month_day)||payload.month_day<1||payload.month_day>31)){el('saveError').textContent='يوم الشهر يجب أن يكون بين 1 و31.';return}
+  el('saveRecurringButton').disabled=true;
+  try{await bimRequest('/api/recurring'+(editingRecurring?'/'+editingRecurring:''),{method:editingRecurring?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});closeRecurring();bimToast('تم حفظ المهمة الثابتة');await loadRecurring()}
+  catch(err){el('saveError').textContent=err.message}
+  finally{el('saveRecurringButton').disabled=false}
+}
+async function toggleRecurring(id,active){try{await bimRequest('/api/recurring/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({is_active:active})});await loadRecurring()}catch(err){el('pageError').textContent=err.message}}
+async function deleteRecurring(id){if(!confirm('حذف تعريف المهمة الثابتة؟ المهام التي أُنشئت سابقاً ستبقى.'))return;try{await bimRequest('/api/recurring/'+id,{method:'DELETE'});await loadRecurring()}catch(err){el('pageError').textContent=err.message}}
+loadRecurring();
+</script>{% endblock %}

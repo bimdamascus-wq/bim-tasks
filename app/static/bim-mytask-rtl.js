@@ -1,0 +1,24 @@
+/* Presentation only: keeps application handlers, requests and permissions intact. */
+(()=>{'use strict';
+const paths={home:'<path d="m3 10 9-7 9 7v11H3z"/><path d="M9 21v-8h6v8"/>',tasks:'<rect x="5" y="4" width="16" height="17" rx="2"/><path d="M9 3h8v4H9zM9 12l2 2 4-4M9 18h8"/>',people:'<circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 5a3 3 0 0 1 0 6M18 15a5 5 0 0 1 3 6"/>',chart:'<path d="M3 3v18h18M7 17v-5M12 17V6M17 17V9"/>',sync:'<path d="M3 10a9 9 0 0 1 16-5l2 3M21 3v5h-5M21 14A9 9 0 0 1 5 19l-2-3M3 21v-5h5"/>',telegram:'<path d="m3 11 18-8-4 18-6-6-4 4v-6zM7 13 21 3M11 15l10-12"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 3"/>',gear:'<path d="m9 3-1 3-3 1 1 4-2 2 2 4 3-1 3 3 3-3 3 1 2-4-2-2 1-4-3-1-1-3z"/><circle cx="12" cy="11" r="3"/>',archive:'<path d="M4 8h16v13H4zM3 3h18v5H3zM9 12h6"/>',shield:'<path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6zM8 12l3 3 5-6"/>'};
+function icon(url){if(url==='/')return'home';if(/telegram/.test(url))return'telegram';if(/employees|users|handover/.test(url))return'people';if(/report|workload|dashboard/.test(url))return'chart';if(/sync/.test(url))return'sync';if(/shift|recurring|audit/.test(url))return'clock';if(/archive|record/.test(url))return'archive';if(/backup|access/.test(url))return'shield';if(/task|my-work|template/.test(url))return'tasks';return'gear'}
+function mount(){const sidebar=document.querySelector('.v510-sidebar'),top=document.querySelector('.v510-topbar');if(!sidebar||!top)return false;
+sidebar.id='bimMainNavigation';sidebar.setAttribute('aria-label','التنقل الرئيسي');
+// Move authorized links missing from the old sidebar, preserving the original anchors.
+const extraNav=document.getElementById('activityNav'),oldNav=document.querySelector('body > nav.toolbar:not(#activityNav)');if(extraNav&&oldNav){for(const a of Array.from(extraNav.children))oldNav.append(a);extraNav.remove()}
+const legacy=oldNav||extraNav,scroll=sidebar.querySelector('.v510-sidebar-scroll');
+if(legacy&&scroll){const extras=document.createElement('div');extras.className='v510-nav-group';const label=document.createElement('div');label.className='v510-nav-label';label.textContent='مساحات العمل';extras.append(label);const nav=document.createElement('div');nav.className='v510-nav';extras.append(nav);
+for(const a of Array.from(legacy.querySelectorAll('a'))){if(!Array.from(sidebar.querySelectorAll('a')).some(b=>b.getAttribute('href')===a.getAttribute('href'))){const text=a.textContent; a.textContent='';const i=document.createElement('span');i.className='v510-nav-ico';const t=document.createElement('span');t.textContent=text;a.append(i,t);nav.append(a)}}
+if(nav.children.length)scroll.append(extras);legacy.remove()}
+for(const a of sidebar.querySelectorAll('.v510-nav a')){const url=a.getAttribute('href');const i=a.querySelector('.v510-nav-ico');if(i){i.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+paths[icon(url)]+'</svg>';i.dataset.v73='1'}if(location.pathname===url){a.classList.add('active');a.setAttribute('aria-current','page')}}
+// Keep the user's own company identity; older cosmetic scripts replaced it unconditionally.
+const brand=window.companyBrand;const img=sidebar.querySelector('.v510-brand-mark img');if(img){img.src=brand?.logo?'/company-logo':'/static/bim-logo-trim.png';img.alt=brand?.name||'بيم دمشق';img.dataset.v73='1'}
+const title=top.querySelector('.v510-page-name b');if(title?.textContent==='BIM Tasks'&&document.body.dataset.bimPage)title.textContent=document.body.dataset.bimPage;
+const toggle=document.createElement('button');toggle.type='button';toggle.className='bim-mt-menu';toggle.textContent='☰';toggle.setAttribute('aria-label','فتح القائمة الرئيسية');toggle.setAttribute('aria-controls',sidebar.id);toggle.setAttribute('aria-expanded','false');top.prepend(toggle);
+const shade=document.createElement('div');shade.className='bim-mt-shade';document.body.append(shade);
+const setOpen=open=>{document.body.classList.toggle('bim-mt-nav-open',open);toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-label',open?'إغلاق القائمة الرئيسية':'فتح القائمة الرئيسية');if(!open)toggle.focus()};toggle.addEventListener('click',()=>setOpen(!document.body.classList.contains('bim-mt-nav-open')));shade.addEventListener('click',()=>setOpen(false));document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('bim-mt-nav-open'))setOpen(false)});
+for(const p of document.querySelectorAll('body > p'))if(p.querySelector('a'))p.classList.add('bim-mt-shortcuts');
+document.documentElement.dataset.bimDesign='mytask-rtl';return true}
+function init(){if(document.body.classList.contains('bim-login-page'))return;if(mount())return;const mo=new MutationObserver(()=>{if(mount())mo.disconnect()});mo.observe(document.body,{childList:true});setTimeout(()=>mo.disconnect(),20000)}
+document.addEventListener('DOMContentLoaded',init);
+})();

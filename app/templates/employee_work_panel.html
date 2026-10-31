@@ -1,0 +1,9 @@
+{% if user and user['role_code']=='employee' %}
+<details id="workInstructions" class="bim-section"><summary>تعليمات عملي</summary><div id="workInstructionText" style="white-space:pre-wrap"></div><button type="button" id="workReadButton">قرأت التعليمات</button></details>
+<script>
+let employeeWorkProfile=null;
+window.loadEmployeeWorkProfile=async function(){const r=await fetch('/api/bim-employee-profile/{{ user["employee_id"]|int }}',{cache:'no-store'});if(!r.ok)throw Error('تعذر تحميل إعدادات العمل');const p=await r.json();employeeWorkProfile=p;const box=document.getElementById('workInstructions');document.getElementById('workInstructionText').textContent=p.instructions||'لا توجد تعليمات مسجلة';if(!p.instructions_read&&p.display_mode==='once'||p.display_mode==='auto')box.open=true;document.getElementById('workReadButton').onclick=async()=>{let r=await fetch('/api/bim-employee-profile/{{ user["employee_id"]|int }}/acknowledge',{method:'POST'});if(r.ok){box.open=false;employeeWorkProfile.instructions_read=true}};return p};
+window.collectCompletion=async function(tid){let fields;if(tid){const r=await fetch('/api/tasks/'+tid+'/work-profile');if(!r.ok)throw Error('تعذر تحميل نموذج المهمة');fields=(await r.json()).completion_fields}else{fields=(await loadEmployeeWorkProfile()).config.completion_fields}let values={};for(const field of fields){let v=prompt(field+' (اختياري، يمكنك تركه فارغاً)','');if(v===null)return null;values[field]=v}return values};
+loadEmployeeWorkProfile().catch(e=>document.getElementById('workInstructionText').textContent=e.message);
+</script>
+{% endif %}

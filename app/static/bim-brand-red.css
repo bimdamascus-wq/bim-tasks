@@ -1,0 +1,67 @@
+/* BIM Damascus identity:#414b58 sampled from the supplied existing logo (#414b58). */
+:root{--brand:#414b58;--brand-dark:#414b58;--sidebar:#414b58;--sidebar-2:#414b58}
+body .v510-brand{flex-direction:column!important;gap:9px!important;padding:16px 14px!important;min-height:175px!important;flex-shrink:0}
+body .v510-brand-mark{width:142px!important;height:122px!important;border-radius:10px!important;background:white!important;overflow:hidden;box-shadow:none!important;display:flex;align-items:center;justify-content:center}
+body .v510-brand-mark img{width:100%!important;height:100%!important;object-fit:contain!important;padding:7px!important}
+body .v510-brand-copy{text-align:center}body .v510-brand-copy b{font-size:17px!important}body .v510-brand-copy span{font-size:12px!important}
+body .v510-nav a.active{background:#ffffff25!important;color:white!important;box-shadow:inset -3px 0 white!important}
+body .v510-sidebar .v510-user-card .v510-avatar{background:#fff!important;color:#414b58!important}
+body .login-visual img{width:220px!important;max-width:220px!important;height:235px!important;object-fit:contain!important;background:#fff;border-radius:14px!important;padding:14px!important}
+body .activity-tabs{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}body .activity-tabs button[aria-selected=true]{background:#414b58!important;box-shadow:0 0 0 2px #e1e5ea!important}
+body .activity-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}body .activity-filters label{display:grid;gap:5px}
+body .activity-note{background:#f0f1f3;border:1px solid #e1e5ea;border-radius:7px;padding:14px;margin:16px 0;color:#414b58}
+body .activity-summary{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin:14px 0}
+body .activity-time{white-space:nowrap;font-size:14px!important}body .activity-result{border-radius:5px;padding:4px 8px;white-space:nowrap;background:#edf0f4;color:#555}
+body .activity-result.success{background:#e4f2e9;color:#246c44}body .activity-result.failed,body .activity-result.denied{background:#f0f1f3;color:#414b58}
+body #changeDetails{max-width:100%;overflow:auto;white-space:normal}body #changeDetails pre{white-space:pre-wrap;overflow-wrap:anywhere;direction:rtl;text-align:right;font-family:inherit}
+@media(max-width:700px){body .activity-filters{grid-template-columns:1fr 1fr}body .v510-brand{min-height:150px!important}body .v510-brand-mark{width:110px!important;height:98px!important}}
+
+body .activity-filters label[hidden]{display:none!important}
+
+/* 2026-10-24: readable navigation, heavier Arabic type and compact sidebar. */
+body .v510-sidebar .v510-nav a:hover,
+body .v510-sidebar .v510-nav a:focus-visible,
+body .v510-sidebar .v510-nav a.active{background:#414b58!important;color:#fff!important}
+body .v510-sidebar .v510-nav a,
+body .v510-sidebar .v510-nav a *{color:#fff!important}
+body .v510-sidebar .v510-nav a:focus-visible{outline:2px solid #fff!important;outline-offset:2px}
+html[lang=ar] body,html[lang=ar] body :where(p,span,div,small,a,li,td,input,select,textarea){font-weight:750!important}
+html[lang=ar] body :is(button,.btn,label,th,b,strong,h1,h2,h3,h4,.v510-nav-label,.v510-page-name){font-weight:850!important}
+body .v510-sidebar{width:240px!important}
+@media(min-width:951px){body:not(.bim-login-page){padding-right:290px!important}body .v510-topbar{right:290px!important}}
+/* Match the specificity of the old circular logo rule and keep natural proportions. */
+body.bim-login-page .login-visual img{display:block!important;width:220px!important;max-width:100%!important;height:auto!important;object-fit:contain!important;border-radius:0!important;clip-path:none!important;mask:none!important;padding:14px!important;margin-inline:auto;box-sizing:border-box}
+@media(max-width:650px){body.bim-login-page .login-visual{display:flex!important;min-height:0!important;padding:20px!important}body.bim-login-page .login-visual img{width:130px!important}body.bim-login-page .login-visual h1{font-size:23px!important;margin:10px 0!important;text-align:center}body.bim-login-page .login-visual p,body.bim-login-page .login-visual>div:last-child{display:none}body.bim-login-page .login-panel{padding:25px!important}}
+/* Allow heavier action captions to wrap without overlapping adjacent controls. */
+body table td a.btn{display:inline-flex!important;align-items:center;vertical-align:middle;margin:3px 0!important}
+
+/* Light neutral surfaces; retain the original BIM logo artwork. */
+:root{--sidebar:#f0f1f3;--sidebar-2:#e5e7eb}
+body .v510-sidebar{background:#f0f1f3!important;border:1px solid #dfe2e6!important}
+body .v510-sidebar .v510-brand-copy b,body .v510-sidebar .v510-user-card b{color:#252b33!important}
+body .v510-sidebar .v510-brand-copy span,body .v510-sidebar .v510-user-card span,body .v510-sidebar .v510-nav-label{color:#545d69!important}
+body .v510-sidebar .v510-nav a,body .v510-sidebar .v510-nav a *{color:#303843!important}
+body .v510-sidebar .v510-nav a:hover,body .v510-sidebar .v510-nav a:focus-visible{background:#dfe3e8!important;color:#20262e!important}
+body .v510-sidebar .v510-nav a.active{background:#d6dce3!important;color:#20262e!important;box-shadow:inset -3px 0 #596575!important}
+body .v510-sidebar .v510-nav a:focus-visible{outline:2px solid #596575!important}
+body .v510-sidebar .v510-sidebar-scroll{scrollbar-color:#aeb6c0 transparent}
+body .v510-sidebar .v510-side-user{border-top:1px solid #d4d9df!important}
+body .v510-sidebar .v510-logout{background:#e0e4e9!important;color:#303843!important}
+body .v510-sidebar .v510-user-card .v510-avatar{background:white!important;color:#414b58!important}
+body.bim-login-page .login-visual{background:#f0f1f3!important;color:#252b33!important}
+body.bim-login-page .login-visual h1,body.bim-login-page .login-visual p{color:#303843!important}
+
+/* Neutral controls throughout the app, including page-specific legacy rules. */
+html[lang=ar] body button,html[lang=ar] body button:not(.xbtn):not(.btn-light):not(.btn-danger),html[lang=ar] body .btn,html[lang=ar] body .btn:not(.btn-light):not(.btn-danger),html[lang=ar] body a.btn,html[lang=ar] body .bim-action,html[lang=ar] body input[type=submit]{background:#e5e7eb!important;color:#28323e!important;border:1px solid #cbd1d9!important;box-shadow:none!important}
+html[lang=ar] body button:hover,html[lang=ar] body .btn:hover,html[lang=ar] body .bim-action:hover{background:#d4d9e0!important;color:#202934!important}
+html[lang=ar] body button:focus-visible,html[lang=ar] body a:focus-visible{outline:2px solid #667385!important;outline-offset:2px}
+html[lang=ar] body .activity-tabs button[aria-selected=true]{background:#cdd4dd!important;color:#202934!important;box-shadow:inset 0 -3px #667385!important}
+html[lang=ar] body a:not(.btn),html[lang=ar] body .name-red{color:#364252}
+html[lang=ar] body input,html[lang=ar] body select,html[lang=ar] body textarea{accent-color:#596575!important}
+html[lang=ar] body input:focus,html[lang=ar] body select:focus,html[lang=ar] body textarea:focus{outline-color:#8794a5!important;box-shadow:none!important;border-color:#8794a5!important}
+body .bim-column-heading{display:inline-flex!important;align-items:center!important;justify-content:center;gap:7px;white-space:nowrap;vertical-align:middle;max-width:none}
+body .bim-column-label{display:inline!important;white-space:nowrap}
+html[lang=ar] body button.bim-filter-toggle{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 28px!important;width:28px!important;height:28px!important;min-height:28px!important;padding:5px!important;margin:0!important;border-radius:6px!important;background:#e8ebef!important;color:#414b58!important;border:1px solid #c7ced7!important;line-height:1!important}
+html[lang=ar] body button.bim-filter-toggle svg{width:16px;height:16px;display:block;flex:none}
+html[lang=ar] body button.bim-filter-toggle.is-filtered{background:#596575!important;color:#fff!important;border-color:#596575!important}
+body .bim-excel-menu{max-width:calc(100vw - 16px);max-height:calc(100dvh - 16px);overflow:auto}

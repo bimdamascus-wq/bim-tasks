@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="page-shell">
+<section class="page-title">
+  <div>
+    <h1>📱 إعداد اختصارات iPhone</h1>
+    <p>اختصاران مستقلان: مهمة صوتية ومهمة مكتوبة. لا تحتاج لفتح BIM Tasks عند الاستخدام اليومي.</p>
+  </div>
+</section>
+
+<section class="panel">
+<h2>مهامك تذهب إلى الادارة تلقائياً</h2>
+<p>اختصاراتك الحالية تعمل كما هي. إذا لم تبدأ النص باسم موظف معروف، تُسند المهمة إلى الموظف «الادارة». إذا لم يوجد سجل فعال بهذا الاسم، تظهر رسالة خطأ ولا تُحفظ مهمة بلا موظف.</p>
+<p>لإظهار اسمك في السجل، اربط حساب المدير بالموظف «الادارة» من إدارة المستخدمين، ثم اختره هنا مرة واحدة. قبل هذا الربط يظهر المصدر «اختصار الإدارة — مفتاح مشترك».</p>
+<label for="legacyOwner">صاحب اختصارات الإدارة الحالية</label><select id="legacyOwner"><option value="">اختر حساب المدير</option></select>
+<button id="saveOwner" type="button">حفظ صاحب الاختصارات</button>
+</section>
+<section class="panel">
+<h2>اختصارات الموظفين — إنشاء مهام جديدة</h2>
+<p>اختر حساباً مرتبطاً بموظف، وأصدر له مفتاحاً مستقلاً. استخدم نفس رابطَي الصوت والكتابة ونفس الحقل text، واستبدل قيمة X-BIM-Secret بمفتاح الموظف في اختصاريه. كل مهمة تُسند إلى الموظف المرتبط مهما ورد في النص من أسماء.</p>
+<p>إصدار المفتاح يمنح هذا الحساب إنشاء مهامه الشخصية عبر الاختصار فقط. لا يمنحه تعديل مهام الآخرين. إذا كان حسابه ممنوعاً من الدخول الخارجي، فلن يعمل الاختصار عبر الدومين.</p>
+<div class="toolbar"><label for="shortcutUser">حساب الموظف</label><select id="shortcutUser"></select><button id="issueKey" type="button">إصدار / تجديد المفتاح</button><button id="revokeKey" type="button" class="btn-light">إلغاء مفتاح الموظف</button></div>
+<p id="keyStatus" role="status"></p><div id="keyResult" hidden><label for="personalKey">مفتاح الموظف — يظهر مرة واحدة</label><textarea id="personalKey" readonly autocomplete="off" style="direction:ltr;width:100%"></textarea><button id="copyPersonalKey" type="button">نسخ مفتاح الموظف</button></div>
+<p>تجديد المفتاح يلغي القديم. تعطيل الحساب أو الموظف يوقف اختصاره، وتغيير الموظف المرتبط يستلزم إصدار مفتاح جديد.</p>
+</section>
+<div class="two-col">
+  <section class="bim-section">
+    <div class="bim-section-head"><h2>🎤 الاختصار الصوتي</h2></div>
+    <div class="bim-section-body">
+      <ol style="line-height:2">
+        <li>في تطبيق Shortcuts أنشئ اختصارًا جديدًا باسم <b>BIM مهمة صوتية</b>.</li>
+        <li>أضف الإجراء <b>Dictate Text / إملاء النص</b>.</li>
+        <li>أضف <b>Get Contents of URL / الحصول على محتويات URL</b>.</li>
+        <li>الطريقة: <b>POST</b>.</li>
+        <li>Header: <code>X-BIM-Secret</code> وقيمته من الزر أدناه.</li>
+        <li>Request Body = <b>Form</b>، الحقل <code>text</code> وقيمته <b>Dictated Text</b>.</li>
+      </ol>
+      <div class="toolbar">
+        <button onclick="copyVoice()">نسخ رابط الصوت</button>
+        <button class="btn-light" onclick="copySecret()">نسخ مفتاح الإدارة</button>
+      </div>
+      <input id="voiceUrl" readonly onclick="this.select()" style="direction:ltr;width:100%;margin-top:10px;padding:12px" value="">
+    </div>
+  </section>
+
+  <section class="bim-section">
+    <div class="bim-section-head"><h2>✍️ الاختصار الكتابي</h2></div>
+    <div class="bim-section-body">
+      <ol style="line-height:2">
+        <li>أنشئ اختصارًا جديدًا باسم <b>BIM مهمة مكتوبة</b>.</li>
+        <li>أضف <b>Ask for Input / طلب إدخال</b> والنوع Text.</li>
+        <li>أضف <b>Get Contents of URL / الحصول على محتويات URL</b>.</li>
+        <li>الطريقة: <b>POST</b>.</li>
+        <li>Header: <code>X-BIM-Secret</code>.</li>
+        <li>Request Body = <b>Form</b>، الحقل <code>text</code> وقيمته <b>Provided Input</b>.</li>
+      </ol>
+      <div class="toolbar">
+        <button onclick="copyText()">نسخ رابط الكتابة</button>
+        <button class="btn-light" onclick="copySecret()">نسخ مفتاح الإدارة</button>
+      </div>
+      <input id="textUrl" readonly onclick="this.select()" style="direction:ltr;width:100%;margin-top:10px;padding:12px" value="">
+    </div>
+  </section>
+</div>
+
+<section class="panel" style="margin-top:12px">
+  <h2>🔐 بيانات ربط الإدارة</h2>
+  <p>هذا مفتاح اختصارات الإدارة الحالية. لا تستخدمه لاختصارات الموظفين؛ استخدم «نسخ مفتاح الموظف» أعلاه. يظهر هذا القسم لمن لديه صلاحية إدارة المستخدمين.</p>
+  <div class="toolbar">
+    <button onclick="copySecret()">نسخ مفتاح الإدارة</button>
+  </div>
+  <textarea id="secretBox" readonly onclick="this.select()" style="direction:ltr;width:100%;min-height:72px;margin-top:10px;padding:12px"></textarea>
+</section>
+
+<section class="panel">
+  <h2>✅ طريقة الاستخدام بعد الإعداد</h2>
+  <p><b>الصوتي:</b> اضغط الأيقونة، تكلم، ثم تُرسل المهمة مباشرة إلى BIM Tasks.</p>
+  <p><b>الكتابي:</b> اضغط الأيقونة، اكتب المهمة، ثم تُرسل مباشرة.</p>
+  <p class="muted-mini">يمكن إضافة كل اختصار إلى الشاشة الرئيسية من داخل تطبيق Shortcuts ليصبح عندك زران منفصلان.</p>
+</section>
+</main>
+{% endblock %}
+{% block scripts %}
+<script>
+let setup=null;
+async function loadSetup(){
+  try{
+    setup=await bimRequest('/api/iphone/setup');
+    voiceUrl.value=setup.voice_url;
+    textUrl.value=setup.text_url;
+    secretBox.value=setup.secret;
+  }catch(e){bimToast(e.message,'err')}
+}
+async function cp(v,msg){
+  try{
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(v);
+      bimToast(msg); return;
+    }
+  }catch(e){}
+  try{
+    const ta=document.createElement('textarea');
+    ta.value=v; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.opacity='0'; ta.style.pointerEvents='none';
+    document.body.appendChild(ta); ta.focus(); ta.select(); ta.setSelectionRange(0,99999);
+    const ok=document.execCommand('copy'); document.body.removeChild(ta);
+    if(ok){bimToast(msg);return;}
+  }catch(e){}
+  bimToast('حدد النص داخل المربع وانسخه يدوياً','err');
+}
+function copyVoice(){if(setup)cp(setup.voice_url,'تم نسخ رابط الصوت')}
+function copyText(){if(setup)cp(setup.text_url,'تم نسخ رابط الكتابة')}
+function copySecret(){if(setup)cp(setup.secret,'تم نسخ مفتاح الإدارة')}
+let shortcutAccounts=[];
+async function loadAccounts(){
+ const data=await bimRequest('/api/iphone/accounts');shortcutAccounts=data.items;
+ const old=shortcutUser.value;shortcutUser.replaceChildren();legacyOwner.replaceChildren(new Option('اختر حساب المدير',''));
+ for(const u of data.items){
+  const title=(u.full_name||u.username)+' — '+(u.employee_name||'غير مرتبط بموظف');
+  const op=new Option(title,String(u.id));op.disabled=!u.employee_id;shortcutUser.add(op);
+  if(u.role_code==='admin'&&u.employee_id)legacyOwner.add(new Option(title,String(u.id)));
+ }
+ if(old&&data.items.some(u=>String(u.id)===old))shortcutUser.value=old;
+ legacyOwner.value=data.legacy_owner?String(data.legacy_owner):'';showKeyState();
+}
+function showKeyState(){keyResult.hidden=true;personalKey.value='';const u=shortcutAccounts.find(u=>String(u.id)===shortcutUser.value);keyStatus.textContent=u?(u.created_at?'له مفتاح فعال. آخر استخدام: '+(u.last_used_at||'لم يستخدم بعد'):'لم يصدر مفتاح لهذا الحساب'):'لا يوجد حساب مرتبط بموظف';}
+shortcutUser.onchange=showKeyState;
+saveOwner.onclick=async()=>{try{await bimRequest('/api/iphone/legacy-owner',{method:'PUT',body:JSON.stringify({user_id:Number(legacyOwner.value)})});bimToast('تم ربط اختصارات الإدارة بالحساب')}catch(e){bimToast(e.message,'err')}};
+issueKey.onclick=async()=>{if(!shortcutUser.value)return;const uid=shortcutUser.value;issueKey.disabled=true;try{const r=await bimRequest('/api/iphone/accounts/'+uid+'/key',{method:'POST'});await loadAccounts();personalKey.value=r.secret;keyResult.hidden=false;keyStatus.textContent=r.message+' الموظف: '+r.employee}catch(e){bimToast(e.message,'err')}finally{issueKey.disabled=false}};
+revokeKey.onclick=async()=>{if(!shortcutUser.value)return;try{await bimRequest('/api/iphone/accounts/'+shortcutUser.value+'/key',{method:'DELETE'});await loadAccounts();bimToast('تم إلغاء مفتاح الموظف')}catch(e){bimToast(e.message,'err')}};
+copyPersonalKey.onclick=()=>cp(personalKey.value,'تم نسخ مفتاح الموظف');
+loadAccounts().catch(e=>bimToast(e.message,'err'));
+loadSetup();
+</script>
+{% endblock %}

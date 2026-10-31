@@ -1,0 +1,51 @@
+{% extends "base.html" %}{% block content %}
+<main class="page-shell"><section class="page-title"><div><h1>📈 التقارير التشغيلية</h1><p>حسب الموظف والقسم والفترة: المهام، المكتمل، المتأخر، متوسط وقت البدء والإنجاز والمشاكل.</p></div></section>
+<section class="panel"><div class="form-grid"><div class="field"><label>الفترة</label><select id="days"><option value="1">اليوم</option><option value="7">7 أيام</option><option value="30" selected>30 يوم</option><option value="90">90 يوم</option></select></div><div class="field"><label>الموظف</label><select id="employee"><option value="">الكل</option></select></div><div class="field"><label>القسم</label><select id="department"><option value="">الكل</option></select></div></div><div class="toolbar" style="justify-content:flex-end"><button onclick="loadReport()">تحديث التقرير</button></div></section>
+<div class="kpi-grid" id="interactiveKpis"><div class="kpi bim-kpi-click" role="button" tabindex="0" data-kind="total" aria-label="عرض تفاصيل إجمالي المهام"><span>إجمالي المهام</span><b id="total">0</b></div><div class="kpi bim-kpi-click" role="button" tabindex="0" data-kind="completed" aria-label="عرض تفاصيل مكتمل"><span>مكتمل</span><b id="completed">0</b></div><div class="kpi bim-kpi-click" role="button" tabindex="0" data-kind="overdue" aria-label="عرض تفاصيل متأخر"><span>متأخر</span><b id="overdue">0</b></div><div class="kpi"><span>مشاكل</span><b id="problems">0</b></div><div class="kpi"><span>متوسط البدء / دقيقة</span><b id="avgStart">—</b></div><div class="kpi"><span>متوسط الإنجاز / دقيقة</span><b id="avgComplete">—</b></div></div>
+<section class="panel"><div class="scroll-box"><table class="sticky-table"><thead><tr><th>الموظف</th><th>القسم</th><th>المهام</th><th>مكتمل</th><th>متأخر</th><th>متوسط البدء</th><th>متوسط الإنجاز</th></tr></thead><tbody id="rows"></tbody></table></div></section><section id="bimTaskDrill" class="panel" hidden aria-live="polite" style="margin-top:14px">
+  <div class="toolbar" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+    <h2 id="bimTaskDrillHeading" style="margin:0">تفاصيل المهام</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><input id="bimTaskDrillSearch" type="search" placeholder="ابحث عن مهمة أو موظف أو قسم" aria-label="البحث في تفاصيل المهام"><button type="button" id="bimTaskDrillClose">إغلاق التفاصيل</button></div>
+  </div>
+  <p id="bimTaskDrillCount"></p>
+  <div class="scroll-box"><table class="sticky-table"><thead><tr><th>المهمة</th><th>الموظف</th><th>القسم</th><th>الحالة</th><th>الموعد</th></tr></thead><tbody id="bimTaskDrillRows"></tbody></table></div>
+<button type="button" id="bimTaskDrillMore" hidden>عرض المزيد من المهام</button></section></main>
+{% endblock %}{% block scripts %}<script>const $=id=>document.getElementById(id);let initialized=false,reportScope=null,reportVersion=0;function reportCount(r,kind){return `<button type="button" class="report-row-count" data-employee="${r.employee_id??'unassigned'}" data-name="${bimEsc(r.employee_name)}" data-kind="${kind}" aria-label="${bimEsc(r.employee_name)} — ${kind==='total'?'جميع المهام':kind==='completed'?'المهام المكتملة':'المهام المتأخرة'}: ${r[kind]||0}">${r[kind]||0}</button>`}async function loadReport(){const version=++reportVersion;const scope={days:$('days').value,employee:$('employee').value,department:$('department').value};try{let url='/api/operations-report?days='+$('days').value;if($('employee').value)url+='&employee_id='+$('employee').value;if($('department').value)url+='&department='+encodeURIComponent($('department').value);const d=await bimRequest(url);if(version!==reportVersion)return;reportScope=scope;drillKind=null;drillVersion++;$('bimTaskDrill').hidden=true;const s=d.summary||{};$('total').textContent=s.total||0;$('completed').textContent=s.completed||0;$('overdue').textContent=s.overdue||0;$('problems').textContent=s.problems||0;$('avgStart').textContent=s.avg_start_minutes??'—';$('avgComplete').textContent=s.avg_complete_minutes??'—';if(!initialized){$('employee').innerHTML='<option value="">الكل</option>'+d.employees.map(e=>`<option value="${e.id}">${bimEsc(e.name)}</option>`).join('');$('department').innerHTML='<option value="">الكل</option>'+d.departments.map(x=>`<option>${bimEsc(x)}</option>`).join('');initialized=true}$('rows').innerHTML=(d.rows||[]).map(r=>`<tr><td class="name-red">${bimEsc(r.employee_name)}</td><td>${bimEsc(r.department)}</td><td>${reportCount(r,'total')}</td><td>${reportCount(r,'completed')}</td><td>${reportCount(r,'overdue')}</td><td>${r.avg_start_minutes??'—'}</td><td>${r.avg_complete_minutes??'—'}</td></tr>`).join('')}catch(e){bimToast(e.message,'err')}}
+let drillKind=null,drillEmployee=undefined,drillName='',drillVersion=0,drillOffset=0;
+const drillTitles={total:'جميع المهام',completed:'المهام المكتملة',overdue:'المهام المتأخرة'};
+async function openDrill(kind,employee=undefined,name=''){
+  if(!reportScope)return;
+  drillKind=kind;drillEmployee=employee;drillName=name;drillOffset=0;$('bimTaskDrillSearch').value='';
+  $('bimTaskDrillHeading').textContent=(name?name+' — ':'')+(drillTitles[kind]||'تفاصيل المهام');
+  $('bimTaskDrill').hidden=false;$('bimTaskDrill').scrollIntoView({behavior:'smooth',block:'nearest'});
+  await loadDrill();
+}
+async function loadDrill(more=false){
+  if(!drillKind||!reportScope)return;
+  const version=++drillVersion;if(!more){drillOffset=0;$('bimTaskDrillRows').replaceChildren()}
+  $('bimTaskDrillMore').hidden=true;$('bimTaskDrillCount').textContent='جاري تحميل المهام…';
+  const p=new URLSearchParams({days:reportScope.days,category:drillKind,q:$('bimTaskDrillSearch').value,offset:String(drillOffset)});
+  if(drillEmployee==='unassigned')p.set('unassigned','true');
+  else if(drillEmployee!==undefined)p.set('employee_id',drillEmployee);
+  else if(reportScope.employee)p.set('employee_id',reportScope.employee);
+  if(reportScope.department)p.set('department',reportScope.department);
+  try{
+    const d=await bimRequest('/api/operations-report/tasks?'+p.toString());if(version!==drillVersion)return;
+    $('bimTaskDrillCount').textContent=`عدد المهام المطابقة: ${d.total}`;
+    const html=(d.items||[]).map(x=>`<tr><td><a href="/task/${encodeURIComponent(x.id)}">${bimEsc(x.title||'مهمة')}</a></td><td>${bimEsc(x.employee_name)}</td><td>${bimEsc(x.department)}</td><td>${bimEsc(x.status)}</td><td>${bimEsc(x.due_at||'—')}</td></tr>`).join('');
+    if(more)$('bimTaskDrillRows').insertAdjacentHTML('beforeend',html);else $('bimTaskDrillRows').innerHTML=html||'<tr><td colspan="5">لا توجد مهام مطابقة</td></tr>';
+    drillOffset=d.next_offset;$('bimTaskDrillMore').hidden=!d.truncated;
+  }catch(e){if(version===drillVersion)$('bimTaskDrillCount').textContent=e.message||'تعذّر جلب التفاصيل';}
+}
+$('rows').addEventListener('click',ev=>{const b=ev.target.closest('[data-employee][data-kind]');if(b)openDrill(b.dataset.kind,b.dataset.employee,b.dataset.name)});
+$('bimTaskDrillMore').addEventListener('click',()=>loadDrill(true));
+document.querySelectorAll('#interactiveKpis [data-kind]').forEach(el=>{
+  const run=()=>openDrill(el.dataset.kind);
+  el.addEventListener('click',run);
+  el.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();run()}});
+});
+$('bimTaskDrillClose').addEventListener('click',()=>{$('bimTaskDrill').hidden=true;drillKind=null;drillVersion++});
+let searchDelay;
+$('bimTaskDrillSearch').addEventListener('input',()=>{clearTimeout(searchDelay);searchDelay=setTimeout(()=>loadDrill(),260)});
+['days','employee','department'].forEach(k=>$(k).addEventListener('change',()=>loadReport()));
+loadReport();</script>{% endblock %}
