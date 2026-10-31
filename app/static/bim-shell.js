@@ -61,7 +61,7 @@ function arDates(root){
     refreshDate(inp);
   }
 }
-function refreshDate(inp){const w=inp.parentNode;if(!w||!w.classList||!w.classList.contains('ds-date'))return;const t=dateText(inp);w.lastElementChild.textContent=t;w.classList.toggle('has-text',!!t)}
+function refreshDate(inp){const w=inp.parentNode;if(!w||!w.classList||!w.classList.contains('ds-date'))return;const t=dateText(inp);const el=w.lastElementChild;el.textContent=t||(inp.type==='date'?'بدون تاريخ':'بدون موعد');el.classList.toggle('is-empty',!t);w.classList.add('has-text')}
 let pending=null;
 function enhance(){pending=null;try{tagCells(document);arDates(document)}catch(e){}}
 function schedule(){if(!pending)pending=setTimeout(enhance,150)}

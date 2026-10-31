@@ -487,3 +487,68 @@ body.ds .manage-table .task-input{min-width:170px}
 body.ds .manage-table input.due{min-width:190px}
 body.ds .manage-table :is(select.st,select.pr){min-width:104px}
 body.ds .manage-table select.rem{min-width:96px}
+
+/* =====================================================================================================
+   v4 (owner, 2026-10-31): Fluent 3D picture icons like his financial report, colour on ALL sides of every
+   box, and black text bigger, darker and bolder across the whole system.
+   ===================================================================================================== */
+.ds-i3d{width:30px;height:30px;flex:none;object-fit:contain;filter:drop-shadow(0 2px 2px rgba(16,24,40,.18))}
+.ds-i3d-lg{width:44px;height:44px}
+.ds-i3d-sm{width:24px;height:24px}
+.ds-search .ds-i3d-sm{width:22px;height:22px}
+body.ds .ds-nav-link{gap:12px}
+body.ds .ds-nav-link:hover .ds-i3d{transform:scale(1.08)}
+.ds-i3d{transition:transform .15s}
+
+/* ---- text: darker, bigger, bolder ---- */
+body.ds{color:#0B0F14;font-size:18px;font-weight:600}
+body.ds :is(p,li,dd,td,label,summary,.notice,.empty,.meta,small){color:#111827}
+body.ds .page-title p,body.ds .section-head p,body.ds .ds-home-head p{color:#1F2937;font-size:18px;font-weight:600}
+body.ds h1{font-size:32px;font-weight:700;color:#05080C}
+body.ds h2{font-size:23px;font-weight:700;color:#05080C}
+body.ds h3,body.ds h4{font-weight:700;color:#05080C}
+body.ds td{font-size:17px;font-weight:600}
+body.ds th{font-size:16.5px;font-weight:700;color:#0B1B33}
+body.ds label{font-size:16.5px;font-weight:700;color:#0B0F14}
+body.ds input:not([type=checkbox]):not([type=radio]),body.ds select,body.ds textarea{font-size:17.5px;font-weight:600;color:#05080C;border-color:#AEB8C6}
+body.ds button,body.ds .btn{font-size:17px;font-weight:700}
+body.ds .ds-nav-link{font-size:16.5px;font-weight:700;color:#0B0F14}
+body.ds .ds-nav-label{font-size:14px;font-weight:700;color:#374151}
+body.ds .ds-top-title{font-size:21px;color:#05080C}
+body.ds .ds-today{color:#1F2937;font-weight:600}
+body.ds small,body.ds .muted,body.ds .muted-mini{font-size:15.5px;color:#374151;font-weight:600}
+body.ds .ds-home .row .t span{font-size:18px;font-weight:700;color:#05080C}
+body.ds .ds-home .who{font-size:16.5px;color:#111827}
+body.ds .ds-home .due{font-size:16px;color:#1F2937;font-weight:600}
+
+/* ---- colour on every side of boxes (no more one-side bars) ---- */
+body.ds .kpi{border:2px solid color-mix(in srgb,var(--b) 55%,#fff)!important;border-radius:16px;
+  background:linear-gradient(160deg,color-mix(in srgb,var(--a) 22%,#fff) 0%,color-mix(in srgb,var(--a) 6%,#fff) 100%);
+  box-shadow:0 4px 12px -6px color-mix(in srgb,var(--b) 60%,transparent)}
+body.ds .kpi::before{display:none}
+body.ds .kpi span,body.ds .kpi small,body.ds .kpi label{font-size:17px;font-weight:700;color:color-mix(in srgb,var(--b) 80%,#000)}
+body.ds .kpi b,body.ds .kpi strong,body.ds .kpi .num{font-size:38px;font-weight:700}
+body.ds .panel,body.ds details.bim-section,body.ds .detail-card,body.ds .ds-card,body.ds .employee-card,body.ds .team-card{
+  border:2px solid color-mix(in srgb,var(--b) 45%,#fff)!important;border-radius:18px;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--a) 7%,#fff) 0%,#fff 140px);
+  box-shadow:0 6px 16px -10px color-mix(in srgb,var(--b) 70%,transparent)}
+body.ds .ds-card-head h2,body.ds .panel>h2,body.ds .section-head h2,body.ds details.bim-section>summary,body.ds .detail-card h2{color:color-mix(in srgb,var(--b) 70%,#000)}
+body.ds .ds-card-head h2{display:flex;align-items:center;gap:10px}
+body.ds .ds-quick{border:2px solid #C9D3E3}
+body.ds .scroll-box{border:2px solid #C9D3E3}
+body.ds .notice{border-width:2px}
+body.ds .ds-search{border:2px solid #D3DAE4}
+
+/* ---- /my-team: tidy grid (boxes in one row, filters in one row, cards below) ---- */
+body.ds .team-cards{grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
+body.ds .team-card .row{display:grid!important;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center}
+body.ds .team-card .row select{min-width:0}
+body.ds .team-card .meta{font-size:15.5px;font-weight:600;color:#1F2937}
+body.ds .team-filter{gap:8px}
+@media (max-width:640px){body.ds .team-card .row{grid-template-columns:1fr 1fr}body.ds .team-card .row button{grid-column:1/-1}}
+
+/* ---- dates: always Arabic words, empty shows "بدون موعد" ---- */
+body.ds .ds-date>input:not(:focus){color:transparent!important;-webkit-text-fill-color:transparent}
+body.ds .ds-date>input:not(:focus)::-webkit-datetime-edit{opacity:0}
+body.ds .ds-date>.ds-date-text{font-weight:600;color:#05080C}
+body.ds .ds-date>.ds-date-text.is-empty{color:#6B7280}

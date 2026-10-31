@@ -14,7 +14,7 @@ GROUPS = [
                 ('/recurring', 'المهام المتكررة', 'repeat'), ('/archive', 'الأرشيف', 'archive')]),
     ('الفريق', [('/employees', 'الموظفون', 'team'), ('/users', 'المستخدمون', 'user'), ('/access-control', 'الصلاحيات والقنوات', 'key'),
                 ('/job-profiles', 'المسميات الوظيفية', 'badge'), ('/workload', 'عبء العمل', 'gauge'), ('/handover', 'تسليم الأعمال', 'swap'),
-                ('/shift-center', 'الشيفتات والملخص اليومي', 'clock')]),
+                ('/shift-center', 'الشيفتات', 'clock')]),
     ('التقارير والسجلات', [('/team-performance', 'أداء الفريق', 'chart'), ('/operations-reports', 'التقارير التشغيلية', 'chart'),
                            ('/activity-log', 'السجل الشامل', 'history'), ('/audit', 'سجل التغييرات', 'history'),
                            ('/record-management', 'إدارة السجلات والحذف', 'archive')]),
@@ -75,6 +75,22 @@ COLORS = {
     '/sync': 'blue', '/backup': 'purple', '/account': 'indigo',
 }
 
+# 3D picture of each page (app/static/icons3d/<name>.png, Microsoft Fluent Emoji 3D, MIT licence) — same family as
+# the icons of the owner's financial report.
+ICON3D = {
+    '/': 'home', '/my-work': 'check', '/my-team': 'team',
+    '/tasks': 'clipboard', '/tasks-table': 'table', '/manage': 'memo', '/recurring': 'repeat', '/archive': 'archive',
+    '/employees': 'briefcase', '/users': 'user', '/access-control': 'key', '/job-profiles': 'bookmark', '/workload': 'hourglass',
+    '/handover': 'handover', '/shift-center': 'alarm',
+    '/team-performance': 'chartup', '/operations-reports': 'barchart', '/activity-log': 'scroll', '/audit': 'ledger',
+    '/record-management': 'trash',
+    '/template-library': 'folder', '/automation-center': 'bolt', '/notification-center': 'bell', '/telegram-center': 'envelope',
+    '/telegram-groups': 'speech', '/telegram-health': 'stethoscope', '/telegram-dashboard': 'antenna', '/iphone-setup': 'phone',
+    '/integrations': 'link',
+    '/security': 'shield', '/permissions': 'lock', '/company': 'building', '/page-visibility': 'eye', '/system-health': 'heart',
+    '/sync': 'sync', '/backup': 'floppy', '/account': 'gear',
+}
+
 TITLES = {p: l for _, items in GROUPS for p, l, _ in items}
 PAGE_ICON = {p: ic for _, items in GROUPS for p, _, ic in items}
 PAGE_ICON['/account'] = 'account'
@@ -116,7 +132,7 @@ def nav(user, permissions, path='/'):
             if need and need not in perms:
                 continue
             active = path == p or (p != '/' and path.startswith(p + '/'))
-            item = {'path': p, 'label': label, 'icon': ICONS[icon], 'active': active, 'color': COLORS.get(p, 'blue')}
+            item = {'path': p, 'label': label, 'icon': ICONS[icon], 'active': active, 'color': COLORS.get(p, 'blue'), 'img': ICON3D.get(p, 'clipboard')}
             (more if p in hidden and p not in ('/', '/my-work', '/my-team') else links).append(item)
         if links:
             out.append((group, links))
@@ -132,4 +148,4 @@ def icon(name):
 def page(path):
     """3D icon of the page shown in the top bar: {'icon', 'color'}."""
     key = path if path in PAGE_ICON else ('/tasks' if path.startswith('/task/') else '')
-    return {'icon': ICONS.get(PAGE_ICON.get(key, 'list'), ''), 'color': COLORS.get(key, 'blue')}
+    return {'icon': ICONS.get(PAGE_ICON.get(key, 'list'), ''), 'color': COLORS.get(key, 'blue'), 'img': ICON3D.get(key, 'clipboard')}

@@ -1,7 +1,7 @@
 {% extends "base.html" %}{% block content %}
 <main class="ds-home" aria-labelledby="title">
   <form class="ds-quick" id="cmd" autocomplete="off">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+    <img class="ds-i3d" src="/static/icons3d/pencil.png" alt="" aria-hidden="true">
     <input id="q" placeholder="اكتب مهمة جديدة… مثال: «سامر يجرد مستودع الزبلطاني عاجل»" aria-label="مهمة جديدة">
     <span class="pv" id="pv"></span><span class="kbd" dir="ltr">Ctrl K</span>
     <button class="go" id="go" disabled>إضافة</button>
@@ -11,22 +11,22 @@
     <div class="seg" id="seg" role="group" aria-label="الفترة"><button type="button" data-s="today" class="on">اليوم</button><button type="button" data-s="week">هذا الأسبوع</button><button type="button" data-s="all">الكل</button></div>
   </div>
   <div class="ds-home-kpis">
-    <div class="kpi"><span>مفتوحة</span><div class="ds-kpi-row"><b class="num" id="kOpen">—</b><span class="ds-ico ds-ico-lg c-blue" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="{{ ds_icon('list') }}"></path></svg></span></div></div>
-    <div class="kpi is-late"><span>متأخرة</span><div class="ds-kpi-row"><b class="num" id="kLate">—</b><span class="ds-ico ds-ico-lg c-red" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="{{ ds_icon('clock') }}"></path></svg></span></div></div>
-    <div class="kpi is-done"><span>أُنجزت اليوم</span><div class="ds-kpi-row"><b class="num" id="kDone">—</b><span class="ds-ico ds-ico-lg c-green" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="{{ ds_icon('check') }}"></path></svg></span></div></div>
-    <div class="kpi"><span>بالوقت آخر ٧ أيام</span><div class="ds-kpi-row"><b class="num" id="kRate">—</b><span class="ds-ico ds-ico-lg c-purple" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="{{ ds_icon('chart') }}"></path></svg></span></div></div>
+    <div class="kpi"><span>مفتوحة</span><div class="ds-kpi-row"><b class="num" id="kOpen">—</b><img class="ds-i3d ds-i3d-lg" src="/static/icons3d/folder.png" alt="" aria-hidden="true"></div></div>
+    <div class="kpi is-late"><span>متأخرة</span><div class="ds-kpi-row"><b class="num" id="kLate">—</b><img class="ds-i3d ds-i3d-lg" src="/static/icons3d/stopwatch.png" alt="" aria-hidden="true"></div></div>
+    <div class="kpi is-done"><span>أُنجزت اليوم</span><div class="ds-kpi-row"><b class="num" id="kDone">—</b><img class="ds-i3d ds-i3d-lg" src="/static/icons3d/check.png" alt="" aria-hidden="true"></div></div>
+    <div class="kpi"><span>بالوقت آخر ٧ أيام</span><div class="ds-kpi-row"><b class="num" id="kRate">—</b><img class="ds-i3d ds-i3d-lg" src="/static/icons3d/target.png" alt="" aria-hidden="true"></div></div>
   </div>
   <div id="filter"></div>
   <div class="ds-home-grid">
     <div class="ds-home-col">
-      <section class="ds-card is-late"><div class="ds-card-head"><h2><span class="ds-ico c-red" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="{{ ds_icon('clock') }}"></path></svg></span>يحتاج انتباهك <span class="ds-count num" id="cA">٠</span></h2></div><div id="gA"></div></section>
-      <section class="ds-card is-due"><div class="ds-card-head"><h2><span class="ds-ico c-amber" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="{{ ds_icon('list') }}"></path></svg></span><span id="dueLabel">مستحقة اليوم</span> <span class="ds-count num" id="cD">٠</span></h2></div><div id="gD"></div></section>
-      <section class="ds-card is-done"><div class="ds-card-head"><h2><span class="ds-ico c-green" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="{{ ds_icon('check') }}"></path></svg></span><span id="doneLabel">أُنجزت اليوم</span> <span class="ds-count num" id="cO">٠</span></h2></div><div id="gO"></div></section>
+      <section class="ds-card is-late"><div class="ds-card-head"><h2><img class="ds-i3d" src="/static/icons3d/stopwatch.png" alt="" aria-hidden="true">يحتاج انتباهك <span class="ds-count num" id="cA">٠</span></h2></div><div id="gA"></div></section>
+      <section class="ds-card is-due"><div class="ds-card-head"><h2><img class="ds-i3d" src="/static/icons3d/folder.png" alt="" aria-hidden="true"><span id="dueLabel">مستحقة اليوم</span> <span class="ds-count num" id="cD">٠</span></h2></div><div id="gD"></div></section>
+      <section class="ds-card is-done"><div class="ds-card-head"><h2><img class="ds-i3d" src="/static/icons3d/check.png" alt="" aria-hidden="true"><span id="doneLabel">أُنجزت اليوم</span> <span class="ds-count num" id="cO">٠</span></h2></div><div id="gO"></div></section>
     </div>
     <div class="ds-home-col">
-      <section class="ds-card"><div class="ds-card-head"><h2><span class="ds-ico c-teal" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="{{ ds_icon('team') }}"></path></svg></span>الفريق</h2><small>الحمل الحالي — اضغط اسماً لعرض مهامه</small></div><div id="team"></div></section>
-      <section class="ds-card"><div class="ds-card-head"><h2><span class="ds-ico c-indigo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="{{ ds_icon('user') }}"></path></svg></span>فلترة سريعة حسب الموظف</h2></div><div class="ds-members" id="sTeam"></div></section>
-      <section class="ds-card"><div class="ds-card-head"><h2><span class="ds-ico c-orange" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="{{ ds_icon('pulse') }}"></path></svg></span>النشاط المباشر</h2></div><div id="feed"></div></section>
+      <section class="ds-card"><div class="ds-card-head"><h2><img class="ds-i3d" src="/static/icons3d/team.png" alt="" aria-hidden="true">الفريق</h2><small>الحمل الحالي — اضغط اسماً لعرض مهامه</small></div><div id="team"></div></section>
+      <section class="ds-card"><div class="ds-card-head"><h2><img class="ds-i3d" src="/static/icons3d/user.png" alt="" aria-hidden="true">فلترة سريعة حسب الموظف</h2></div><div class="ds-members" id="sTeam"></div></section>
+      <section class="ds-card"><div class="ds-card-head"><h2><img class="ds-i3d" src="/static/icons3d/bolt.png" alt="" aria-hidden="true">النشاط المباشر</h2></div><div id="feed"></div></section>
     </div>
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
