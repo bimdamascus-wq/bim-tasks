@@ -4,6 +4,13 @@
 import json, re, sqlite3, sys
 from pathlib import Path
 
+# Windows prints through cp1252 when the output is piped: Arabic names crashed the report (2026-10-31).
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
+
 root = Path(sys.argv[1] if len(sys.argv) > 1 else r'C:\BIM_Tasks_Server')
 db = root / 'data' / 'bim_tasks.db'
 
@@ -93,6 +100,25 @@ def main():
     for r in rows:
         print(f'  {r[0]}: {r[1]} pairs')
     c.close()
+    full_sync_report()
+
+
+def full_sync_report():
+    print('\n[google sheet full sync: last 3 runs] (from sync_full_logs\\SUMMARY_*.json)')
+    logs = sorted((root / 'sync_full_logs').glob('SUMMARY_*.json'))[-3:]
+    if not logs:
+        print('  no run found')
+    for p in logs:
+        try:
+            r = json.loads(p.read_text(encoding='utf-8'))
+        except Exception as e:
+            print(f'  {p.name}: unreadable ({type(e).__name__})'); continue
+        rows = sum((r.get('counts') or {}).values())
+        sent = sum((r.get('sent') or {}).values())
+        print(f"  {p.name}: status={r.get('status')} started={r.get('started_at')} finished={r.get('finished_at', 'NOT FINISHED')}"
+              f" rows={rows} uploaded={sent}")
+        for e in (r.get('errors') or [])[:3]:
+            print('      error:', clean_error(e))
 
 
 main()

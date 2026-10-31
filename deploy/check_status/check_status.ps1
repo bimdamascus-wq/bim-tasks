@@ -27,6 +27,11 @@ $report = & {
         $port = if ($_.CommandLine -match '--port\s+(\d+)') { $Matches[1] } else { '?' }
         "  pid $($_.ProcessId)  port $port  started $($_.CreationDate)  $($_.ExecutablePath)" }
     ''
+    '[google sheet full sync processes] (one started long ago = stuck)'
+    $fs = Get-CimInstance Win32_Process | Where-Object { $_.ProcessId -ne $PID -and $_.CommandLine -match 'RUN_FULL_SYNC\.cmd|sync_all\.py' }
+    if (-not $fs) { '  none running' }
+    $fs | ForEach-Object { "  pid $($_.ProcessId)  $($_.Name)  started $($_.CreationDate)" }
+    ''
     '[scheduled tasks]'
     foreach ($t in '\BIM Tasks\LAN', 'BIM Tasks External 8798', '\BIM Tasks\Backup Hourly', '\BIM Tasks\Backup Daily Full', 'BIM_Tasks_Full_Google_Sheets_Sync') {
         "  -- $t"
@@ -41,6 +46,8 @@ $report = & {
     if (Test-Path "$Root\.venv\Scripts\python.exe") { & "$Root\.venv\Scripts\python.exe" -I "$Here\check_status.py" $Root 2>&1 | ForEach-Object { Mask "$_" } }
     else { 'python not found' }
     ''
+    $sl = "$Root\sync_full_logs\scheduled.log"
+    if (Test-Path $sl) { '[last lines of sync_full_logs\scheduled.log]'; Get-Content $sl -Tail 12 -Encoding UTF8 -ErrorAction SilentlyContinue | ForEach-Object { '  ' + (Mask $_) }; '' }
     foreach ($log in 'server-lan.err.log', 'server-external.log', 'server-lan.log') {
         $f = "$Root\logs\$log"
         if (Test-Path $f) { "[last lines of $log]"; Get-Content $f -Tail 15 -Encoding UTF8 -ErrorAction SilentlyContinue | ForEach-Object { '  ' + (Mask $_) }; '' }

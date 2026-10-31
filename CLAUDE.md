@@ -72,6 +72,12 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   failed Telegram rows in the status report (open item 6), and a note of how the Sheet sends its secret.
   Apps Script code is not in the repo: the status report's "[google sheet -> server ...]" section shows whether
   `?secret=` is still used. Only if it is, ask the owner to paste the Apps Script (secret value removed) and give exact lines.
+- 2026-10-31 13:23: owner installed `fixes_tests` (report 13:47: 8797 lan+workers, 8798 external, both commit 5123848).
+  Not merged into `main` yet: the report crashed (cp1252 stdout + Arabic employee name, fixed) before the failed-Telegram
+  and Sheet-secret sections. Full sync task showed Running + Last Result 0x800710E0 (a run was refused because one was
+  still running): either an old instance started before the install still waits on the removed `pause`, or a run takes
+  longer than 5 minutes. Report now lists sync processes with start times and the last SUMMARY_*.json runs to tell which.
+  The 02:00 off-site backup has not had a chance yet: `telegram_backup` was installed 10:31, first automatic run 2026-11-01 02:00.
 
 ## Open items (agreed with the owner, not started)
 1. (in `gateway_staging`) external process ran the workers too. 2. (in `gateway_staging`) staging copy.
