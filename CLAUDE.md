@@ -96,16 +96,16 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   (only `_sync_auth` and the shift lists in workers). Install confirmed -> `main` fast-forwarded (server = 5123848).
   Still read the duplicate breakdown in the next report; normal work (assign then edit) can produce pairs.
 
-## Open items (agreed with the owner, not started)
-1. (in `gateway_staging`) external process ran the workers too. 2. (in `gateway_staging`) staging copy.
+## Open items
 - DECIDED by the owner (2026-10-31): personal iPhone shortcut keys must work from outside the company, for every role,
   even roles without external login. That is why `iphone_accounts.eligible` has no gateway check — do not add one.
-3. Google Sheet sync sends its secret in the URL query (`?secret=`); move to the `X-BIM-Sync-Secret` header (needs the Apps Script changed too).
-4. Feature ideas offered, owner has not chosen yet: supervisor dashboard for their team, daily Telegram summary for supervisors,
-   per-team performance report. Ask the owner what slows down their daily work before building anything.
-5. Shift-start Telegram message (`workers._send_open_tasks`) lists only tasks where `employee_id` = the employee; group tasks
-   they take part in are missing, while the shift-test button and the "my tasks" command include them. DECIDED: include them.
-6. 2 failed rows in `telegram_outbox` (status report 2026-10-31) — check which chat/why.
+- Done in session 2 (package `fixes_tests`): workers no longer run in the external process, staging copy, group tasks
+  in shift messages, shift-test 500, full-sync `pause`, failed-Telegram diagnosis (no internet on 2026-10-29).
+- Sheet secret: Apps Script already uses the `X-BIM-Sync-Secret` header. Remove `?secret=` in package `code_split`.
+- Next: package `code_split` (full sync incremental for log tables + lock, status tool in a fixed place with desktop
+  shortcut, page/API tests, split `main.py`, dead code, drop `?secret=`) — see `docs/handoff/SESSION_3.md`.
+- Then features (supervisor daily summary, team performance report, supervisor mobile page), redesign last.
+- Still ask: did the automatic 02:00 off-site backup (first run 2026-11-01) arrive on Telegram?
 
 ## Roadmap agreed with the owner (2026-10-31) — session-by-session plan in `docs/handoff/SESSION_<n>.md` — phases 1–2 were done in another conversation, not in this repo
 - Owner decision: all functional work first, redesign LAST (session 4). Session 3 = supervisor daily Telegram summary,
