@@ -653,6 +653,26 @@
    "status": 200,
    "type": "application/json"
   },
+  "boss /api/supervisor-summary/preview": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 404,
+   "type": "application/json"
+  },
+  "boss /api/supervisor-summary/settings": {
+   "shape": {
+    "enabled": "bool",
+    "managers": "bool",
+    "not_linked": [],
+    "people": [
+     "dict"
+    ],
+    "time": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
   "boss /api/sync/conflicts": {
    "shape": [],
    "status": 200,
@@ -1757,6 +1777,13 @@
     "shift_overdue_enabled",
     "shift_start_tasks_enabled",
     "start_date",
+    "supEnabled",
+    "supManagers",
+    "supPreview",
+    "supRows",
+    "supSummaryPanel",
+    "supTime",
+    "supUnlinked",
     "target_department",
     "target_shift"
    ],
@@ -2906,6 +2933,26 @@
    "status": 200,
    "type": "application/json"
   },
+  "dep /api/supervisor-summary/preview": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 404,
+   "type": "application/json"
+  },
+  "dep /api/supervisor-summary/settings": {
+   "shape": {
+    "enabled": "bool",
+    "managers": "bool",
+    "not_linked": [],
+    "people": [
+     "dict"
+    ],
+    "time": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
   "dep /api/sync/conflicts": {
    "shape": [],
    "status": 200,
@@ -4010,6 +4057,13 @@
     "shift_overdue_enabled",
     "shift_start_tasks_enabled",
     "start_date",
+    "supEnabled",
+    "supManagers",
+    "supPreview",
+    "supRows",
+    "supSummaryPanel",
+    "supTime",
+    "supUnlinked",
     "target_department",
     "target_shift"
    ],
@@ -4846,6 +4900,20 @@
    "type": "application/json"
   },
   "member /api/staff/{eid}/settings": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/supervisor-summary/preview": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/supervisor-summary/settings": {
    "shape": {
     "detail": "str"
    },
@@ -5885,6 +5953,20 @@
    "status": 403,
    "type": "application/json"
   },
+  "samer /api/supervisor-summary/preview": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/supervisor-summary/settings": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
   "samer /api/sync/conflicts": {
    "shape": {
     "detail": "str"
@@ -6687,6 +6769,8 @@
   "GET /api/shift-settings get_shift_settings",
   "GET /api/shift-test/employees shift_test_employees",
   "GET /api/staff/{eid}/settings staff_settings",
+  "GET /api/supervisor-summary/preview supervisor_summary_preview",
+  "GET /api/supervisor-summary/settings supervisor_summary_settings",
   "GET /api/sync/conflicts sync_conflicts",
   "GET /api/sync/pull sync_pull",
   "GET /api/sync/snapshot sync_snapshot",
@@ -6828,6 +6912,7 @@
   "PUT /api/security/backup-settings backup_settings",
   "PUT /api/security/backup-telegram backup_telegram",
   "PUT /api/staff/{eid}/settings set_staff",
+  "PUT /api/supervisor-summary/settings save_supervisor_summary_settings",
   "PUT /api/templates/{tid}/employee/{eid} override_template",
   "PUT /api/templates/{tid}/employee/{eid}/items/{key} override_item",
   "PUT /api/templates/{tid}/links link_template",

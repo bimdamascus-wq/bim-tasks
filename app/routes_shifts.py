@@ -2,6 +2,8 @@
 Split out of app/main.py (package code_split) with no change in behaviour; main.py imports this module."""
 from __future__ import annotations
 import calendar
+import json
+import re
 import secrets
 import time
 from datetime import datetime, timedelta
@@ -395,3 +397,44 @@ async def run_shift_test(req:Request):
     audit(c,req,u,'shift_test','employee',eid,after={'kind':kind,'sent':sent_count,'queued':queued_count})
     c.close()
     return {'ok':True,'sent':sent_count,'queued':queued_count}
+
+
+# ---------- daily Telegram summary for supervisors (app/supervisor_summary.py) ----------
+@app.get('/api/supervisor-summary/settings')
+def supervisor_summary_settings(req:Request):
+    need(req,'employees.edit'); c=connect()
+    try:
+        from . import supervisor_summary as ss
+        cfg=ss.settings(c); off=ss.off_users(cfg)
+        people=[{'user_id':r['user_id'],'name':r['full_name'] or r['name'],'role':r['role_code'],'team_size':len(ss.members(c,r)),
+                 'enabled':r['user_id'] not in off} for r in ss.recipients(c,True)]
+        unlinked=[r['full_name'] or r['username'] for r in c.execute("""SELECT u.full_name,u.username FROM users u JOIN roles r ON r.id=u.role_id
+            LEFT JOIN employees e ON e.id=u.employee_id WHERE r.code='supervisor' AND u.is_active=1 AND u.deleted_at IS NULL
+            AND (e.id IS NULL OR e.telegram_enabled<>1 OR e.telegram_chat_id IS NULL OR trim(e.telegram_chat_id)='')""")]
+        return {'enabled':ss._on(cfg['supervisor_summary_enabled']),'time':cfg['supervisor_summary_time'],
+                'managers':ss._on(cfg['supervisor_summary_managers']),'people':people,'not_linked':unlinked}
+    finally: c.close()
+
+@app.put('/api/supervisor-summary/settings')
+async def save_supervisor_summary_settings(req:Request):
+    u=need(req,'employees.edit'); d=await req.json(); c=connect()
+    try:
+        t=str(d.get('time','18:00')).strip()
+        if not re.fullmatch(r'([01]\d|2[0-3]):[0-5]\d',t): raise HTTPException(400,'الوقت بصيغة 18:00')
+        vals={'supervisor_summary_enabled':'1' if d.get('enabled') else '0','supervisor_summary_time':t,
+              'supervisor_summary_managers':'1' if d.get('managers') else '0',
+              'supervisor_summary_off':json.dumps(sorted({int(x) for x in d.get('off',[])}))}
+        for k,v in vals.items():
+            c.execute('INSERT INTO settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value',(k,v))
+        audit(c,req,u,'supervisor_summary_settings','system',None,after=vals); return {'ok':True}
+    finally: c.close()
+
+@app.get('/api/supervisor-summary/preview')
+def supervisor_summary_preview(req:Request, user_id:int=0):
+    need(req,'employees.edit'); c=connect()
+    try:
+        from . import supervisor_summary as ss
+        rec=next((r for r in ss.recipients(c,True) if r['user_id']==user_id),None)
+        if not rec: raise HTTPException(404,'الحساب غير موجود أو غير مربوط بـ Telegram')
+        return {'text':ss.build_text(c,rec) or 'لا يوجد موظفون في فريق هذا المسؤول — لن تُرسل رسالة.'}
+    finally: c.close()
