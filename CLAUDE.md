@@ -74,4 +74,19 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 3. Google Sheet sync sends its secret in the URL query (`?secret=`); move to the `X-BIM-Sync-Secret` header (needs the Apps Script changed too).
 4. Feature ideas offered, owner has not chosen yet: supervisor dashboard for their team, daily Telegram summary for supervisors,
    per-team performance report. Ask the owner what slows down their daily work before building anything.
+5. Shift-start Telegram message (`workers._send_open_tasks`) lists only tasks where `employee_id` = the employee; group tasks
+   they take part in are missing, while the shift-test button and the "my tasks" command include them. Ask the owner, likely fix.
+6. 2 failed rows in `telegram_outbox` (status report 2026-10-31) — check which chat/why.
+
+## Roadmap agreed with the owner (2026-10-31) — phases 1–2 were done in another conversation, not in this repo
+- Phase 3: rebuild pages in the new design. ~42 templates today → 8 pages: manager dashboard, tasks (list or board),
+  task detail, team, recurring, reports, settings, supervisor page (built mobile-first).
+  The design itself (from phases 1–2) is NOT in the repository yet — get it from the owner before starting.
+- Phase 4: split `app/main.py` (~2700 lines) into clear modules, delete dead code (e.g. the stacked CSS layers
+  bim-system-v510 / bim-theme-v63 / bim-v81 / premium-ui...), and run the tests automatically before every package
+  (`build_update.py` should refuse to build if `pytest` fails).
+- Recommended order (told the owner): one update per step, each tried with INSTALL_TO_TEST.cmd first:
+  A) the pending small fixes + pytest gate in build_update; B) more tests on the pages/APIs that phase 3 will replace;
+  C) split main.py with no behaviour change; D) new pages one or two at a time, old pages kept until the new ones are accepted;
+  supervisor mobile page early because it is new, not a replacement.
 
