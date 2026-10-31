@@ -30,6 +30,7 @@
 <script>window.companyBrand={{ company|tojson }};document.addEventListener('DOMContentLoaded',()=>{const c=window.companyBrand;document.querySelectorAll('.v510-brand-copy b').forEach(e=>e.textContent=c.name);document.querySelectorAll('.v510-brand-copy span').forEach(e=>e.textContent='إدارة العمل');if(c.logo)document.querySelectorAll('.v510-brand-mark img').forEach(e=>{e.src='/company-logo';e.alt=c.name})});</script>
 <script src="/static/record-management.js?v=6.3.0"></script>
 <link rel="stylesheet" href="/static/bim-theme-v63.css?v=6.3.1">
+<link rel="stylesheet" href="/static/bim-final.css?v=1">
 {% block scripts %}{% endblock %}
 </body>
 </html>

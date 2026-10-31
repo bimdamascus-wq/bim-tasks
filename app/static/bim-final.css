@@ -1,0 +1,71 @@
+/* BIM Tasks — final look, approved by the owner 2026-10-31 (mock-up option 1, "hadi"):
+   calm light pages, slate side menu, brand red only for the main action, LARGER and BOLDER text.
+   Loaded LAST on every page (base.html, login pages, admin home) so it wins over the older stacked layers.
+   Colors: slate #414B58 (menu), #2F3740 (active), red #D0121B, page #F3F4F6, text #1F252C, muted #4F5966. */
+
+/* ---------- base text: bigger and bolder ---------- */
+html[lang] body{font-size:17px!important;font-weight:500;line-height:1.65;color:#1F252C}
+html[lang] body h1{font-size:30px!important;font-weight:700!important;line-height:1.35}
+html[lang] body h2{font-size:22px!important;font-weight:700!important}
+html[lang] body h3{font-size:19px!important;font-weight:700!important}
+html[lang] body :is(p,li,dd,summary,.notice,.empty){font-size:17px!important}
+html[lang] body :is(td,.employee-task-title,a.employee-task-title){font-size:16.5px!important}
+html[lang] body th{font-size:15.5px!important;font-weight:700!important}
+html[lang] body label{font-size:15.5px!important;font-weight:600!important}
+html[lang] body :is(input,select,textarea){font-size:16.5px!important;font-weight:500!important;min-height:44px}
+html[lang] body :is(button,.btn,a.btn,.btn-sm,button.btn-sm){font-size:16px!important;font-weight:600!important;min-height:44px}
+html[lang] body :is(small,.meta,div.meta,.v6-today,.v510-state,.bim-origin){font-size:14.5px!important}
+html[lang] body :is(.status-pill,.prio-pill,.chip,.pill,.badge){font-size:14.5px!important;font-weight:600!important}
+html[lang] body :is(.bim-filter-toggle,.bim-column-label){font-size:15.5px!important}
+html[lang] body .page-title p{font-size:17px!important;color:#4F5966!important}
+/* the compact inline editors on /manage keep their row height but get readable text */
+html[lang] body :is(.task-input,.employee-select,select.st,select.pr,input.due,select.rem){font-size:15.5px!important}
+
+/* ---------- page and cards ---------- */
+html[lang] body:has(.v510-sidebar),html[lang] body:has(.page-shell){background:#F3F4F6!important}
+html[lang] body :is(.panel,.employee-card,.kpi,.modal-card,details.bim-section,.team-card){background:#FFFFFF!important;border:1px solid #E3E6EA!important;border-radius:12px!important;box-shadow:none!important}
+html[lang] body .kpi b,html[lang] body .kpi strong{font-size:32px!important;font-weight:700!important}
+html[lang] body .kpi span{font-size:15px!important;color:#4F5966!important}
+
+/* ---------- side menu: slate ---------- */
+html[lang] body aside.v510-sidebar{background:#414B58!important;border:0!important;color:#FFFFFF!important}
+html[lang] body aside.v510-sidebar .v510-brand-mark{background:#FFFFFF!important;border-radius:12px!important;padding:8px!important;display:inline-flex}
+html[lang] body aside.v510-sidebar .v510-nav-label{color:#D5DAE1!important;font-size:14px!important;font-weight:600!important}
+html[lang] body aside.v510-sidebar .v510-nav a,html[lang] body aside.v510-sidebar .v510-nav a *{color:#F1F3F5!important;font-size:17px!important;font-weight:600!important}
+html[lang] body aside.v510-sidebar .v510-nav a{min-height:44px;border-radius:8px!important;box-shadow:none!important}
+html[lang] body aside.v510-sidebar .v510-nav a:hover,html[lang] body aside.v510-sidebar .v510-nav a:focus-visible{background:#4D5866!important}
+html[lang] body aside.v510-sidebar .v510-nav a.active{background:#2F3740!important;box-shadow:inset -4px 0 #D0121B!important}
+html[lang] body aside.v510-sidebar .v510-nav a:focus-visible{outline:2px solid #FFFFFF!important;outline-offset:2px}
+html[lang] body aside.v510-sidebar :is(.v510-side-user,.v510-user-card,.v510-user-card *){color:#FFFFFF!important}
+html[lang] body aside.v510-sidebar .v510-logout{color:#FFFFFF!important;background:#2F3740!important;font-size:15px!important;min-height:44px;display:flex;align-items:center;justify-content:center}
+
+/* ---------- top bar ---------- */
+html[lang] body .v510-topbar{background:#FFFFFF!important;border-bottom:1px solid #E3E6EA!important}
+html[lang] body .v510-topbar .v510-page-name b{font-size:21px!important;font-weight:700!important}
+html[lang] body .v510-topbar .v510-page-name span{font-size:15px!important;color:#4F5966!important}
+
+/* ---------- main action in brand red ---------- */
+html[lang] body .page-title .toolbar>button:last-child:not(.btn-light){background:#D0121B!important;border-color:#D0121B!important;color:#FFFFFF!important}
+
+/* ---------- admin home (/): same palette ---------- */
+html[lang] body .app>nav.side{background:#414B58!important;border:0!important}
+html[lang] body .app>nav.side .logo img{background:#FFFFFF;border-radius:14px;padding:8px}
+html[lang] body .app>nav.side :is(a,button.mem){color:#F1F3F5!important;font-size:17px!important;font-weight:600!important}
+html[lang] body .app>nav.side :is(.ico,.n){color:#D5DAE1!important;font-size:15px!important}
+html[lang] body .app>nav.side .n.r{color:#FFB3B7!important}
+html[lang] body .app>nav.side h6{color:#D5DAE1!important;font-size:14px!important}
+html[lang] body .app>nav.side :is(a,button.mem):hover{background:#4D5866!important}
+html[lang] body .app>nav.side .on{background:#2F3740!important;color:#FFFFFF!important;box-shadow:inset -4px 0 #D0121B!important}
+html[lang] body .app>nav.side .out{color:#D5DAE1!important}
+html[lang] body .app{background:#F3F4F6}
+html[lang] body .app>.main{font-size:17px}
+
+/* ---------- login ---------- */
+html[lang] body .login-panel{font-size:17px!important}
+
+/* ---------- phones ---------- */
+@media (max-width:700px){
+  html[lang] body h1{font-size:25px!important}
+  html[lang] body h2{font-size:20px!important}
+}
+html[lang] body aside.v510-sidebar .v510-avatar{color:#414B58!important;background:#FFFFFF!important}
