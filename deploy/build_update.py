@@ -13,7 +13,7 @@ import argparse, json, shutil, subprocess, sys, zipfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
-NOT_SHIPPED = ('tests/', 'deploy/', 'dist/', '.github/', 'CLAUDE.md', 'README.md', '.gitignore')
+NOT_SHIPPED = ('tests/', 'deploy/', 'docs/', 'dist/', '.github/', 'CLAUDE.md', 'README.md', '.gitignore')
 
 
 def git(*args):

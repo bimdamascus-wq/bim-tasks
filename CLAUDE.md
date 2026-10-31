@@ -75,10 +75,10 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 4. Feature ideas offered, owner has not chosen yet: supervisor dashboard for their team, daily Telegram summary for supervisors,
    per-team performance report. Ask the owner what slows down their daily work before building anything.
 5. Shift-start Telegram message (`workers._send_open_tasks`) lists only tasks where `employee_id` = the employee; group tasks
-   they take part in are missing, while the shift-test button and the "my tasks" command include them. Ask the owner, likely fix.
+   they take part in are missing, while the shift-test button and the "my tasks" command include them. DECIDED: include them.
 6. 2 failed rows in `telegram_outbox` (status report 2026-10-31) — check which chat/why.
 
-## Roadmap agreed with the owner (2026-10-31) — phases 1–2 were done in another conversation, not in this repo
+## Roadmap agreed with the owner (2026-10-31) — session-by-session plan in `docs/handoff/SESSION_<n>.md` — phases 1–2 were done in another conversation, not in this repo
 - Phase 3: rebuild pages in the new design. ~42 templates today → 8 pages: manager dashboard, tasks (list or board),
   task detail, team, recurring, reports, settings, supervisor page (built mobile-first).
   The design itself (from phases 1–2) is NOT in the repository yet — get it from the owner before starting.
