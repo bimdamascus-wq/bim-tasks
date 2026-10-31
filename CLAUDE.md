@@ -45,7 +45,7 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 ## Deployment log
 - 2026-10-31: security update installed on the server with `deploy/security_update` (v2). Repository `main` matches the server code.
 - 2026-10-31: update `telegram_backup` (branch `next-update`, package built with `deploy/build_update.py`) given to the owner.
-  NOT yet confirmed installed. Ask the owner first; if it succeeded, merge `next-update` into `main` and log it here.
+  Owner confirmed it is installed; merged into `main`. Still ask whether the daily backup file arrives on Telegram.
 
 ## Open items (agreed with the owner, not started)
 1. `RUN_EXTERNAL.cmd` never sets `BIM_GATEWAY=external` / `BIM_COOKIE_SECURE=1`, so the external process also starts
