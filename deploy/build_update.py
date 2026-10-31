@@ -7,7 +7,7 @@ BASE_REF is the commit currently installed on the server (normally `main`).
 Output: dist/BIM_Update_<NAME>.zip containing deploy/installer/* + update.json + payload/ (+ wheels/).
 The payload always carries app/release.json with the commit; the installer reads it back from
 /api/release-health on every port, so it proves the new code runs with the right gateway even without --check.
-INSTALL_UPDATE.cmd installs on the real system, INSTALL_TO_TEST.cmd on the staging copy (C:\BIM_Tasks_Test).
+INSTALL_UPDATE.cmd installs on the real system, INSTALL_TO_TEST.cmd on the staging copy (C:\\BIM_Tasks_Test).
 """
 import argparse, json, shutil, subprocess, sys, zipfile
 from pathlib import Path
