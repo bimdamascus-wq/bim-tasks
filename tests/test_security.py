@@ -217,9 +217,13 @@ def _last_code(env):
 
 def test_external_admin_login_needs_telegram_code(env):
     lan = client(env, 'boss')
+    phone = client(env, 'boss', external=True)  # a session opened before the confirmation was switched on
+    assert phone.get('/api/me').status_code == 200
     ch = lan.post('/api/me/mfa/start', json={'action': 'enable'}).json()['challenge']
     assert env['sent'][-1][0] == '111'
     assert lan.post('/api/me/mfa/confirm', json={'challenge': ch, 'code': _last_code(env)}).json()['enabled'] is True
+    assert phone.get('/api/me').status_code == 401  # old session closed
+    assert lan.get('/api/me').status_code == 200    # the session that enabled it stays
 
     ext = env['TestClient'](env['m'].app, base_url='https://testserver', headers={'origin': 'https://testserver', 'cf-ray': 't'})
     r = ext.post('/login', data={'username': 'boss', 'password': ADMIN_PW}, follow_redirects=False)

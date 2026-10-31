@@ -422,6 +422,10 @@ def register(app, m):
             c.execute('''INSERT INTO user_mfa(user_id,enabled,enabled_at,updated_at) VALUES(?,?,CASE WHEN ? THEN CURRENT_TIMESTAMP END,CURRENT_TIMESTAMP)
                 ON CONFLICT(user_id) DO UPDATE SET enabled=excluded.enabled,enabled_at=COALESCE(excluded.enabled_at,user_mfa.enabled_at),updated_at=CURRENT_TIMESTAMP''',
                       (u['user_id'], int(on), int(on)))
+            if on:
+                # Sessions opened before the confirmation existed must not stay valid: close every other session.
+                c.execute('UPDATE login_sessions SET revoked_at=CURRENT_TIMESTAMP WHERE user_id=? AND revoked_at IS NULL AND id<>?',
+                          (u['user_id'], req.cookies.get(m.COOKIE)))
             m.audit(c, req, u, 'mfa_enable' if on else 'mfa_disable', 'user', u['user_id'], after={'via': 'telegram_code'})
             return {'ok': True, 'enabled': on}
         finally:
