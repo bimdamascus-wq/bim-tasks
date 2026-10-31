@@ -136,7 +136,7 @@ def full_sync_report():
         rows = sum((r.get('counts') or {}).values())
         sent = sum((r.get('sent') or {}).values())
         print(f"  {p.name}: status={r.get('status')} started={r.get('started_at')} finished={r.get('finished_at', 'NOT FINISHED')}"
-              f" mode={r.get('mode', 'full(old)')} rows={rows} uploaded={sent}")
+              f" mode={r.get('mode', 'full(old)')} rows={rows} uploaded={sent} unchanged={sum((r.get('unchanged') or {}).values())}")
         for e in (r.get('errors') or [])[:3]:
             print('      error:', clean_error(e))
     st = root / 'sync_full_logs' / 'incremental_state.json'

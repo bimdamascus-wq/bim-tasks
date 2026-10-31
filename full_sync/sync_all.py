@@ -5,6 +5,8 @@ Never sends secrets, passwords, sessions, IPs or message credentials.
 Faster runs (package code_split):
 - Append-only log tables (INCREMENTAL) send only rows with id > the last id the Sheet accepted. The last id is kept
   in sync_full_logs/incremental_state.json and written only after the whole table went through.
+- Every other table sends only rows whose content changed since the Sheet last accepted the table (a short hash per
+  row, keyed by the primary key, kept in the same state file). Rows deleted in the app stay in the Sheet, as before.
 - Once a day (first run after 03:00, or `--full`) every table is sent in full, as before.
 - A lock file stops overlapping runs: a second run exits at once with code 0. A lock older than 30 min is ignored.
 The receiver upserts by (table, source key), so sending fewer rows leaves the Sheet with the same data.
@@ -69,12 +71,24 @@ def call(url, secret, body):
   raw=response.read(200000).decode('utf-8','replace')
  return json.loads(raw)
 
+def pk_cols(conn, name):
+ return [r['name'] for r in sorted(conn.execute('PRAGMA table_info("'+name+'")'),key=lambda r:r['pk']) if r['pk']]
+
+def row_key(record, pk):
+ if not pk or any(c not in record for c in pk):return None
+ return '|'.join(str(record[c]) for c in pk)
+
+def row_hash(record):
+ return hashlib.sha1(json.dumps(record,ensure_ascii=False,sort_keys=True,default=str).encode('utf-8')).hexdigest()[:16]
+
 def read_state():
  try:
   st=json.loads((LOGROOT/'incremental_state.json').read_text(encoding='utf-8'))
-  if isinstance(st,dict) and isinstance(st.get('last_id'),dict):return st
+  if isinstance(st,dict) and isinstance(st.get('last_id'),dict):
+   if not isinstance(st.get('hashes'),dict):st['hashes']={}
+   return st
  except Exception:pass
- return {'last_id':{},'last_full_date':''}
+ return {'last_id':{},'last_full_date':'','hashes':{}}
 
 def write_state(st):
  tmp=LOGROOT/'incremental_state.json.tmp'
@@ -121,7 +135,7 @@ def run(force_full=False):
  state=read_state()
  full=force_full or full_due(state,now)
  report={'started_at':datetime.now(timezone.utc).isoformat(),'source':str(DB),'mode':'full' if full else 'incremental',
-         'counts':{},'sent':{},'errors':[], 'status':'not_started'}
+         'counts':{},'unchanged':{},'sent':{},'errors':[], 'status':'not_started'}
  env={}
  envfile=ROOT/'.env'
  if envfile.exists():
@@ -132,11 +146,24 @@ def run(force_full=False):
  secret=(os.environ.get('BIM_FULL_SYNC_SECRET') or env.get('BIM_FULL_SYNC_SECRET') or env.get('BIM_SYNC_SECRET') or '').strip()
  conn=sqlite3.connect('file:'+DB.as_posix()+'?mode=ro',uri=True)
  conn.row_factory=sqlite3.Row
- mirror={}
+ mirror={};new_hashes={}
  try:
   for table in ALLOW:
    after=None if full or table not in INCREMENTAL else int(state['last_id'].get(table,0))
    data=get_rows(conn,table,after)
+   if table not in INCREMENTAL:
+    pk=pk_cols(conn,table);keyed={}
+    for r in data:
+     k=row_key(r,pk)
+     if k is None:keyed=None;break
+     keyed[k]=row_hash(r)
+    if keyed is not None:
+     new_hashes[table]=keyed
+     if not full:
+      old=state['hashes'].get(table,{})
+      before=len(data)
+      data=[r for r in data if old.get(row_key(r,pk))!=keyed[row_key(r,pk)]]
+      report['unchanged'][table]=before-len(data)
    mirror[table]=data;report['counts'][table]=len(data)
  finally:conn.close()
  # Make immutable local report for verifying data even when remote receiver is not ready.
@@ -160,6 +187,9 @@ def run(force_full=False):
      if not (response.get('ok') is True and response.get('protocol')=='bim_fullsync_v1' and int(response.get('accepted',-1))==len(subset)):
       raise RuntimeError(table+' batch '+str(i)+' rejected: '+str(response)[:500])
      report['sent'][table]+=len(subset)
+    if table in new_hashes:
+     # The whole table went through: remember what the Sheet now holds (drops ids deleted in the app).
+     state['hashes'][table]=new_hashes[table];write_state(state)
     if table in INCREMENTAL and records:
      # The whole table went through: next run starts after its highest id.
      state['last_id'][table]=max(int(state['last_id'].get(table,0)),max(int(r['id']) for r in records))

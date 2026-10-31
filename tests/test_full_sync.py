@@ -122,3 +122,45 @@ def test_lock_released_after_error(sync):
     with pytest.raises(RuntimeError):
         mod.main([])
     assert not (root / 'sync_full_logs' / 'sync.lock').exists()
+
+
+def test_only_changed_rows_of_other_tables(sync):
+    mod, sheet, root = sync
+    assert mod.main([]) == 0                                  # first run: full
+    sheet['calls'].clear()
+    assert mod.main([]) == 0                                  # nothing changed
+    assert sent_rows(sheet, 'tasks') == 0 and sent_rows(sheet, 'employees') == 0
+    assert [b for b in sheet['calls'] if b['action'] == 'bim_fullsync_batch'] == []
+    c = sqlite3.connect(root / 'data' / 'bim_tasks.db')
+    c.execute("INSERT INTO tasks(task_code,title,employee_id) VALUES('T-2','ثانية',1)")
+    c.execute("UPDATE employees SET name='أحمد علي' WHERE id=1")
+    c.commit(); c.close()
+    sheet['calls'].clear()
+    assert mod.main([]) == 0
+    assert sent_rows(sheet, 'tasks') == 1 and sheet['rows'][('tasks', 2)]['title'] == 'ثانية'
+    assert sent_rows(sheet, 'employees') == 1 and sheet['rows'][('employees', 1)]['name'] == 'أحمد علي'
+    summary = json.loads(sorted((root / 'sync_full_logs').glob('SUMMARY_*.json'))[-1].read_text(encoding='utf-8'))
+    assert summary['unchanged']['tasks'] == 1
+
+
+def test_changed_rows_resent_after_failure(sync):
+    mod, sheet, root = sync
+    assert mod.main([]) == 0
+    c = sqlite3.connect(root / 'data' / 'bim_tasks.db')
+    c.execute("UPDATE tasks SET title='بعد الفشل'"); c.commit(); c.close()
+    sheet['fail'] = 'tasks'
+    assert mod.main([]) == 2
+    sheet['fail'] = None; sheet['calls'].clear()
+    assert mod.main([]) == 0
+    assert sent_rows(sheet, 'tasks') == 1 and sheet['rows'][('tasks', 1)]['title'] == 'بعد الفشل'
+
+
+def test_upgrade_from_state_without_hashes_sends_everything_once(sync):
+    mod, sheet, root = sync
+    assert mod.main([]) == 0
+    st_file = root / 'sync_full_logs' / 'incremental_state.json'
+    st = json.loads(st_file.read_text(encoding='utf-8')); st.pop('hashes')
+    st_file.write_text(json.dumps(st), encoding='utf-8')     # state written by package code_split
+    sheet['calls'].clear()
+    assert mod.main([]) == 0
+    assert sent_rows(sheet, 'tasks') == 1 and sent_rows(sheet, 'task_events') == 0
