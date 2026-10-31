@@ -135,6 +135,11 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   the lock it effectively runs every 10 min. Proposal (owner to decide): send only rows whose content hash changed.
   `?secret=` still not seen (header 16:44). First supervisor summary due 18:00 — ask tomorrow if it arrived.
 
+- 2026-10-31 evening: owner chose mock-up option 1 (calm, side menu) but with BIGGER and BOLDER text (mock-up updated:
+  sizes x1.2, base 17px/500). Package `sync_hash` (commit b14dee6, base c94b3e6) given — NOT yet confirmed: row-hash sync
+  for non-log tables, status report shows `unchanged=`, installer shortcut fix. `?secret=` still NOT removed (waiting a
+  full working day of reports). After install a run should take seconds and upload only changed rows.
+
 ## Code layout (since package `code_split`)
 - `app/main.py`: settings, app object, middleware, shared helpers (auth/session, Telegram task texts, Sheet push).
   Route modules `app/routes_{auth,pages,telegram,shifts,reports,employees,tasks,recurring,users,backup,sync}.py`
@@ -154,7 +159,9 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   working day still shows "?secret= ... not seen yet" (was deferred from `code_split`).
 - `code_split` installed and merged. Next report: check sync runs are mode=incremental and short; one full after 03:00.
 - `supervisor_tools` installed and merged. Ask: did supervisors get the 18:00 summary? any complaints?
-- Owner (2026-10-31): the small update (row-hash sync, drop `?secret=`, shortcut fix) must ship SEPARATELY from the redesign.
+- Owner (2026-10-31): small updates ship SEPARATELY from the redesign. `sync_hash` waiting for install + report.
+- Redesign: option 1 chosen, larger/bolder type. Next: mock up the other pages (tasks, task detail, team, recurring,
+  reports, settings) in that style for approval, then build page by page next to the old ones.
 - Redesign mock-ups for approval: https://claude.ai/artifact/CnuJyxwEvGNBDeiTQdDCwY (3 options: 1 calm light + side menu,
   2 dark monitoring room, 3 big cards + top menu; each a manager dashboard + a phone screen; sample data). Waiting for
   the owner's choice. Next: drop `?secret=` (if still unseen) — see `docs/handoff/SESSION_5.md`.
