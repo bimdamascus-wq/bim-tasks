@@ -10,7 +10,7 @@ File format (.bimbak):
   nonce = nonce_prefix + counter(4); AAD = MAGIC + counter + final flag,
   so reordered, removed or truncated chunks fail to decrypt.
 """
-import hashlib, json, os, secrets, shutil, sqlite3, struct, tempfile, zipfile
+import hashlib, json, os, re, secrets, shutil, sqlite3, struct, tempfile, zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -159,20 +159,15 @@ def list_backups(folder: Path):
     return rows
 
 
-def run(dest_dir: str, passphrase: str, keep: int = 30, db: Path | None = None) -> dict:
-    """Create, verify and rotate one off-site backup. Raises BackupError with an Arabic reason."""
-    if not dest_dir:
-        raise BackupError('لم يُحدد مجلد النسخ خارج السيرفر')
-    dest = Path(dest_dir)
-    if not dest.is_dir():
-        raise BackupError('مجلد النسخ خارج السيرفر غير موجود أو غير متصل: ' + str(dest))
+def create(out_dir: Path, passphrase: str, db: Path | None = None) -> tuple[Path, dict]:
+    """Build, encrypt and verify one backup file inside out_dir. Raises BackupError with an Arabic reason."""
     db = db or (DATA / 'bim_tasks.db')
     if not db.exists():
         raise BackupError('قاعدة البيانات غير موجودة')
     _key(passphrase, b'0' * 16)  # validate passphrase length before doing any work
     stamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    final = dest / f'{PREFIX}{stamp}{SUFFIX}'
-    partial = dest / f'.{PREFIX}{stamp}.partial'
+    final = out_dir / f'{PREFIX}{stamp}{SUFFIX}'
+    partial = out_dir / f'.{PREFIX}{stamp}.partial'
     with tempfile.TemporaryDirectory(prefix='bim_backup_') as tmp:
         archive, manifest = build_archive(Path(tmp), db)
         try:
@@ -182,14 +177,55 @@ def run(dest_dir: str, passphrase: str, keep: int = 30, db: Path | None = None) 
         finally:
             if partial.exists():
                 partial.unlink()
+    return final, manifest
+
+
+def run(dest_dir: str, passphrase: str, keep: int = 30, db: Path | None = None) -> dict:
+    """Create, verify and rotate one off-site backup in a folder."""
+    if not dest_dir:
+        raise BackupError('لم يُحدد مجلد النسخ خارج السيرفر')
+    dest = Path(dest_dir)
+    if not dest.is_dir():
+        raise BackupError('مجلد النسخ خارج السيرفر غير موجود أو غير متصل: ' + str(dest))
+    final, manifest = create(dest, passphrase, db)
     removed = []
     for old in list_backups(dest)[max(int(keep), 1):]:
         try:
             Path(old['path']).unlink(); removed.append(old['name'])
         except OSError:
             pass
-    return {'ok': True, 'file': final.name, 'folder': str(dest), 'size': final.stat().st_size,
+    return {'ok': True, 'file': final.name, 'path': str(final), 'folder': str(dest), 'size': final.stat().st_size,
             'counts': manifest['counts'], 'removed': removed}
+
+
+def split(path: Path, part_size: int) -> list[Path]:
+    """Cut a backup into NAME.bimbak.part1of3, part2of3... so each fits a Telegram upload."""
+    size = path.stat().st_size
+    if size <= part_size:
+        return [path]
+    count = -(-size // part_size)
+    parts = []
+    with open(path, 'rb') as f:
+        for i in range(1, count + 1):
+            part = path.with_name(f'{path.name}.part{i}of{count}')
+            part.write_bytes(f.read(part_size))
+            parts.append(part)
+    return parts
+
+
+def join_parts(any_part: Path, out: Path) -> Path:
+    """Rebuild a backup from its parts (all in the same folder, e.g. Downloads)."""
+    m = re.fullmatch(r'(.+)\.part(\d+)of(\d+)', any_part.name)
+    if not m:
+        return any_part
+    base, count = m.group(1), int(m.group(3))
+    missing = [i for i in range(1, count + 1) if not (any_part.parent / f'{base}.part{i}of{count}').is_file()]
+    if missing:
+        raise BackupError('أجزاء ناقصة من النسخة: ' + '، '.join(str(i) for i in missing) + f' من {count}. نزّلها كلها لنفس المجلد')
+    with open(out, 'wb') as w:
+        for i in range(1, count + 1):
+            w.write((any_part.parent / f'{base}.part{i}of{count}').read_bytes())
+    return out
 
 
 def restore_into(backup: Path, passphrase: str, root: Path = ROOT, with_env: bool = False) -> dict:

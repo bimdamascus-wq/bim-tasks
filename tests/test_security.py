@@ -295,3 +295,33 @@ def test_offsite_backup_restore_roundtrip(env, tmp_path):
 def test_backup_folder_inside_server_is_refused(env):
     boss = client(env, 'boss')
     assert boss.put('/api/security/backup-settings', json={'folder': str(env['root'] / 'data'), 'hour': 2, 'keep': 5}).status_code == 400
+
+
+def test_backup_to_telegram_in_parts(env, tmp_path):
+    from app import backup_offsite, security_center, telegram_media
+    boss = client(env, 'boss')
+    assert boss.put('/api/security/backup-settings', json={'folder': '', 'hour': 2, 'keep': 5}).status_code == 200
+    assert boss.put('/api/security/backup-telegram', json={'enabled': True}).status_code == 200
+    dep = client(env, 'dep')
+    assert dep.put('/api/security/backup-telegram', json={'enabled': False}).status_code == 403
+    uploads = []
+    saved_upload, saved_part = telegram_media._curl_upload, security_center.TELEGRAM_PART
+    def fake_upload(method, chat, path, field, caption=''):
+        copy = tmp_path / path.name; copy.write_bytes(path.read_bytes())
+        uploads.append((chat, copy, caption)); return {'ok': True}
+    telegram_media._curl_upload, security_center.TELEGRAM_PART = fake_upload, 4000
+    try:
+        r = boss.post('/api/security/backup-now')
+    finally:
+        telegram_media._curl_upload, security_center.TELEGRAM_PART = saved_upload, saved_part
+    assert r.status_code == 200, r.text
+    assert r.json()['telegram']['parts'] > 1 and {u[0] for u in uploads} == {'111'}
+    first = uploads[0][1]
+    assert first.name.endswith('of' + str(len(uploads)))
+    joined = backup_offsite.join_parts(first, tmp_path / 'joined.bimbak')
+    assert backup_offsite.verify(joined, os.environ['BIM_BACKUP_PASSPHRASE'])['counts']['users'] >= 5
+    uploads[1][1].unlink()
+    with pytest.raises(backup_offsite.BackupError):
+        backup_offsite.join_parts(first, tmp_path / 'again.bimbak')
+    checks = {c['key']: c for c in boss.get('/api/security/overview').json()['checks']}
+    assert checks['backup_folder']['ok'] and checks['backup_fresh']['ok']

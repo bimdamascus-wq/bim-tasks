@@ -17,6 +17,13 @@ The owner does not run git on the server. Every change ships as a self-installin
 `deploy/<update>/` (installer) + `payload/` (changed files, same paths as the server root) + `wheels/` for new dependencies.
 The owner extracts it on the server and runs the `.cmd` as administrator.
 
+Build every update with the generic installer (`deploy/installer/`), never a hand-written one:
+```
+python deploy/build_update.py <name> main "<Arabic title>" --check <route that only the new code has>
+```
+It ships the git diff between `main` (= what the server runs) and HEAD, refuses to run twice, and rolls back on failure.
+Work on a branch; merge into `main` only after the owner confirms the install succeeded.
+
 Lessons from the first install (2026-10-31), keep them in every installer:
 - Use the real task names above; fall back to `RUN_LAN.cmd` / `RUN_EXTERNAL.cmd` if a task is missing.
 - Stop by matching `uvicorn` + `app.main:app` in the process command line, not the root path (the venv launcher spawns a child python without it). Wait until ports 8797/8798 are free.

@@ -176,6 +176,7 @@ def backup_config(c):
         r = c.execute('SELECT value FROM settings WHERE key=?', (k,)).fetchone()
         return (r['value'] if r else None) or d
     return {'folder': s('backup.offsite_dir', os.environ.get('BIM_OFFSITE_DIR', '')).strip(),
+            'telegram': s('backup.telegram', '0') == '1',
             'hour': int(s('backup.offsite_hour', '2')), 'keep': int(s('backup.offsite_keep', '30')),
             'passphrase_set': len(os.environ.get('BIM_BACKUP_PASSPHRASE', '')) >= 16,
             'last': json.loads(s('backup.offsite_last', '{}'))}
@@ -193,11 +194,10 @@ def run_offsite_backup(actor=None, gateway='lan', ip='server'):
         at = datetime.now().isoformat(timespec='seconds')
         identity = actor or {'user_id': None, 'username': 'النسخ التلقائي اليومي'}
         try:
-            result = backup_offsite.run(cfg['folder'], os.environ.get('BIM_BACKUP_PASSPHRASE', ''), cfg['keep'])
+            result = _make_and_deliver(c, cfg)
             result['at'] = at
-            prev_ok = cfg['last'].get('last_ok_at')
             _store_last(c, {**result, 'last_ok_at': at, 'last_attempt_at': at})
-            append_audit(c, _audit_row(identity, 'offsite_backup', {'file': result['file'], 'size': result['size']}, gateway, ip))
+            append_audit(c, _audit_row(identity, 'offsite_backup', {'file': result['file'], 'size': result['size'], 'kind': result['where']}, gateway, ip))
             return result
         except Exception as e:
             msg = str(e) if isinstance(e, backup_offsite.BackupError) else f'{type(e).__name__}: {e}'
@@ -207,6 +207,62 @@ def run_offsite_backup(actor=None, gateway='lan', ip='server'):
             raise
     finally:
         c.close()
+
+
+TELEGRAM_PART = 45 * 1024 * 1024  # bots may upload up to 50 MB per file
+
+
+def admin_chats(c):
+    return [r[0] for r in c.execute('''SELECT DISTINCT e.telegram_chat_id FROM users u JOIN roles r ON r.id=u.role_id JOIN employees e ON e.id=u.employee_id
+        WHERE r.code='admin' AND u.is_active=1 AND u.deleted_at IS NULL AND e.is_active=1
+        AND e.telegram_chat_id IS NOT NULL AND trim(e.telegram_chat_id)<>'' ''')]
+
+
+def _make_and_deliver(c, cfg):
+    passphrase = os.environ.get('BIM_BACKUP_PASSPHRASE', '')
+    if not cfg['folder'] and not cfg['telegram']:
+        raise backup_offsite.BackupError('لم تُحدد وجهة للنسخ: فعّل Telegram أو اختر مجلداً')
+    import tempfile
+    with tempfile.TemporaryDirectory(prefix='bim_offsite_') as tmp:
+        if cfg['folder']:
+            result = backup_offsite.run(cfg['folder'], passphrase, cfg['keep'])
+            path = Path(result['path'])
+        else:
+            path, manifest = backup_offsite.create(Path(tmp), passphrase)
+            result = {'ok': True, 'file': path.name, 'size': path.stat().st_size, 'counts': manifest['counts']}
+        where = ['folder'] if cfg['folder'] else []
+        if cfg['telegram']:
+            result['telegram'] = _send_to_telegram(c, path, Path(tmp), result['counts'])
+            where.append('telegram')
+        result['where'] = '+'.join(where)
+        result.pop('path', None)
+    return result
+
+
+def _send_to_telegram(c, path, tmp, counts):
+    chats = admin_chats(c)
+    if not chats:
+        raise backup_offsite.BackupError('ما في حساب مدير مربوط على Telegram لاستلام النسخة')
+    work = tmp / path.name
+    if work != path:
+        import shutil
+        shutil.copy2(path, work)
+    parts = backup_offsite.split(work, TELEGRAM_PART)
+    from .telegram_media import _curl_upload
+    sent, errors = 0, []
+    for chat in chats:
+        ok = True
+        for i, part in enumerate(parts, 1):
+            caption = (f'🗄️ نسخة BIM Tasks الاحتياطية — {datetime.now():%Y-%m-%d %H:%M}\n'
+                       f'الجزء {i} من {len(parts)} · مهام {counts["tasks"]} · موظفون {counts["employees"]}\n'
+                       'مشفّرة. للاسترجاع: نزّل كل الأجزاء لمجلد واحد واسحب الأول على RESTORE_BACKUP.cmd')
+            r = _curl_upload('sendDocument', str(chat), part, 'document', caption)
+            if not r.get('ok'):
+                ok = False; errors.append(str(r.get('error'))[:200]); break
+        sent += ok
+    if not sent:
+        raise backup_offsite.BackupError('تعذر إرسال النسخة على Telegram: ' + '; '.join(errors))
+    return {'sent_to': sent, 'parts': len(parts), 'errors': errors}
 
 
 def _audit_row(u, action, after, gateway, ip):
@@ -231,7 +287,7 @@ def process_offsite_backup():
     c = connect()
     try:
         cfg = backup_config(c)
-        if not cfg['folder']:
+        if not cfg['folder'] and not cfg['telegram']:
             return
         now = datetime.now()
         last = cfg['last']
@@ -282,7 +338,9 @@ def review(m, c):
         ('mfa', all(r['mfa'] for r in managers) and bool(managers), 'تأكيد الدخول من الخارج مفعّل لكل حسابات الإدارة',
          'غير مفعّل لـ: ' + '، '.join(r['username'] for r in managers if not r['mfa']) if any(not r['mfa'] for r in managers) else 'مفعّل.'),
         ('admin_name', not weak_admin, 'لا يوجد حساب باسم admin الافتراضي', 'غيّر اسم الدخول admin لاسم غير متوقع.' if weak_admin else 'جيد.'),
-        ('backup_folder', bool(cfg['folder']), 'مجلد نسخ خارج السيرفر محدد', cfg['folder'] or 'غير محدد'),
+        ('backup_folder', bool(cfg['folder'] or (cfg['telegram'] and admin_chats(c))), 'وجهة النسخ خارج السيرفر محددة',
+         '، '.join(x for x in (('Telegram (' + str(len(admin_chats(c))) + ' مدير)') if cfg['telegram'] else '', cfg['folder']) if x)
+         or 'غير محددة: فعّل الإرسال على Telegram'),
         ('backup_key', cfg['passphrase_set'], 'كلمة سر تشفير النسخ مضبوطة (BIM_BACKUP_PASSPHRASE)', 'مضبوطة — احتفظ بنسخة ورقية منها خارج الشركة.' if cfg['passphrase_set'] else 'غير مضبوطة أو أقل من 16 حرفاً؛ لن تُنشأ نسخ خارجية بدونها.'),
         ('backup_fresh', fresh, 'آخر نسخة خارج السيرفر خلال 26 ساعة', last_ok or 'لا توجد نسخة ناجحة بعد'),
     ]
@@ -476,6 +534,19 @@ def register(app, m):
                 c.execute('INSERT INTO settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value', (k, v))
             m.audit(c, req, u, 'backup_settings', 'system', None, after={'folder': folder, 'hour': hour, 'keep': keep})
             return {'ok': True}
+        finally:
+            c.close()
+
+    @app.put('/api/security/backup-telegram')
+    async def backup_telegram(req: Request):
+        u = m.need(req, 'security.manage'); d = await req.json(); on = bool(d.get('enabled'))
+        c = connect()
+        try:
+            if on and not admin_chats(c):
+                raise HTTPException(400, 'اربط حساب المدير بموظف مربوط على Telegram أولاً')
+            c.execute("INSERT INTO settings(key,value) VALUES('backup.telegram',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", ('1' if on else '0',))
+            m.audit(c, req, u, 'backup_settings', 'system', None, after={'kind': 'telegram', 'is_active': on})
+            return {'ok': True, 'enabled': on}
         finally:
             c.close()
 

@@ -84,6 +84,13 @@ def main():
         path = Path(rows[int(pick) - 1]['path'])
     if not path.is_file():
         sys.exit('الملف غير موجود: ' + str(path))
+    if '.part' in path.name:  # downloaded from Telegram in several parts
+        import tempfile
+        joined = Path(tempfile.mkdtemp(prefix='bim_join_')) / path.name.split('.part')[0]
+        try:
+            path = backup_offsite.join_parts(path, joined)
+        except backup_offsite.BackupError as e:
+            sys.exit('❌ ' + str(e))
 
     passphrase = os.environ.get('BIM_BACKUP_PASSPHRASE') or getpass.getpass('كلمة سر النسخ (BIM_BACKUP_PASSPHRASE): ')
     print('جاري فك التشفير والتحقق…')
