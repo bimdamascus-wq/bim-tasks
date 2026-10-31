@@ -58,7 +58,7 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 - 2026-10-31: update `gateway_staging` installed 11:07 (status report: 8797 lan+workers, 8798 external no workers,
   8799 test copy, all on commit 22e9f34). `main` fast-forwarded to 22e9f34 = server code.
   Off-site backup to Telegram ran OK at 10:33 (manual, 1 part); first automatic run is 02:00 — ask whether it arrived.
-- Status tool: `deploy/check_status/` (zip it, owner double-clicks `CHECK_STATUS.cmd`, pastes the report). Read-only, no secrets.
+- Status tool: `tools/check_status/` (shipped to the server from package `code_split` on; installer puts a desktop shortcut "تقرير حالة BIM" that runs as administrator; before that: zip it, owner runs `CHECK_STATUS.cmd`, pastes the report). Read-only, no secrets.
   On Windows each uvicorn shows twice (venv launcher + Python313 child) — normal. Task "Last Result 267009" = still running — normal.
 - Pending on the branch, not shipped yet: fix for `/api/shift-test` (500, seen in server-lan.err.log).
 - Pending on the branch: `full_sync/RUN_FULL_SYNC.cmd` ended with `pause`, so the scheduled run (SYSTEM, no one to press a key)

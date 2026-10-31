@@ -172,6 +172,20 @@ foreach ($g in $Gates) {
     Write-Host "   البوابة $p ($($g.Gateway)): تعمل بالنسخة الجديدة $($U.commit)" -ForegroundColor Green
 }
 
+# Status report tool lives in tools\check_status; give the owner a desktop shortcut to it (never fatal).
+$Tool = "$Root\tools\check_status\CHECK_STATUS.cmd"
+if (-not $Test -and (Test-Path $Tool)) {
+    try {
+        $lnk = Join-Path ([Environment]::GetFolderPath('CommonDesktopDirectory')) 'تقرير حالة BIM.lnk'
+        $sc = (New-Object -ComObject WScript.Shell).CreateShortcut($lnk)
+        $sc.TargetPath = $Tool; $sc.WorkingDirectory = Split-Path $Tool
+        $sc.Description = 'BIM Tasks status report (read only)'; $sc.Save()
+        # Byte 0x15 bit 0x20 = "Run as administrator" in the shortcut's advanced properties.
+        $b = [IO.File]::ReadAllBytes($lnk); $b[0x15] = $b[0x15] -bor 0x20; [IO.File]::WriteAllBytes($lnk, $b)
+        Write-Host "   اختصار على سطح المكتب: تقرير حالة BIM" -ForegroundColor Green
+    } catch { Write-Host "   تنبيه: ما قدرت أعمل اختصار تقرير الحالة ($($_.Exception.Message)). شغّله من $Tool" -ForegroundColor Yellow }
+}
+
 Move-Item $InProgress $Done -Force
 Stop-Transcript | Out-Null
 Write-Host ''
