@@ -1,0 +1,47 @@
+/* Theme C — "tiles": warm light canvas, slim icon rail with big 3D icons, SOLID colour blocks with white text. */
+body.ds{background:#FBF7F2!important;font-family:"Cairo",BIMSans,Tahoma,sans-serif!important}
+.ds-side{width:104px!important;background:#FFFFFF!important;border:0!important;box-shadow:0 0 0 1px #EFE6DA,6px 0 24px -18px rgba(120,80,30,.4)!important}
+.ds-brand{justify-content:center;padding:14px 0!important}
+.ds-brand-text,.ds-nav-label,.ds-user-text{display:none!important}
+.ds-nav{padding:0 8px!important}
+.ds-nav-group{margin-top:6px!important;padding-top:6px;border-top:1px dashed #EADFCF}
+.ds-nav-group:first-child{border:0}
+body.ds .ds-nav-link{flex-direction:column;gap:2px!important;min-height:76px!important;padding:8px 2px!important;justify-content:center;text-align:center;font-size:11.5px!important;font-weight:700!important;color:#4A3B2A!important;border-radius:18px!important;line-height:1.25}
+body.ds .ds-nav-link .ds-i3d{width:40px;height:40px}
+body.ds .ds-nav-link:hover{background:#FFF1E2!important}
+body.ds .ds-nav-link.is-active{background:#FFE4C7!important;color:#7A3E00!important}
+body.ds .ds-nav-link.is-active::before{display:none}
+.ds-user{flex-direction:column;border-color:#EFE6DA!important}
+.ds-top{background:#FBF7F2!important;border:0!important}
+body.ds .ds-search{background:#fff!important;border:2px solid #EADFCF!important;border-radius:999px!important}
+body.ds h1{font-size:36px!important;font-weight:800!important;color:#2B1D0E!important}
+body.ds :is(p,li,td,label,summary,small){color:#2B1D0E}
+/* solid colour blocks */
+body.ds .kpi{background:linear-gradient(150deg,var(--a),var(--b))!important;border:0!important;border-radius:26px!important;box-shadow:0 14px 26px -16px var(--b)!important;color:#fff!important;padding:22px 24px!important}
+body.ds .kpi span,body.ds .kpi small,body.ds .kpi label,body.ds .kpi b,body.ds .kpi strong,body.ds .kpi .num{color:#fff!important}
+body.ds .kpi b,body.ds .kpi .num{font-size:44px!important;font-weight:800!important}
+body.ds :is(.panel,details.bim-section,.detail-card,.ds-card,.employee-card,.team-card){background:#fff!important;border:0!important;border-radius:26px!important;box-shadow:0 10px 30px -20px rgba(120,80,30,.45)!important;overflow:hidden;padding-top:0!important}
+body.ds .ds-card-head,body.ds .panel>.section-head,body.ds .employee-card-head{margin:0 -20px 14px!important;padding:14px 20px!important;background:linear-gradient(150deg,var(--a),var(--b))!important;border:0!important}
+body.ds .panel>.section-head{margin:0 -22px 16px!important;padding:14px 22px!important}
+body.ds .ds-card-head h2,body.ds .ds-card-head small,body.ds .panel>.section-head h2,body.ds .panel>.section-head p{color:#fff!important}
+body.ds .ds-count{background:rgba(255,255,255,.25)!important;color:#fff!important;border:0!important}
+body.ds .employee-card-head{margin:0!important}
+body.ds .employee-card-head :is(button,b,h2,h3){background:rgba(255,255,255,.22)!important;box-shadow:none!important}
+body.ds .employee-count{background:rgba(255,255,255,.25)!important;color:#fff!important;border:0!important}
+body.ds .panel,body.ds details.bim-section{padding-top:22px!important}
+body.ds details.bim-section>summary{color:var(--b)!important}
+body.ds .scroll-box{border:0!important;border-radius:18px!important;box-shadow:0 0 0 2px #F1E7DA}
+body.ds th{background:#2B1D0E!important;color:#FFE9CF!important;border-color:#4A3626!important}
+body.ds td{border-color:#F1E7DA!important}
+body.ds tbody tr:nth-child(even) td{background:#FFF8EF!important}
+body.ds tbody tr:hover td{background:#FFEFD9!important}
+body.ds input:not([type=checkbox]):not([type=radio]),body.ds select,body.ds textarea{border-radius:14px!important;border:2px solid #EADFCF!important;background:#FFFDF9!important}
+body.ds button:not(.btn-light):not(.btn-danger):not(.ds-menu):not(.ck):not(.tm):not(.mem):not(.bim-filter-toggle):not(.xbtn){background:#2B1D0E!important;border-color:#2B1D0E!important;border-radius:999px!important;box-shadow:none!important}
+body.ds .btn-light,body.ds button.btn-light{border-radius:999px!important;border:2px solid #EADFCF!important;background:#fff!important;color:#2B1D0E!important}
+body.ds .page-title .toolbar>button:not(.btn-light):not(.btn-danger):last-child,body.ds .ds-quick .go{background:#F97316!important;border-color:#F97316!important}
+body.ds .ds-quick{border-radius:999px!important;border:2px solid #EADFCF!important}
+body.ds .seg{background:#F3E8DA!important;border-radius:999px!important}body.ds .seg button.on{background:#2B1D0E!important;color:#fff!important;border-radius:999px!important}
+body.ds .ds-tag{border-radius:10px!important;padding:3px 12px!important}
+body.ds .ds-search input,body.ds .ds-quick input{border:0!important;background:transparent!important;box-shadow:none!important;outline:0!important}
+body.ds .seg button:not(.on){background:transparent!important;color:#4A3B2A!important}
+body.ds .ds-home .mem:not(.on),body.ds .ds-home .tm{background:transparent!important;color:#2B1D0E!important;border-radius:14px!important}
