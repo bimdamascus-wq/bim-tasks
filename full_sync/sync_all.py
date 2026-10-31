@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 """BIM Tasks full mirror: read-only SQLite -> separately deployed Google Apps Script.
 Never sends secrets, passwords, sessions, IPs or message credentials.
+
+Faster runs (package code_split):
+- Append-only log tables (INCREMENTAL) send only rows with id > the last id the Sheet accepted. The last id is kept
+  in sync_full_logs/incremental_state.json and written only after the whole table went through.
+- Once a day (first run after 03:00, or `--full`) every table is sent in full, as before.
+- A lock file stops overlapping runs: a second run exits at once with code 0. A lock older than 30 min is ignored.
+The receiver upserts by (table, source key), so sending fewer rows leaves the Sheet with the same data.
 """
 import csv, hashlib, json, os, sqlite3, sys, time, urllib.request, urllib.error
 from pathlib import Path
@@ -9,7 +16,11 @@ from datetime import datetime, timezone
 ROOT=Path(os.environ.get('BIM_SERVER_ROOT',r'C:\BIM_Tasks_Server'))
 DB=ROOT/'data'/'bim_tasks.db'
 LOGROOT=ROOT/'sync_full_logs'
-LOGROOT.mkdir(parents=True,exist_ok=True)
+# Only rows are ever added to these (ids from AUTOINCREMENT, never updated or deleted by the app).
+# shift_dispatch_log / group_dispatch_log are NOT here: the workers update their status and delete failed rows.
+INCREMENTAL=('audit_logs','task_events','sync_events','notifications')
+FULL_HOUR=3
+LOCK_STALE_SECONDS=30*60
 ALLOW={
  'employees':None,'settings':{'key','value','updated_at'},'users':{'id','username','full_name','role_id','employee_id','is_active','created_at','last_login_at','deleted_at'},
  'roles':None,'permissions':None,'role_permissions':None,
@@ -36,12 +47,15 @@ def scrub(item):
   out[k]=v
  return out
 
-def get_rows(conn, name):
+def get_rows(conn, name, after_id=None):
  cols={r['name'] for r in conn.execute('PRAGMA table_info("'+name+'")')}
  if not cols:return []
  selected=ALLOW[name]
  records=[]
- for rr in conn.execute('SELECT * FROM "'+name+'"'):
+ sql='SELECT * FROM "'+name+'"'
+ args=()
+ if after_id is not None:sql+=' WHERE id>? ORDER BY id';args=(int(after_id),)
+ for rr in conn.execute(sql,args):
   item=scrub(dict(rr))
   if selected is not None:item={k:v for k,v in item.items() if k in selected}
   if name=='settings': item={k:v for k,v in item.items() if k!='value' or not any(w in str(item.get('key','')).lower() for w in DENY_SUBSTR)}
@@ -55,10 +69,59 @@ def call(url, secret, body):
   raw=response.read(200000).decode('utf-8','replace')
  return json.loads(raw)
 
-def main():
+def read_state():
+ try:
+  st=json.loads((LOGROOT/'incremental_state.json').read_text(encoding='utf-8'))
+  if isinstance(st,dict) and isinstance(st.get('last_id'),dict):return st
+ except Exception:pass
+ return {'last_id':{},'last_full_date':''}
+
+def write_state(st):
+ tmp=LOGROOT/'incremental_state.json.tmp'
+ tmp.write_text(json.dumps(st,ensure_ascii=False,indent=1),encoding='utf-8')
+ os.replace(tmp,LOGROOT/'incremental_state.json')
+
+def full_due(st,now):
+ # No state yet -> full. Otherwise once per day, on the first run at or after FULL_HOUR.
+ if not st.get('last_full_date'):return True
+ return now.hour>=FULL_HOUR and st['last_full_date']!=now.strftime('%Y-%m-%d')
+
+def take_lock():
+ lock=LOGROOT/'sync.lock'
+ for _ in range(2):
+  try:
+   fd=os.open(str(lock),os.O_CREAT|os.O_EXCL|os.O_WRONLY)
+   os.write(fd,(str(os.getpid())+' '+datetime.now().isoformat()).encode());os.close(fd)
+   return lock
+  except FileExistsError:
+   try:age=time.time()-lock.stat().st_mtime
+   except FileNotFoundError:continue
+   if age<LOCK_STALE_SECONDS:return None
+   # Left behind by a run that was killed: ignore it.
+   try:lock.unlink()
+   except FileNotFoundError:pass
+ return None
+
+def main(argv=None):
+ argv=sys.argv[1:] if argv is None else argv
+ LOGROOT.mkdir(parents=True,exist_ok=True)
+ lock=take_lock()
+ if lock is None:
+  print('BIM full sync: another run is still working; this one exits (not an error).')
+  return 0
+ try:return run('--full' in argv)
+ finally:
+  try:lock.unlink()
+  except FileNotFoundError:pass
+
+def run(force_full=False):
  if not DB.is_file():raise RuntimeError('Database not found: '+str(DB))
- ts=datetime.now().strftime('%Y%m%d_%H%M%S')
- report={'started_at':datetime.now(timezone.utc).isoformat(),'source':str(DB),'counts':{},'sent':{},'errors':[], 'status':'not_started'}
+ now=datetime.now()
+ ts=now.strftime('%Y%m%d_%H%M%S')
+ state=read_state()
+ full=force_full or full_due(state,now)
+ report={'started_at':datetime.now(timezone.utc).isoformat(),'source':str(DB),'mode':'full' if full else 'incremental',
+         'counts':{},'sent':{},'errors':[], 'status':'not_started'}
  env={}
  envfile=ROOT/'.env'
  if envfile.exists():
@@ -72,7 +135,8 @@ def main():
  mirror={}
  try:
   for table in ALLOW:
-   data=get_rows(conn,table)
+   after=None if full or table not in INCREMENTAL else int(state['last_id'].get(table,0))
+   data=get_rows(conn,table,after)
    mirror[table]=data;report['counts'][table]=len(data)
  finally:conn.close()
  # Make immutable local report for verifying data even when remote receiver is not ready.
@@ -96,13 +160,19 @@ def main():
      if not (response.get('ok') is True and response.get('protocol')=='bim_fullsync_v1' and int(response.get('accepted',-1))==len(subset)):
       raise RuntimeError(table+' batch '+str(i)+' rejected: '+str(response)[:500])
      report['sent'][table]+=len(subset)
+    if table in INCREMENTAL and records:
+     # The whole table went through: next run starts after its highest id.
+     state['last_id'][table]=max(int(state['last_id'].get(table,0)),max(int(r['id']) for r in records))
+     write_state(state)
+   if full:
+    state['last_full_date']=now.strftime('%Y-%m-%d');write_state(state)
    report['status']='SENT_TO_SHEETS'
   except Exception as e:
    report['status']='PARTIAL_OR_FAILED'
    report['errors'].append(str(e))
  report['finished_at']=datetime.now(timezone.utc).isoformat()
  with (LOGROOT/('SUMMARY_'+ts+'.json')).open('w',encoding='utf-8') as f:json.dump(report,f,ensure_ascii=False,indent=2)
- print('BIM full sync:',report['status'])
+ print('BIM full sync:',report['status'],'('+report['mode']+')')
  print('Records:',report['counts'])
  print('Uploaded:',report['sent'])
  print('Report:',LOGROOT/('SUMMARY_'+ts+'.json'))

@@ -2,6 +2,7 @@
     python check_status.py C:\\BIM_Tasks_Server
 """
 import json, re, sqlite3, sys
+from datetime import datetime
 from pathlib import Path
 
 # Windows prints through cp1252 when the output is piped: Arabic names crashed the report (2026-10-31).
@@ -123,8 +124,8 @@ def main():
 
 
 def full_sync_report():
-    print('\n[google sheet full sync: last 3 runs] (from sync_full_logs\\SUMMARY_*.json)')
-    logs = sorted((root / 'sync_full_logs').glob('SUMMARY_*.json'))[-3:]
+    print('\n[google sheet full sync: last 6 runs] (from sync_full_logs\\SUMMARY_*.json)')
+    logs = sorted((root / 'sync_full_logs').glob('SUMMARY_*.json'))[-6:]
     if not logs:
         print('  no run found')
     for p in logs:
@@ -135,9 +136,19 @@ def full_sync_report():
         rows = sum((r.get('counts') or {}).values())
         sent = sum((r.get('sent') or {}).values())
         print(f"  {p.name}: status={r.get('status')} started={r.get('started_at')} finished={r.get('finished_at', 'NOT FINISHED')}"
-              f" rows={rows} uploaded={sent}")
+              f" mode={r.get('mode', 'full(old)')} rows={rows} uploaded={sent}")
         for e in (r.get('errors') or [])[:3]:
             print('      error:', clean_error(e))
+    st = root / 'sync_full_logs' / 'incremental_state.json'
+    if st.exists():
+        try:
+            d = json.loads(st.read_text(encoding='utf-8'))
+            print(f"  incremental state: last full={d.get('last_full_date')} last ids={d.get('last_id')}")
+        except Exception as e:
+            print(f'  incremental state unreadable ({type(e).__name__})')
+    lock = root / 'sync_full_logs' / 'sync.lock'
+    if lock.exists():
+        print(f'  lock file present since {datetime.fromtimestamp(lock.stat().st_mtime):%Y-%m-%d %H:%M} (a run is working, or one was killed)')
 
 
 main()
