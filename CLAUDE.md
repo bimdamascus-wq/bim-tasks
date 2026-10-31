@@ -140,6 +140,11 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   for non-log tables, status report shows `unchanged=`, installer shortcut fix. `?secret=` still NOT removed (waiting a
   full working day of reports). After install a run should take seconds and upload only changed rows.
 
+- 2026-10-31 night: owner asked for this to be the LAST step. Package `new_look` (commit 7195f1f, base c94b3e6, so it also
+  carries `sync_hash`'s files) given — NOT yet confirmed: `app/static/bim-final.css` loaded last on every page
+  (option 1 look, bigger/bolder text, slate side menu). CSS only. The full rebuild of ~42 templates into 8 pages is
+  NOT done and not planned: the owner is satisfied with the restyle; do it only if he asks again.
+
 ## Code layout (since package `code_split`)
 - `app/main.py`: settings, app object, middleware, shared helpers (auth/session, Telegram task texts, Sheet push).
   Route modules `app/routes_{auth,pages,telegram,shifts,reports,employees,tasks,recurring,users,backup,sync}.py`
@@ -160,8 +165,9 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 - `code_split` installed and merged. Next report: check sync runs are mode=incremental and short; one full after 03:00.
 - `supervisor_tools` installed and merged. Ask: did supervisors get the 18:00 summary? any complaints?
 - Owner (2026-10-31): small updates ship SEPARATELY from the redesign. `sync_hash` waiting for install + report.
-- Redesign: option 1 chosen, larger/bolder type. Next: mock up the other pages (tasks, task detail, team, recurring,
-  reports, settings) in that style for approval, then build page by page next to the old ones.
+- Redesign: option 1 applied as a CSS layer (`new_look`). Look changes go in `app/static/bim-final.css`.
+- After `new_look` is confirmed: merge into `main`. Remaining, all optional: drop `?secret=` (still unseen; harmless),
+  remove the old stacked CSS layers once nothing needs them, rebuild pages only if the owner asks.
 - Redesign mock-ups for approval: https://claude.ai/artifact/CnuJyxwEvGNBDeiTQdDCwY (3 options: 1 calm light + side menu,
   2 dark monitoring room, 3 big cards + top menu; each a manager dashboard + a phone screen; sample data). Waiting for
   the owner's choice. Next: drop `?secret=` (if still unseen) — see `docs/handoff/SESSION_5.md`.
