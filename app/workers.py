@@ -59,9 +59,18 @@ def _finish(c,key,ok,error=None):
 def _notify_log(c,eid,kind,result,task_id=None):
     c.execute("INSERT INTO notifications(task_id,employee_id,channel,kind,status,error,sent_at) VALUES(?,?,?,?,?,?,CURRENT_TIMESTAMP)",(task_id,eid,'telegram',kind,'queued' if result.get('queued') else ('sent' if result.get('ok') else 'failed'),result.get('error')))
 
-def _send_open_tasks(c,e,prefix='📋 مهامك اليوم'):
-    sql="SELECT id,title,status,priority,due_at FROM tasks WHERE employee_id=? AND archived_at IS NULL AND status NOT IN ('تم','ملغاة') ORDER BY CASE priority WHEN 'عاجلة' THEN 1 WHEN 'عالية' THEN 2 WHEN 'عادي' THEN 3 ELSE 4 END,CASE WHEN due_at IS NULL THEN 1 ELSE 0 END,due_at,id DESC"
-    rows=c.execute(sql,(e['id'],)).fetchall()
+# المهام المفتوحة للموظف: المسندة له مباشرة + المهام الجماعية التي يشارك فيها ولم ينهِ جزءه.
+# نفس الشرط المستخدم في زر اختبار الشيفت وأمر "مهامي" على Telegram، حتى تتطابق الرسائل الثلاث.
+OPEN_TASKS_WHERE=("(employee_id=? OR EXISTS(SELECT 1 FROM task_participants p WHERE p.task_id=tasks.id AND p.employee_id=? AND p.status<>'تم'))"
+                  " AND archived_at IS NULL AND status NOT IN ('تم','ملغاة')")
+
+def _open_task_rows(c,eid):
+    sql=("SELECT id,title,status,priority,due_at FROM tasks WHERE "+OPEN_TASKS_WHERE+
+         " ORDER BY CASE priority WHEN 'عاجلة' THEN 1 WHEN 'عالية' THEN 2 WHEN 'عادي' THEN 3 ELSE 4 END,CASE WHEN due_at IS NULL THEN 1 ELSE 0 END,due_at,id DESC")
+    return c.execute(sql,(eid,eid)).fetchall()
+
+def _send_open_tasks(c,e,prefix='📋 مهامك اليوم',rows=None):
+    if rows is None: rows=_open_task_rows(c,e['id'])
     if not rows:return send(e['telegram_chat_id'],f"{prefix}\n\n✅ لا توجد لديك مهام مفتوحة حالياً.")
     lines=[prefix]
     for i,t in enumerate(rows,1):
@@ -137,9 +146,9 @@ def process_shift_automation():
                 if _setting_bool(c,'shift_end_summary_enabled') and notices(c,e['id'],'shift_end'):
                     key=f"shift_end_summary:{e['id']}:{day}"
                     if _claim(c,key,e['id'],'shift_end_summary'):
-                        count=c.execute("SELECT COUNT(*) n FROM tasks WHERE employee_id=? AND archived_at IS NULL AND status NOT IN ('تم','ملغاة')",(e['id'],)).fetchone()['n']
+                        rows=_open_task_rows(c,e['id']); count=len(rows)
                         if count:
-                            r=_send_open_tasks(c,e,f'⏳ قبل نهاية الشيفت — بقي لديك {count} مهام غير مكتملة')
+                            r=_send_open_tasks(c,e,f'⏳ قبل نهاية الشيفت — بقي لديك {count} مهام غير مكتملة',rows)
                             _notify_log(c,e['id'],'ملخص نهاية الشيفت',r)
                             _finish(c,key,bool(r.get('ok')),r.get('error'))
                         else:

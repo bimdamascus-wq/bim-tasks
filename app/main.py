@@ -425,10 +425,25 @@ def _set_setting(c,key:str,value:str):
 def _sync_secret():
     return os.environ.get('BIM_SYNC_SECRET','').strip()
 
+_SYNC_AUTH_SEEN={}
+def _note_sync_auth(via:str, path:str):
+    """Remember (at most once a minute) whether the Sheet authenticates with the header or with ?secret=.
+    CHECK_STATUS shows it, so we know when the old ?secret= way is no longer used and can be removed."""
+    t=time.time()
+    if t-_SYNC_AUTH_SEEN.get(via,0)<60: return
+    _SYNC_AUTH_SEEN[via]=t
+    try:
+        c=connect()
+        try: _set_setting(c,f'sync.auth_last_{via}',json.dumps({'at':datetime.now().isoformat(timespec='seconds'),'path':path}))
+        finally: c.close()
+    except Exception: pass
+
 def _sync_auth(req:Request):
-    secret=req.headers.get('x-bim-sync-secret','') or req.query_params.get('secret','')
+    header=req.headers.get('x-bim-sync-secret','')
+    secret=header or req.query_params.get('secret','')
     if not _sync_secret() or not hmac.compare_digest(secret,_sync_secret()):
         raise HTTPException(401,'Sync secret غير صحيح')
+    _note_sync_auth('header' if header else 'query',req.url.path)
 
 def _task_sync_payload(c, tid:int):
     r=c.execute("""SELECT t.id,t.task_code,t.employee_id,COALESCE(e.name,'') employee_name,t.title,t.notes,

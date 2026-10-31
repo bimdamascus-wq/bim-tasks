@@ -409,3 +409,40 @@ def test_shift_test_button_lists_tasks(env):
     for kind in ('start', 'end'):
         r = boss.post('/api/shift-test', json={'employee_id': env['ids']['بوس'], 'kind': kind})
         assert r.status_code == 200, r.text
+
+
+def test_shift_messages_include_group_tasks(env, monkeypatch):
+    # Shift-start list and end-of-shift count must match the "my tasks" command: own tasks + open group participation.
+    m = env['m']
+    import app.workers as w
+    eid = env['ids']['موظف آخر']
+    c = m.connect()
+    c.execute("INSERT INTO tasks(task_code,title,employee_id,status,priority) VALUES('SG-1','مهمة فردية',?,'جديدة','عادي')", (eid,))
+    c.execute("INSERT INTO tasks(task_code,title,status,priority,is_group) VALUES('SG-2','مهمة جماعية','جديدة','عادي',1)")
+    gid = c.execute('SELECT last_insert_rowid()').fetchone()[0]
+    c.execute('INSERT INTO task_participants(task_id,employee_id) VALUES(?,?)', (gid, eid))
+    c.execute("INSERT INTO tasks(task_code,title,status,priority,is_group) VALUES('SG-3','جماعية أنهيت جزئي','جديدة','عادي',1)")
+    did = c.execute('SELECT last_insert_rowid()').fetchone()[0]
+    c.execute("INSERT INTO task_participants(task_id,employee_id,status) VALUES(?,?,'تم')", (did, eid))
+    out = []
+    monkeypatch.setattr(w, 'send', lambda chat, text, **kw: out.append(text) or {'ok': True})
+    e = c.execute('SELECT * FROM employees WHERE id=?', (eid,)).fetchone()
+    titles = [r['title'] for r in w._open_task_rows(c, eid)]
+    w._send_open_tasks(c, e)
+    c.close()
+    assert 'مهمة فردية' in titles and 'مهمة جماعية' in titles and 'جماعية أنهيت جزئي' not in titles
+    assert 'مهمة جماعية' in out[-1] and 'جماعية أنهيت جزئي' not in out[-1]
+
+
+def test_sync_auth_records_header_or_query(env):
+    m = env['m']
+    m._SYNC_AUTH_SEEN.clear()
+    cl = client(env)
+    assert cl.get('/api/sync/pull', headers={'X-BIM-Sync-Secret': 's' * 32}).status_code == 200
+    assert cl.get('/api/sync/pull?secret=' + 's' * 32).status_code == 200   # still accepted until the Sheet is changed
+    assert cl.get('/api/sync/pull', headers={'X-BIM-Sync-Secret': 'wrong'}).status_code == 401
+    c = m.connect()
+    got = dict(c.execute("SELECT key,value FROM settings WHERE key LIKE 'sync.auth_last_%'").fetchall())
+    c.close()
+    assert '/api/sync/pull' in got['sync.auth_last_header'] and '/api/sync/pull' in got['sync.auth_last_query']
+    assert 's' * 32 not in ''.join(got.values())

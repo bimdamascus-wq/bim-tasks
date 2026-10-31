@@ -7,6 +7,7 @@ BASE_REF is the commit currently installed on the server (normally `main`).
 Output: dist/BIM_Update_<NAME>.zip containing deploy/installer/* + update.json + payload/ (+ wheels/).
 The payload always carries app/release.json with the commit; the installer reads it back from
 /api/release-health on every port, so it proves the new code runs with the right gateway even without --check.
+The test suite (python -m pytest tests -q) runs first; no package is built if it fails.
 INSTALL_UPDATE.cmd installs on the real system, INSTALL_TO_TEST.cmd on the staging copy (C:\\BIM_Tasks_Test).
 """
 import argparse, json, shutil, subprocess, sys, zipfile
@@ -30,6 +31,9 @@ def main():
     a = ap.parse_args()
     if git('status', '--porcelain').strip():
         sys.exit('Commit your changes first: the package must match a commit.')
+    tests = subprocess.run([sys.executable, '-m', 'pytest', 'tests', '-q'], cwd=REPO)
+    if tests.returncode != 0:
+        sys.exit('Tests failed: no package built. Fix them first (python -m pytest tests -q).')
     changed, deleted = [], []
     for line in git('diff', '--name-status', '--no-renames', a.base, 'HEAD').splitlines():
         status, path = line.split('\t', 1)
