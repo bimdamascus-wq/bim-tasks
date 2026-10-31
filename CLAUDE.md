@@ -126,6 +126,15 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   settings at the end of /shift-center); /team-performance (+ CSV, new permission `reports.team` for admin/deputy/
   supervisor); /my-team mobile page (tasks.edit). Merge into `main` only after the post-install report.
 
+- Report 16:45 (2026-10-31): `supervisor_tools` installed 16:42; 8797 lan+workers, 8798 external, 8799 test all on
+  c94b3e6. `main` fast-forwarded to the branch (2b50541 = c94b3e6 + docs + installer shortcut fix, not yet shipped).
+  Desktop shortcut was NOT created by either install (owner: no icon) -> installer now saves it under an ASCII name
+  and renames it, on public + current desktop; ships with the next package. Until then: tools\check_status\CHECK_STATUS.cmd.
+  Sync incremental works: ~875 rows/run instead of ~3140, all SENT, no timeouts, task Ready/0. But a run still takes
+  5-6 min (tasks 310 + task_reminders 310 + shift_dispatch_log 109 re-sent each time, ~7 s per 20-row batch), so with
+  the lock it effectively runs every 10 min. Proposal (owner to decide): send only rows whose content hash changed.
+  `?secret=` still not seen (header 16:44). First supervisor summary due 18:00 — ask tomorrow if it arrived.
+
 ## Code layout (since package `code_split`)
 - `app/main.py`: settings, app object, middleware, shared helpers (auth/session, Telegram task texts, Sheet push).
   Route modules `app/routes_{auth,pages,telegram,shifts,reports,employees,tasks,recurring,users,backup,sync}.py`
@@ -144,7 +153,7 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 - Sheet secret: Apps Script uses the `X-BIM-Sync-Secret` header (seen). Remove `?secret=` once a report after a full
   working day still shows "?secret= ... not seen yet" (was deferred from `code_split`).
 - `code_split` installed and merged. Next report: check sync runs are mode=incremental and short; one full after 03:00.
-- `supervisor_tools` waiting for install + report. Then: did supervisors get the 18:00 summary? any complaints?
+- `supervisor_tools` installed and merged. Ask: did supervisors get the 18:00 summary? any complaints?
 - Next: drop `?secret=` (if still unseen), then the redesign — see `docs/handoff/SESSION_5.md`.
 - Still ask: did the automatic 02:00 off-site backup (first run 2026-11-01) arrive on Telegram?
 
