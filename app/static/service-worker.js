@@ -1,5 +1,5 @@
-const CACHE='bim-tasks-v6-3-0';
-const STATIC=['/static/bim-system-v510.css?v=6.3.0','/static/bim-ui-v510.js?v=6.3.0','/static/bim-damascus-logo.png','/static/bim-logo-original.jpg','/manifest.webmanifest'];
+const CACHE='bim-tasks-ds-2';
+const STATIC=['/static/bim-ds.css?v=2','/static/bim-ui-v510.js?v=6.4.0','/static/bim-shell.js?v=2','/static/bim-damascus-logo.png','/static/bim-logo-original.jpg','/manifest.webmanifest'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(STATIC).catch(()=>{})));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE)await caches.delete(k);await self.clients.claim()})())});
 self.addEventListener('message',e=>{if(e.data&&e.data.type==='CLEAR_PRIVATE')e.waitUntil(caches.delete(CACHE).then(()=>caches.open(CACHE)));});

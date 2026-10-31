@@ -1,103 +1,37 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{{ company.name }} | لوحة المدير</title>
-<link rel="stylesheet" href="/static/bim-plex.css?v=6.3.0"><link rel="manifest" href="/manifest.webmanifest">
-<style>
-:root{--red:#d0121b;--red-50:#fff1f1;--red-100:#fbd5d6;--ink:#17181c;--ink-2:#3d414a;--ink-3:#6b7280;--muted:#9aa0aa;--line:#ebecef;--line-2:#f2f3f5;--bg:#fafafa;
---ok:#0f7b4b;--ok-50:#e8f6ef;--warn:#a65d00;--warn-50:#fff4e0;--info:#2459c5;--info-50:#eef3ff}
-*{box-sizing:border-box}html{-webkit-font-smoothing:antialiased}
-body{margin:0;font-family:Plex,Tahoma,sans-serif;color:var(--ink);background:#fff;direction:rtl;font-size:16px;line-height:1.55}
-a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}
-.num{font-variant-numeric:tabular-nums}
-.app{display:grid;grid-template-columns:260px minmax(0,1fr) 340px;min-height:100vh}
-/* sidebar */
-.side{background:var(--bg);border-inline-start:1px solid var(--line);padding:18px 14px;display:flex;flex-direction:column;gap:2px;position:sticky;top:0;height:100vh;overflow:auto}
-.side .logo{display:flex;justify-content:center;padding:6px 0 16px}.side .logo img{height:104px}
-.side a,.side button.mem{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:var(--ink-2);font-weight:500;font-size:15.5px;background:none;border:0;width:100%;text-align:right}
-.side a:hover,.side button.mem:hover{background:#f0f1f3}
-.side .on{background:#fff!important;color:var(--ink);font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.06),0 0 0 1px var(--line)}
-.side .n{margin-inline-start:auto;font-size:13px;color:var(--ink-3)}.side .n.r{color:var(--red);font-weight:700}
-.side h6{margin:16px 12px 4px;font-size:12.5px;color:var(--muted);font-weight:600}
-.side .ico{width:20px;text-align:center;color:var(--ink-3)}
-.side .out{margin-top:auto;color:var(--ink-3)}
-/* main */
-.main{padding:22px 34px 40px;min-width:0}
-.cmd{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:14px;padding:6px 8px 6px 16px;box-shadow:0 1px 3px rgba(0,0,0,.04);background:#fff}
-.cmd:focus-within{border-color:#c9ccd2;box-shadow:0 0 0 4px #f1f2f4}
-.cmd .spark{color:var(--red);font-size:18px}
-.cmd input{flex:1;border:0;outline:0;font:inherit;font-size:16.5px;padding:8px 0;background:transparent;min-width:0}
-.cmd .pv{font-size:13.5px;color:var(--ink-3);white-space:nowrap}
-.cmd .go{background:var(--red);color:#fff;border:0;border-radius:10px;height:40px;padding:0 18px;font-weight:600}
-.cmd .go:disabled{opacity:.4}
-.kbd{font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:1px 6px;color:var(--ink-3)}
-.hd{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:26px 0 6px;flex-wrap:wrap}.hd h1{margin:0;font-size:28px;font-weight:700}.hd p{margin:2px 0 0;color:var(--ink-3)}
-.seg{display:flex;background:var(--line-2);border-radius:10px;padding:3px}.seg button{padding:6px 14px;border-radius:8px;font-size:14px;font-weight:600;color:var(--ink-3);border:0;background:none}
-.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
-.filter{display:inline-flex;align-items:center;gap:8px;margin-top:10px;background:var(--line-2);border-radius:999px;padding:4px 6px 4px 12px;font-size:14px;font-weight:600}
-.filter button{border:0;background:#fff;border-radius:50%;width:22px;height:22px;line-height:1}
-.grp{margin-top:20px}.grp h3{display:flex;align-items:center;gap:8px;margin:0 0 4px;font-size:14px;font-weight:600;color:var(--ink-3)}
-.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-.row{display:grid;grid-template-columns:24px minmax(0,1fr) auto 150px 116px;align-items:center;gap:14px;padding:12px 10px;border-bottom:1px solid var(--line-2);font-size:16.5px;border-radius:8px}
-.row:hover{background:var(--bg)}
-.ck{width:20px;height:20px;border-radius:6px;border:2px solid #c3c7ce;background:#fff;padding:0}.ck:hover{border-color:var(--ok);background:var(--ok-50)}
-.ck.u{border-color:var(--red)}
-.ck.d{background:var(--ok);border-color:var(--ok)}
-.t{font-weight:600;color:var(--ink);min-width:0}.t span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.t small{display:block;font-weight:400;color:var(--ink-3);font-size:13.5px;margin-top:1px}
-.done .t{color:var(--ink-3);text-decoration:line-through}.done{opacity:.75}
-.chip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap}
-.c-manager{background:var(--red-50);color:var(--red)}.c-self{background:var(--info-50);color:var(--info)}.c-assigned,.c-system{background:var(--line-2);color:var(--ink-2)}
-.who{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--ink-2);min-width:0}.who b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.av{width:32px;height:32px;border-radius:50%;display:inline-grid;place-items:center;font-weight:700;font-size:14px;color:#fff;flex:none}
-.due{font-size:14.5px;color:var(--ink-3);text-align:left}.due.r{color:var(--red);font-weight:600}
-.empty{padding:14px 10px;color:var(--muted);font-size:15px}
-/* panel */
-.panel{border-inline-end:1px solid var(--line);padding:22px;background:#fff;position:sticky;top:0;height:100vh;overflow:auto}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}.stats div{border:1px solid var(--line);border-radius:12px;padding:10px 12px}
-.stats b{font-size:26px;font-weight:700;display:block;line-height:1.25}.stats small{color:var(--ink-3);font-size:13px}.stats .r b{color:var(--red)}
-.panel h4{margin:0 0 10px;font-size:15px;font-weight:700;display:flex;justify-content:space-between}.panel h4 span{color:var(--ink-3);font-weight:500;font-size:13px}
-.tm{display:flex;align-items:center;gap:12px;padding:9px 6px;border-radius:10px;width:100%;border:0;background:none;text-align:right}.tm:hover{background:var(--bg)}
-.tm b{font-weight:600;font-size:15.5px;display:block;line-height:1.3}.tm small{color:var(--ink-3);font-size:13px}
-.load{margin-inline-start:auto;width:86px}.load .bar{height:6px;border-radius:9px;background:var(--line-2);overflow:hidden}.load .bar i{display:block;height:100%;background:var(--ink-2);border-radius:9px}.load small{display:block;text-align:left;font-size:12.5px}
-.feed{margin-top:22px;border-top:1px solid var(--line);padding-top:18px}
-.ev{display:flex;gap:10px;padding:8px 0;font-size:14.5px;color:var(--ink-2)}.ev .av{width:26px;height:26px;font-size:12px}.ev time{display:block;color:var(--muted);font-size:12.5px}
-.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:12px;font-weight:600;z-index:50;opacity:0;transition:opacity .2s}.toast.show{opacity:1}.toast.err{background:var(--red)}
-@media(max-width:1180px){.app{grid-template-columns:240px minmax(0,1fr)}.panel{grid-column:1/-1;position:static;height:auto;border:0;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}.feed{margin:0;border:0;padding:0}.stats{margin:0}}
-.side .menu{display:none}.t .mw{display:none}
-@media(max-width:760px){.app{display:block}.side{position:static;height:auto;padding:10px 14px}.side .logo{justify-content:space-between;align-items:center;padding:0}.side .logo img{height:56px}
-.side .menu{display:block;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 14px;font-weight:600}
-.side>a,.side>h6,.side>#sTeam{display:none}.side.open>a,.side.open>h6{display:flex}.side.open>h6{display:block}
-.main{padding:16px}.row{grid-template-columns:24px minmax(0,1fr) auto;row-gap:4px}.row .who,.row .chip{display:none}.t .mw{display:block}.cmd .pv,.cmd .kbd{display:none}.panel{display:block}}
-</style></head><body>
-<div class="app">
-<nav class="side" aria-label="القائمة">
-  <div class="logo"><img src="/static/bim-logo-trim.png" alt="{{ company.name }}"><button type="button" class="menu" id="menuBtn" aria-expanded="false">☰ القائمة</button></div>
-  <a class="on" href="/"><span class="ico">◉</span>لوحة المدير<span class="n r num" id="sLate"></span></a>
-  {% for label,items in cc_nav %}<h6>{{ label }}</h6>{% for p,l in items %}<a href="{{ p }}"><span class="ico">›</span>{{ l }}</a>{% endfor %}{% endfor %}
-  <h6>الفريق</h6><div id="sTeam"></div>
-  <a class="out" href="/logout"><span class="ico">⎋</span>تسجيل الخروج</a>
-</nav>
-<main class="main">
-  <form class="cmd" id="cmd" autocomplete="off">
-    <span class="spark">✦</span>
+{% extends "base.html" %}{% block content %}
+<main class="ds-home" aria-labelledby="title">
+  <form class="ds-quick" id="cmd" autocomplete="off">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
     <input id="q" placeholder="اكتب مهمة جديدة… مثال: «سامر يجرد مستودع الزبلطاني عاجل»" aria-label="مهمة جديدة">
     <span class="pv" id="pv"></span><span class="kbd" dir="ltr">Ctrl K</span>
     <button class="go" id="go" disabled>إضافة</button>
   </form>
-  <div class="hd"><div><h1 id="title">اليوم</h1><p id="sub"></p></div>
-    <div class="seg" id="seg"><button data-s="today" class="on">اليوم</button><button data-s="week">هذا الأسبوع</button><button data-s="all">الكل</button></div></div>
+  <div class="ds-home-head">
+    <div><h1><span id="title">اليوم</span> <span class="ds-badge num" id="sLate" title="متأخرة"></span></h1><p id="sub"></p></div>
+    <div class="seg" id="seg" role="group" aria-label="الفترة"><button type="button" data-s="today" class="on">اليوم</button><button type="button" data-s="week">هذا الأسبوع</button><button type="button" data-s="all">الكل</button></div>
+  </div>
+  <div class="ds-home-kpis">
+    <div class="kpi"><span>مفتوحة</span><b class="num" id="kOpen">—</b></div>
+    <div class="kpi is-late"><span>متأخرة</span><b class="num" id="kLate">—</b></div>
+    <div class="kpi is-done"><span>أُنجزت اليوم</span><b class="num" id="kDone">—</b></div>
+    <div class="kpi"><span>بالوقت آخر ٧ أيام</span><b class="num" id="kRate">—</b></div>
+  </div>
   <div id="filter"></div>
-  <section class="grp"><h3><span class="dot" style="background:var(--red)"></span>يحتاج انتباهك · <span class="num" id="cA">٠</span></h3><div id="gA"></div></section>
-  <section class="grp"><h3><span class="dot" style="background:var(--warn)"></span><span id="dueLabel">مستحقة اليوم</span> · <span class="num" id="cD">٠</span></h3><div id="gD"></div></section>
-  <section class="grp"><h3><span class="dot" style="background:var(--ok)"></span><span id="doneLabel">أُنجزت اليوم</span> · <span class="num" id="cO">٠</span></h3><div id="gO"></div></section>
+  <div class="ds-home-grid">
+    <div class="ds-home-col">
+      <section class="ds-card is-late"><div class="ds-card-head"><h2>يحتاج انتباهك <span class="ds-count num" id="cA">٠</span></h2></div><div id="gA"></div></section>
+      <section class="ds-card is-due"><div class="ds-card-head"><h2><span id="dueLabel">مستحقة اليوم</span> <span class="ds-count num" id="cD">٠</span></h2></div><div id="gD"></div></section>
+      <section class="ds-card is-done"><div class="ds-card-head"><h2><span id="doneLabel">أُنجزت اليوم</span> <span class="ds-count num" id="cO">٠</span></h2></div><div id="gO"></div></section>
+    </div>
+    <div class="ds-home-col">
+      <section class="ds-card"><div class="ds-card-head"><h2>الفريق</h2><small>الحمل الحالي — اضغط اسماً لعرض مهامه</small></div><div id="team"></div></section>
+      <section class="ds-card"><div class="ds-card-head"><h2>فلترة سريعة حسب الموظف</h2></div><div class="ds-members" id="sTeam"></div></section>
+      <section class="ds-card"><div class="ds-card-head"><h2>النشاط المباشر</h2></div><div id="feed"></div></section>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </main>
-<aside class="panel">
-  <div class="stats"><div><b class="num" id="kOpen">—</b><small>مفتوحة</small></div><div class="r"><b class="num" id="kLate">—</b><small>متأخرة</small></div>
-  <div><b class="num" id="kDone">—</b><small>أُنجزت اليوم</small></div><div><b class="num" id="kRate">—</b><small>بالوقت آخر ٧ أيام</small></div></div>
-  <div><h4>الفريق <span>الحمل الحالي</span></h4><div id="team"></div></div>
-  <div class="feed"><h4>النشاط المباشر</h4><div id="feed"></div></div>
-</aside>
-</div>
-<div class="toast" id="toast"></div>
+{% endblock %}{% block scripts %}
 <script>
 (()=>{
 const $=id=>document.getElementById(id);
@@ -177,8 +111,8 @@ $('cmd').addEventListener('submit',async e=>{e.preventDefault();const v=$('q').v
     $('q').value='';$('pv').textContent='';parsed=null;toast('✓ تمت إضافة المهمة'+(x.telegram&&x.telegram.ok?' وإرسالها':''));load()}
   catch(err){toast(err.message,true);$('go').disabled=false}});
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('q').focus()}});
-$('menuBtn').onclick=()=>{const o=document.querySelector('.side').classList.toggle('open');$('menuBtn').setAttribute('aria-expanded',o)};
 load();setInterval(()=>{if(!document.hidden&&document.activeElement!==$('q'))load()},30000);
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/service-worker.js',{scope:'/'}).catch(()=>{});
 })();
-</script><link rel="stylesheet" href="/static/bim-final.css?v=1"></body></html>
+</script>
+{% endblock %}

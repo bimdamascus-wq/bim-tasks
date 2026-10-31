@@ -62,6 +62,8 @@
   const exact=a=>a==='/'?path==='/':path===a||path.startsWith(a+'/');
 
   async function init(){
+    // Since the 2026-10-31 redesign the page shell is server-rendered (base.html, body.ds); keep only the helpers above.
+    if(document.body.classList.contains('ds'))return;
     let me={permissions:[],full_name:'المستخدم',role:''};
     try{
       const r=await fetch('/api/me',{cache:'no-store'});

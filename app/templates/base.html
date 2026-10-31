@@ -4,33 +4,64 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{{ company.name }} | {{ title }}</title>
-<link rel="stylesheet" href="/static/bim-plex.css?v=6.3.1">
-<link rel="stylesheet" href="/static/bim-system-v510.css?v=6.3.0">
-<script src="/static/bim-ui-v510.js?v=6.3.0"></script>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/static/bim-ds.css?v=2">
+<script src="/static/bim-ui-v510.js?v=6.4.0"></script>
 <script defer src="/static/bim-delegate.js?v=6.3.0"></script>
 {% block head %}{% endblock %}
-
-<script defer src="/static/bim-v73-live.js?v=6.3.0"></script>
-<link rel="stylesheet" href="/static/bim-v81-center-ar.css?v=6.3.0">
 <script defer src="/static/bim-v81-center-ar.js?v=6.3.0"></script>
-<link rel="stylesheet" href="/static/bim-readable-font.css?v=6.3.0">
-<link rel="stylesheet" href="/static/bim-premium-ui-20261022.css?v=6.3.0">
 <script defer src="/static/bim-arabic-date-labels-v1.js?v=6.3.0"></script>
-<link rel="stylesheet" href="/static/bim-mytask-rtl.css?v=6.3.0">
-<script defer src="/static/bim-mytask-rtl.js?v=6.3.0"></script>
 <script defer src="/static/bim-activity.js?v=6.3.0"></script>
-<link rel="stylesheet" href="/static/bim-brand-red.css?v=6.3.0">
-<link rel="stylesheet" href="/static/bim-excel-filter-v2.css?v=6.3.0">
 <script defer src="/static/bim-excel-filter-v2.js?v=6.3.0"></script>
+<script defer src="/static/bim-shell.js?v=2"></script>
 </head>
-<body data-bim-page="{{ title|default('') }}">
-{% if user %}<nav class="toolbar" style="padding:10px 20px;flex-wrap:wrap" aria-label="روابط العمل">{% if user['role_code']=='employee' %}<a href="/my-work">مهامي</a>{% else %}<a href="/tasks">المهام</a>{% if 'tasks.edit' in permissions %}<a href="/my-team">متابعة الفريق</a>{% endif %}{% if 'employees.view' in permissions %}<a href="/employees">الموظفون</a>{% endif %}{% if 'recurring.view' in permissions %}<a href="/recurring">المهام الثابتة</a>{% endif %}{% if 'users.manage' in permissions %}<a href="/record-management">إدارة السجلات والحذف</a><a href="/company">إعداد الشركة</a><a href="/template-library">قوالب العمل</a><a href="/access-control">الصلاحيات والقنوات</a><a href="/handover">تسليم الأعمال</a><a href="/job-profiles">الوظائف والإعدادات</a><a href="/notification-center">مركز الإشعارات</a>{% endif %}{% if 'dashboard.view' in permissions %}<a href="/workload">عبء العمل</a><a href="/operations-reports">التقارير</a>{% endif %}{% if 'users.manage' in permissions %}<a href="/security">الأمان والحماية</a><a href="/permissions">جدول الصلاحيات</a>{% endif %}{% if 'reports.team' in permissions %}<a href="/team-performance">أداء الفريق</a>{% endif %}{% endif %}<a href="/account">حسابي</a></nav>{% endif %}
-{% if user and 'audit.view' in permissions %}<nav id="activityNav" class="toolbar"><a href="/activity-log">السجل الشامل للمستخدمين</a></nav>{% endif %}
+<body class="ds" data-bim-page="{{ title|default('') }}">
+{% if user %}
+<a class="ds-skip" href="#dsMain">تخطي إلى المحتوى</a>
+<div class="ds-app">
+  <aside class="ds-side" id="dsSide" aria-label="القائمة الرئيسية">
+    <div class="ds-brand">
+      <span class="ds-brand-logo"><img src="{{ '/company-logo' if company.logo else '/static/bim-logo-trim.png' }}" alt=""></span>
+      <span class="ds-brand-text"><b>{{ company.name }}</b><small>إدارة المهام</small></span>
+    </div>
+    <nav class="ds-nav" aria-label="صفحات النظام">
+      {% for group, links in ds_nav(user, permissions, request.url.path) %}
+      <div class="ds-nav-group">
+        <div class="ds-nav-label">{{ group }}</div>
+        {% for l in links %}
+        <a href="{{ l.path }}" class="ds-nav-link{% if l.active %} is-active{% endif %}"{% if l.active %} aria-current="page"{% endif %}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="{{ l.icon }}"></path></svg><span>{{ l.label }}</span>
+        </a>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </nav>
+    <div class="ds-user">
+      <span class="ds-avatar" aria-hidden="true">{{ (user['full_name'] or user['username'] or 'ب')[:1] }}</span>
+      <span class="ds-user-text"><b>{{ user['full_name'] or user['username'] }}</b><small>{{ {'admin':'المدير','deputy':'نائب المدير','supervisor':'المسؤول','employee':'الموظف'}.get(user['role_code'], '') }}</small></span>
+      <a class="ds-user-link{% if request.url.path == '/account' %} is-active{% endif %}" href="/account" title="حسابي" aria-label="حسابي"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="{{ ds_icon('account') }}"></path></svg></a>
+      <a class="ds-user-link" href="/logout" title="تسجيل الخروج" aria-label="تسجيل الخروج"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="{{ ds_icon('logout') }}"></path></svg></a>
+    </div>
+  </aside>
+  <div class="ds-shade" id="dsShade" hidden></div>
+  <div class="ds-body">
+    <header class="ds-top">
+      <button type="button" class="ds-menu" id="dsMenu" aria-controls="dsSide" aria-expanded="false" aria-label="فتح القائمة"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"></path></svg></button>
+      <div class="ds-top-title">{{ ds_titles.get(request.url.path, title) }}</div>
+      <label class="ds-search"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg><input id="dsSearch" type="search" placeholder="ابحث عن مهمة أو موظف" aria-label="بحث في المهام"></label>
+      <span class="ds-today" id="dsToday"></span>
+      <span class="ds-state" id="dsState"><i></i><span>جاري التحقق</span></span>
+    </header>
+    <div class="ds-main" id="dsMain">
+{% endif %}
 {% block content %}{% endblock %}
-<script>window.companyBrand={{ company|tojson }};document.addEventListener('DOMContentLoaded',()=>{const c=window.companyBrand;document.querySelectorAll('.v510-brand-copy b').forEach(e=>e.textContent=c.name);document.querySelectorAll('.v510-brand-copy span').forEach(e=>e.textContent='إدارة العمل');if(c.logo)document.querySelectorAll('.v510-brand-mark img').forEach(e=>{e.src='/company-logo';e.alt=c.name})});</script>
+{% if user %}
+    </div>
+  </div>
+</div>
+{% endif %}
+<script>window.companyBrand={{ company|tojson }};</script>
 <script src="/static/record-management.js?v=6.3.0"></script>
-<link rel="stylesheet" href="/static/bim-theme-v63.css?v=6.3.1">
-<link rel="stylesheet" href="/static/bim-final.css?v=1">
 {% block scripts %}{% endblock %}
 </body>
 </html>

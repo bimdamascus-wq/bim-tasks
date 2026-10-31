@@ -3,32 +3,26 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{{ company.name }} | تسجيل الدخول</title>
-<link rel="stylesheet" href="/static/bim-system-v510.css?v=6.3.0">
-<link rel="stylesheet" href="/static/bim-mytask-rtl.css?v=6.3.0">
-<script defer src="/static/bim-mytask-rtl.js?v=6.3.0"></script>
-<link rel="stylesheet" href="/static/bim-brand-red.css?v=6.3.0">
-<link rel="stylesheet" href="/static/bim-plex.css?v=6.3.1">
-<link rel="stylesheet" href="/static/bim-theme-v63.css?v=6.3.1">
-<link rel="stylesheet" href="/static/bim-final.css?v=1">
+<link rel="stylesheet" href="/static/bim-ds.css?v=2">
 </head>
-<body class="bim-login-page">
-<div class="login-shell">
-  <section class="login-visual">
+<body class="ds ds-login bim-login-page">
+<main class="ds-login-card">
+  <section class="ds-login-side">
     <div>
-      <img src="{{ '/company-logo' if company.logo else '/static/bim-logo-trim.png' }}" alt="{{ company.name }}">
-      <h1>{{ company.name }}</h1>
+      <span class="ds-brand-logo"><img src="{{ '/company-logo' if company.logo else '/static/bim-logo-trim.png' }}" alt="{{ company.name }}"></span>
+      <h2>{{ company.name }}</h2>
       <p>منصة {{ company.name }} لإدارة المهام والموظفين والمتابعة التشغيلية.</p>
     </div>
-    <div style="font-size:12px;color:#7f8998">إدارة العمل والمهام</div>
+    <p>إدارة العمل والمهام</p>
   </section>
-  <form class="login-panel" method="post" action="/login">
-    <h2>تسجيل الدخول</h2>
+  <form class="ds-login-form login-panel" method="post" action="/login">
+    <h1>تسجيل الدخول</h1>
     <p>أدخل بيانات حسابك للوصول إلى النظام.</p>
-    {% if error %}<div class="errbox">{{ error }}</div>{% endif %}
-    <div class="field"><label>اسم المستخدم</label><input name="username" autocomplete="username" required autofocus></div>
-    <div class="field"><label>كلمة المرور</label><input name="password" type="password" autocomplete="current-password" required></div>
+    {% if error %}<div class="errbox" role="alert">{{ error }}</div>{% endif %}
+    <div class="field"><label for="u">اسم المستخدم</label><input id="u" name="username" autocomplete="username" required autofocus></div>
+    <div class="field"><label for="p">كلمة المرور</label><input id="p" name="password" type="password" autocomplete="current-password" required></div>
     <button>دخول إلى النظام</button>
-    <div class="gate">البوابة: {{ 'خارجية' if gateway=='external' else 'داخلية LAN' }}</div>
+    <div class="ds-login-gate gate">البوابة: {{ 'خارجية' if gateway=='external' else 'داخلية LAN' }}</div>
   </form>
-</div>
+</main>
 </body></html>
