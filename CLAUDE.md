@@ -154,7 +154,10 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   working day still shows "?secret= ... not seen yet" (was deferred from `code_split`).
 - `code_split` installed and merged. Next report: check sync runs are mode=incremental and short; one full after 03:00.
 - `supervisor_tools` installed and merged. Ask: did supervisors get the 18:00 summary? any complaints?
-- Next: drop `?secret=` (if still unseen), then the redesign — see `docs/handoff/SESSION_5.md`.
+- Owner (2026-10-31): the small update (row-hash sync, drop `?secret=`, shortcut fix) must ship SEPARATELY from the redesign.
+- Redesign mock-ups for approval: https://claude.ai/artifact/CnuJyxwEvGNBDeiTQdDCwY (3 options: 1 calm light + side menu,
+  2 dark monitoring room, 3 big cards + top menu; each a manager dashboard + a phone screen; sample data). Waiting for
+  the owner's choice. Next: drop `?secret=` (if still unseen) — see `docs/handoff/SESSION_5.md`.
 - Still ask: did the automatic 02:00 off-site backup (first run 2026-11-01) arrive on Telegram?
 
 ## Roadmap agreed with the owner (2026-10-31) — session-by-session plan in `docs/handoff/SESSION_<n>.md` — phases 1–2 were done in another conversation, not in this repo
