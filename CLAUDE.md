@@ -61,14 +61,16 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 - Status tool: `deploy/check_status/` (zip it, owner double-clicks `CHECK_STATUS.cmd`, pastes the report). Read-only, no secrets.
   On Windows each uvicorn shows twice (venv launcher + Python313 child) — normal. Task "Last Result 267009" = still running — normal.
 - Pending on the branch, not shipped yet: fix for `/api/shift-test` (500, seen in server-lan.err.log).
-- To look at: `BIM_Tasks_Full_Google_Sheets_Sync` (every 5 min) showed Last Result -2147020576 (0x800710E0, run refused —
-  probably the previous run was still going). Check `full_sync` logs before changing anything.
+- Pending on the branch: `full_sync/RUN_FULL_SYNC.cmd` ended with `pause`, so the scheduled run (SYSTEM, no one to press a key)
+  never ended; the next 5-minute run was refused (Last Result 0x800710E0). Removed. The sheet still looked fine because the
+  app pushes each change instantly (`_try_instant_sheet_push`); the full sync is the catch-up. After install, the status
+  report should show that task "Ready" with Last Result 0 between runs.
+- Owner confirmed: manual Telegram backup file arrived. Still ask about the automatic 02:00 one.
 
 ## Open items (agreed with the owner, not started)
 1. (in `gateway_staging`) external process ran the workers too. 2. (in `gateway_staging`) staging copy.
-- Decision for the owner: personal iPhone shortcut keys work from outside even for employees whose role has no external
-  access. The old check in `iphone_accounts.eligible` read the process gateway, which was always `lan`, so it never ran;
-  it was removed (behaviour unchanged) instead of being switched on. Switch it on per request only if the owner wants that.
+- DECIDED by the owner (2026-10-31): personal iPhone shortcut keys must work from outside the company, for every role,
+  even roles without external login. That is why `iphone_accounts.eligible` has no gateway check — do not add one.
 3. Google Sheet sync sends its secret in the URL query (`?secret=`); move to the `X-BIM-Sync-Secret` header (needs the Apps Script changed too).
 4. Feature ideas offered, owner has not chosen yet: supervisor dashboard for their team, daily Telegram summary for supervisors,
    per-team performance report. Ask the owner what slows down their daily work before building anything.
