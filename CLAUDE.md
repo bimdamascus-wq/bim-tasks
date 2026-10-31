@@ -150,6 +150,11 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   everything once, ~6 min, as designed); from the next run `unchanged=` should be ~880 and runs should take seconds.
   `?secret=` still not seen. Still open: 02:00 off-site backup, 18:00 supervisor summary, desktop icon appeared?
 
+- 2026-10-31 night: owner rejected `new_look` ("only colours changed") and asked for a 100% new design keeping every
+  button/option. Package `new_design` (commit e5d2668, base 7195f1f) given — NOT yet confirmed: server-rendered shell
+  (base.html + app/shell_nav.py + bim-shell.js), one stylesheet `app/static/bim-ds.css`, new admin home/login markup,
+  12 old CSS/JS files deleted. Old-vs-new browser comparison (admin/supervisor/employee, 38 pages): nothing missing.
+
 ## Code layout (since package `code_split`)
 - `app/main.py`: settings, app object, middleware, shared helpers (auth/session, Telegram task texts, Sheet push).
   Route modules `app/routes_{auth,pages,telegram,shifts,reports,employees,tasks,recurring,users,backup,sync}.py`
@@ -170,7 +175,7 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 - `code_split` installed and merged. Next report: check sync runs are mode=incremental and short; one full after 03:00.
 - `supervisor_tools` installed and merged. Ask: did supervisors get the 18:00 summary? any complaints?
 - Owner (2026-10-31): small updates ship SEPARATELY from the redesign. `sync_hash` waiting for install + report.
-- Redesign: option 1 applied as a CSS layer (`new_look`). Look changes go in `app/static/bim-final.css`.
+- Design: all look changes go in `app/static/bim-ds.css`; the menu is `app/shell_nav.py` (add new pages there).
 - `new_look` confirmed and merged. Remaining, all optional: drop `?secret=` (still unseen; harmless),
   remove the old stacked CSS layers once nothing needs them, rebuild pages only if the owner asks.
 - Redesign mock-ups for approval: https://claude.ai/artifact/CnuJyxwEvGNBDeiTQdDCwY (3 options: 1 calm light + side menu,
