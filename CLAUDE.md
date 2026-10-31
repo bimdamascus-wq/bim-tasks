@@ -79,9 +79,11 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 6. 2 failed rows in `telegram_outbox` (status report 2026-10-31) — check which chat/why.
 
 ## Roadmap agreed with the owner (2026-10-31) — session-by-session plan in `docs/handoff/SESSION_<n>.md` — phases 1–2 were done in another conversation, not in this repo
-- Phase 3: rebuild pages in the new design. ~42 templates today → 8 pages: manager dashboard, tasks (list or board),
+- Owner decision: all functional work first, redesign LAST (session 4). Session 3 = supervisor daily Telegram summary,
+  team performance report, functional supervisor page — see `docs/handoff/SESSION_2.md`.
+- Phase 3 (now last): rebuild pages in a new design. ~42 templates today → 8 pages: manager dashboard, tasks (list or board),
   task detail, team, recurring, reports, settings, supervisor page (built mobile-first).
-  The design itself (from phases 1–2) is NOT in the repository yet — get it from the owner before starting.
+  The earlier design is not available and the owner will not fetch it: make a mock-up for approval first.
 - Phase 4: split `app/main.py` (~2700 lines) into clear modules, delete dead code (e.g. the stacked CSS layers
   bim-system-v510 / bim-theme-v63 / bim-v81 / premium-ui...), and run the tests automatically before every package
   (`build_update.py` should refuse to build if `pytest` fails).

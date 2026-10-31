@@ -52,7 +52,7 @@ then `CHECK_STATUS.cmd` (zip `deploy/check_status/` for them) and pastes the rep
 - Anything that broke or annoys them since the last update.
 
 ### Do not
-- Change the look of any page (that is session 3).
+- Change the look of any page (the redesign is the last phase, session 4).
 - Add a gateway check to `iphone_accounts.eligible` (owner decided shortcuts work from outside).
 - Push to `main` before the owner confirms the install with a status report.
 
@@ -64,17 +64,21 @@ Commit, push, and send the file to the owner with the line: "ارفق هالمل
 ---
 
 ## Plan for session 3 (draft — session 2 updates it)
-Phase 3, part 1. The new design from the owner's earlier conversation is NOT available and the owner will not fetch it.
-So session 3 makes the design itself:
-1. Publish one clickable mock-up (Artifact) of the 8 pages: manager dashboard, tasks (list / board), task detail, team,
-   recurring, reports, settings, supervisor page (mobile-first). Arabic RTL, keep BIM brand (red, logo in `app/static`).
-   Base page contents on what the current 42 templates actually do, so nothing the team uses gets lost.
-   Ask the owner to approve or comment before writing real pages.
-2. Build the **supervisor mobile page** and the **manager dashboard** first, as new pages next to the old ones.
-   One package, staging first.
+Owner decision (2026-10-31): **finish all functional work first; the visual redesign of the whole system comes last.**
+No page redesign in sessions 2–3. New screens use the current look (`base.html`, existing CSS).
+Session 3 = the features, decided for the owner (they delegated the choice; confirm in one line at the start):
+1. **Daily Telegram summary for each supervisor** ("المسؤول"): at a set hour (setting, default end of day), per team member:
+   done today, overdue, open, not yet viewed. Runs in the LAN worker only, uses `supervisor_team` scope from `access.py`,
+   idempotent per day (like `shift_dispatch_log`), on/off per supervisor. Admin/deputy get the same for everyone, optional.
+2. **Team performance report**: per team and per employee for a chosen period — created, completed, completed late,
+   overdue now, average time to complete. JSON API + one simple page in the current style + Excel/CSV export.
+   Supervisors see only their team (`access.py`), managers see all.
+3. **Supervisor page (functional, mobile friendly, current style)**: their team's open/overdue tasks with quick actions
+   (reassign, change status, remind on Telegram). Reuse existing APIs and permission checks.
+One or two packages, staging first, status report after install.
 
 ## Plan for session 4 (draft)
-Remaining new pages (tasks list/board, task detail, team, recurring, reports, settings), one package per 2–3 pages.
-Old pages stay reachable until the owner accepts the new ones; then remove them and their CSS layers in a last package.
-Feature ideas still open (owner has not chosen): daily Telegram summary for supervisors, per-team performance report —
-the reports page and supervisor page may cover them; ask before building separately.
+Visual redesign of the whole system, after all functional work is done and stable: reduce ~42 templates to ~8 pages
+(manager dashboard, tasks list/board, task detail, team, recurring, reports, settings, supervisor page mobile-first),
+remove the stacked CSS layers. Start with a clickable mock-up (Artifact) for the owner to approve, then build new pages
+next to the old ones, remove the old ones only after the owner accepts.
