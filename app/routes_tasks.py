@@ -187,6 +187,10 @@ def delete_task(tid:int, req:Request):
     u=need(req,'tasks.delete'); c=connect(); old=c.execute('SELECT * FROM tasks WHERE id=?',(tid,)).fetchone()
     if not old: c.close(); raise HTTPException(404,'المهمة غير موجودة')
     if not access.can_manage_task(c,u,old): c.close(); raise HTTPException(403,'هذه المهمة خارج نطاق فريقك')
+    if old['archived_at']:
+        # Already archived (a second click while the first request was still sending to Telegram):
+        # do not notify, log or sync it again. 2026-10-31: up to 6 "cancelled" messages per task this way.
+        c.close(); return {'ok':True,'archived':True,'already':True}
     if old['employee_id']:
         _notify_employee_id(c,int(old['employee_id']),f"❌ تم إلغاء / أرشفة المهمة\n\nالمهمة: {old['title']}",tid,'إلغاء المهمة')
     c.execute("UPDATE task_reminders SET is_active=0,updated_at=CURRENT_TIMESTAMP WHERE task_id=?",(tid,))

@@ -111,6 +111,15 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
     uses `?secret=` but did not run between 13:23 and 14:33 would look "not seen". Remove it in the next package
     if the post-install report (a full working day later) still says "not seen yet".
 
+- Report 15:09 (2026-10-31): `code_split` installed 15:05, 8797 lan+workers and 8798 external both on 6db03f1.
+  `main` fast-forwarded to fcba200 (= 6db03f1 + docs). First new sync run 15:07 = mode full (no state yet), lock
+  present while it runs; old full runs took 11-19 min with 2 timeouts. Next report must show mode=incremental runs.
+  `?secret=` still not seen (header seen 15:09). 02:00 off-site backup: not yet due.
+  Duplicates EXPLAINED: all 98 pairs = "إلغاء المهمة" to آية نسب, 2026-10-31 14:00-14:29 local; user "اية نسب" archived
+  tasks from /manage (347 task_archive audits, 310 tasks exist). DELETE /api/tasks/{tid} was not idempotent and
+  sends Telegram inside the request, so repeated clicks re-archived, re-logged and re-notified (3-6x per task).
+  Fixed on the branch (already-archived -> no-op, test). Asked the owner whether that mass archive was intended.
+
 ## Code layout (since package `code_split`)
 - `app/main.py`: settings, app object, middleware, shared helpers (auth/session, Telegram task texts, Sheet push).
   Route modules `app/routes_{auth,pages,telegram,shifts,reports,employees,tasks,recurring,users,backup,sync}.py`
@@ -128,8 +137,8 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   in shift messages, shift-test 500, full-sync `pause`, failed-Telegram diagnosis (no internet on 2026-10-29).
 - Sheet secret: Apps Script uses the `X-BIM-Sync-Secret` header (seen). Remove `?secret=` once a report after a full
   working day still shows "?secret= ... not seen yet" (was deferred from `code_split`).
-- `code_split` waiting for: INSTALL_TO_TEST -> click-through on 8799 -> INSTALL_UPDATE -> status report. Then merge into
-  `main`. In that report also read: duplicate-notification breakdown, sync runs (mode=incremental, minutes per run).
+- `code_split` installed and merged. Next report: check sync runs are mode=incremental and short; one full after 03:00.
+- Pending on the branch for the next package: archive idempotency fix (duplicate "cancelled" messages).
 - Next: features — see `docs/handoff/SESSION_4.md`.
 - Then features (supervisor daily summary, team performance report, supervisor mobile page), redesign last.
 - Still ask: did the automatic 02:00 off-site backup (first run 2026-11-01) arrive on Telegram?

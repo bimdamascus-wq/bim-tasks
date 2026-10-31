@@ -387,3 +387,18 @@ def test_sync_auth_records_header_or_query(env):
     c.close()
     assert '/api/sync/pull' in got['sync.auth_last_header'] and '/api/sync/pull' in got['sync.auth_last_query']
     assert 's' * 32 not in ''.join(got.values())
+
+
+def test_archiving_twice_notifies_once(env):
+    ids, sent = env['ids'], env['sent']
+    boss = client(env, 'boss')
+    tid = task(boss, ids['موظف آخر'], title='أرشفة مرتين')
+    c = env['m'].connect()
+    count = lambda: c.execute("SELECT COUNT(*) FROM task_events WHERE task_id=? AND event_type='cancelled'", (tid,)).fetchone()[0]
+    notes = lambda: c.execute("SELECT COUNT(*) FROM notifications WHERE task_id=? AND kind='إلغاء المهمة'", (tid,)).fetchone()[0]
+    assert boss.delete(f'/api/tasks/{tid}').json() == {'ok': True, 'archived': True}
+    first = (count(), notes(), len(sent))
+    r = boss.delete(f'/api/tasks/{tid}')
+    assert r.status_code == 200 and r.json().get('already') is True
+    assert (count(), notes(), len(sent)) == first and first[0] == 1
+    c.close()
