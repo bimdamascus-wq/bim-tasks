@@ -145,6 +145,11 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   (option 1 look, bigger/bolder text, slate side menu). CSS only. The full rebuild of ~42 templates into 8 pages is
   NOT done and not planned: the owner is satisfied with the restyle; do it only if he asks again.
 
+- Report 17:19 (2026-10-31): `sync_hash` installed 17:11 and `new_look` 17:18; 8797 lan+workers, 8798 external, 8799 test
+  all on 7195f1f. `main` fast-forwarded. The 17:17 sync run is the first with row hashes (no hashes stored yet -> sends
+  everything once, ~6 min, as designed); from the next run `unchanged=` should be ~880 and runs should take seconds.
+  `?secret=` still not seen. Still open: 02:00 off-site backup, 18:00 supervisor summary, desktop icon appeared?
+
 ## Code layout (since package `code_split`)
 - `app/main.py`: settings, app object, middleware, shared helpers (auth/session, Telegram task texts, Sheet push).
   Route modules `app/routes_{auth,pages,telegram,shifts,reports,employees,tasks,recurring,users,backup,sync}.py`
@@ -166,7 +171,7 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 - `supervisor_tools` installed and merged. Ask: did supervisors get the 18:00 summary? any complaints?
 - Owner (2026-10-31): small updates ship SEPARATELY from the redesign. `sync_hash` waiting for install + report.
 - Redesign: option 1 applied as a CSS layer (`new_look`). Look changes go in `app/static/bim-final.css`.
-- After `new_look` is confirmed: merge into `main`. Remaining, all optional: drop `?secret=` (still unseen; harmless),
+- `new_look` confirmed and merged. Remaining, all optional: drop `?secret=` (still unseen; harmless),
   remove the old stacked CSS layers once nothing needs them, rebuild pages only if the owner asks.
 - Redesign mock-ups for approval: https://claude.ai/artifact/CnuJyxwEvGNBDeiTQdDCwY (3 options: 1 calm light + side menu,
   2 dark monitoring room, 3 big cards + top menu; each a manager dashboard + a phone screen; sample data). Waiting for
