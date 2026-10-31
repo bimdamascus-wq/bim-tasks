@@ -176,13 +176,23 @@ foreach ($g in $Gates) {
 $Tool = "$Root\tools\check_status\CHECK_STATUS.cmd"
 if (-not $Test -and (Test-Path $Tool)) {
     try {
-        $lnk = Join-Path ([Environment]::GetFolderPath('CommonDesktopDirectory')) 'تقرير حالة BIM.lnk'
-        $sc = (New-Object -ComObject WScript.Shell).CreateShortcut($lnk)
-        $sc.TargetPath = $Tool; $sc.WorkingDirectory = Split-Path $Tool
-        $sc.Description = 'BIM Tasks status report (read only)'; $sc.Save()
-        # Byte 0x15 bit 0x20 = "Run as administrator" in the shortcut's advanced properties.
-        $b = [IO.File]::ReadAllBytes($lnk); $b[0x15] = $b[0x15] -bor 0x20; [IO.File]::WriteAllBytes($lnk, $b)
-        Write-Host "   اختصار على سطح المكتب: تقرير حالة BIM" -ForegroundColor Green
+        # Session 3: the shortcut with an Arabic name did not appear. WScript.Shell is saved under an ASCII name
+        # (it can fail on non-ANSI paths), then renamed with .NET; it goes on the public AND the current desktop.
+        $made = @()
+        foreach ($desk in @([Environment]::GetFolderPath('CommonDesktopDirectory'), [Environment]::GetFolderPath('Desktop')) | Select-Object -Unique) {
+            if (-not $desk -or -not (Test-Path $desk)) { continue }
+            $tmp = Join-Path $desk 'BIM_Status_Report.lnk'
+            $sc = (New-Object -ComObject WScript.Shell).CreateShortcut($tmp)
+            $sc.TargetPath = $Tool; $sc.WorkingDirectory = Split-Path $Tool
+            $sc.Description = 'BIM Tasks status report (read only)'; $sc.Save()
+            # Byte 0x15 bit 0x20 = "Run as administrator" in the shortcut's advanced properties.
+            $b = [IO.File]::ReadAllBytes($tmp); $b[0x15] = $b[0x15] -bor 0x20; [IO.File]::WriteAllBytes($tmp, $b)
+            $lnk = Join-Path $desk 'تقرير حالة BIM.lnk'
+            try { if (Test-Path -LiteralPath $lnk) { Remove-Item -LiteralPath $lnk -Force }; [IO.File]::Move($tmp, $lnk) } catch { $lnk = $tmp }
+            $made += $lnk
+        }
+        if (-not $made) { throw 'no desktop folder found' }
+        foreach ($l in $made) { Write-Host "   اختصار تقرير الحالة: $l" -ForegroundColor Green }
     } catch { Write-Host "   تنبيه: ما قدرت أعمل اختصار تقرير الحالة ($($_.Exception.Message)). شغّله من $Tool" -ForegroundColor Yellow }
 }
 
