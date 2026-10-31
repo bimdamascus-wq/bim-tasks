@@ -13,7 +13,7 @@
 <div class="kpi-grid">
   <div class="kpi"><span>آخر نسخة ناجحة</span><b id="bkLast">—</b></div>
   <div class="kpi"><span>آخر محاولة</span><b id="bkAttempt" style="font-size:14px">—</b></div>
-  <div class="kpi"><span>المجلد</span><b id="bkFolder" style="font-size:13px;word-break:break-all">—</b></div>
+  <div class="kpi"><span>الوجهة</span><b id="bkFolder" style="font-size:13px;word-break:break-all">—</b></div>
 </div>
 <div id="bkError" class="errbox" hidden></div>
 <div class="notice" style="margin-top:12px"><label style="display:flex;gap:8px;align-items:center;font-weight:700"><input type="checkbox" id="bkTg" onchange="saveTelegram()"> ابعت النسخة اليومية على Telegram للمدير</label>
@@ -43,7 +43,7 @@ const gw=r=>`${r.gateway==='external'?'خارجي':'داخلي'} · <span dir="l
 async function load(){const d=await call('/api/security/overview');CAN=d.can_change;
  $('checks').innerHTML='<table><tbody>'+d.checks.map(c=>`<tr><td style="width:32px;font-size:18px">${c.ok?'✅':'⚠️'}</td><td><b>${esc(c.title)}</b><br><small>${esc(c.detail)}</small></td></tr>`).join('')+'</tbody></table>';
  $('mfa').innerHTML='<table><thead><tr><th>الحساب</th><th>الدور</th><th>Telegram</th><th>الحالة</th><th></th></tr></thead><tbody>'+d.mfa.map(u=>`<tr><td>${esc(u.username)}</td><td>${u.role_code==='admin'?'المدير':'نائب المدير'}</td><td>${u.telegram_linked?'مربوط':'غير مربوط'}</td><td>${u.enabled?'✅ مفعّل':'⚠️ غير مفعّل'}</td><td>${CAN&&u.enabled?`<button class="btn-sm btn-light" onclick="resetMfa(${u.id})">تصفير</button>`:''}</td></tr>`).join('')+'</tbody></table>';
- const b=d.backup,l=b.last||{};$('bkLast').textContent=l.last_ok_at?bimDate(l.last_ok_at):'لا يوجد';$('bkAttempt').textContent=l.last_attempt_at?(l.ok?'✅ ':'❌ ')+bimDate(l.last_attempt_at):'—';$('bkFolder').textContent=b.folder||'غير محدد';
+ const b=d.backup,l=b.last||{};$('bkLast').textContent=l.last_ok_at?bimDate(l.last_ok_at):'لا يوجد';$('bkAttempt').textContent=l.last_attempt_at?(l.ok?'✅ ':'❌ ')+bimDate(l.last_attempt_at):'—';$('bkFolder').textContent=[b.telegram?'Telegram':'',b.folder||''].filter(Boolean).join(' + ')||'غير محددة';
  $('bkError').hidden=!(l.ok===false);$('bkError').textContent=l.error||'';$('bkDir').value=b.folder||'';$('bkTg').checked=!!b.telegram;$('bkTg').disabled=!CAN;$('bkHour').value=b.hour;$('bkKeep').value=b.keep;
  for(const el of $('bkForm').querySelectorAll('input,#bkSave'))el.disabled=!CAN;
  $('bkFiles').innerHTML=d.offsite_files.length?'<b>النسخ الموجودة بالمجلد:</b><br>'+d.offsite_files.slice(0,10).map(f=>`<small dir="ltr">${esc(f.name)} — ${(f.size/1048576).toFixed(1)} MB</small>`).join('<br>'):'';
