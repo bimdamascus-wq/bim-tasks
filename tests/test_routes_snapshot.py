@@ -75,3 +75,16 @@ def test_routes_answer_as_before(env):
     diff = {k: (want['answers'].get(k), v) for k, v in got['answers'].items() if want['answers'].get(k) != v}
     missing = set(want['answers']) - set(got['answers'])
     assert not diff and not missing, json.dumps({'changed': diff, 'missing': sorted(missing)}, ensure_ascii=False, indent=1)[:4000]
+
+
+def test_no_two_routes_match_the_same_url(env):
+    """Routes live in several modules (app/routes_*.py); this keeps the order they register in irrelevant."""
+    rs = [(r.path, set(getattr(r, 'methods', None) or ())) for r in env['m'].app.routes]
+    clashes = []
+    for i, (p, ms) in enumerate(rs):
+        for j, (q, ns) in enumerate(rs):
+            if i != j and ms & ns and '{' in q:
+                rx = '^' + re.sub(r'\{[^}:]+(:path)?\}', lambda x: '.+' if x.group(1) else '[^/]+', q) + '$'
+                if re.match(rx, p):
+                    clashes.append(f'{p} is also matched by {q}')
+    assert not clashes, clashes
