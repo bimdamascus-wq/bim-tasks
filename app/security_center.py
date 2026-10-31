@@ -82,10 +82,6 @@ def verify_chain(c, limit=None):
     return True, checked, None
 
 
-def is_sensitive(action):
-    return action in SENSITIVE or action.startswith(SENSITIVE_PREFIXES)
-
-
 def sensitive_rows(c, limit=200):
     marks = ','.join('?' for _ in SENSITIVE)
     rows = []

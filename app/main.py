@@ -189,10 +189,6 @@ def audit(c, req, u, action, etype=None, eid=None, before=None, after=None, reas
       'after_json':json.dumps(after, ensure_ascii=False, default=str) if after else None,
       'reason':reason,'gateway':gateway_of(req),'ip_address':ip(req)})
 
-def _employee_row(c, employee_id):
-    if not employee_id: return None
-    return c.execute('SELECT * FROM employees WHERE id=?', (employee_id,)).fetchone()
-
 def _task_accessible(c, u, tid:int):
     row=c.execute('SELECT * FROM tasks WHERE id=?',(tid,)).fetchone()
     if not row: return None

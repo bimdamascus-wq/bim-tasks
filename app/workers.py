@@ -16,10 +16,6 @@ def _setting_int(c,key,default):
     try:return max(0,int(_setting(c,key)))
     except:return default
 
-def _task_text(row,prefix='🔔 تذكير مهمة'):
-    due=f"\nالموعد: {row['due_at']}" if row['due_at'] else ''
-    return f"{prefix}\nالموظف: {row['employee_name'] or 'بدون موظف'}\nالمهمة: {row['title']}\nالحالة: {row['status']}\nالأولوية: {row['priority']}{due}"
-
 def _send_task(c,task_id,kind):
     from .main import _notify_employee
     row=c.execute('SELECT employee_id,status FROM tasks WHERE id=?',(task_id,)).fetchone()
