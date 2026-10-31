@@ -18,7 +18,7 @@ Do not ask them to look things up in other conversations. Decide what you can fr
 - Server runs commit **5123848** (package `fixes_tests`, installed 13:23, confirmed by status report).
   `main` = server code + tooling/docs (a67da42 or later). Branch for new work: create it from `main`
   (or use the branch the session gives you, rebased on `main`).
-- Tests: `pip install -r requirements.txt pytest httpx`, `python -m pytest tests -q` → 24 pass.
+- Tests: `pip install -r requirements.txt pytest httpx`, `python -m pytest tests -q` → 23 pass.
 - `build_update.py` now refuses to build if the tests fail.
 - Status tool: `deploy/check_status/` (zip with folder `BIM_Check_Status/`). Owner: extract, right click
   `CHECK_STATUS.cmd` → Run as administrator, paste the Notepad report. It now also shows: failed Telegram rows,
