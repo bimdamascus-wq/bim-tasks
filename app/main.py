@@ -1569,7 +1569,7 @@ async def run_shift_test(req:Request):
     tasks=c.execute("""SELECT id,title,status,priority,due_at FROM tasks
       WHERE (employee_id=? OR EXISTS(SELECT 1 FROM task_participants p WHERE p.task_id=tasks.id AND p.employee_id=? AND p.status<>'تم')) AND archived_at IS NULL AND status NOT IN ('تم','ملغاة')
       ORDER BY CASE priority WHEN 'عاجلة' THEN 1 WHEN 'عالية' THEN 2 WHEN 'عادي' THEN 3 ELSE 4 END,
-      CASE WHEN due_at IS NULL THEN 1 ELSE 0 END,due_at,id DESC LIMIT 50""",(eid,)).fetchall()
+      CASE WHEN due_at IS NULL THEN 1 ELSE 0 END,due_at,id DESC LIMIT 50""",(eid,eid)).fetchall()
     if kind=='start':
         lines=['📋 مهامك اليوم — اختبار']
         if tasks:

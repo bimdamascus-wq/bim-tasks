@@ -55,11 +55,14 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 - 2026-10-31: update `telegram_backup` (branch `next-update`, package built with `deploy/build_update.py`) given to the owner.
   Owner confirmed it is installed; merged into `main`. Still ask whether the daily backup file arrives on Telegram.
 
-- 2026-10-31: update `gateway_staging` (branch `claude/wonderful-edison-kzadbl`) built and given to the owner — NOT yet confirmed installed.
-  Contains: `BIM_GATEWAY`/`BIM_PORT`/`BIM_COOKIE_SECURE` in `RUN_LAN.cmd` / `RUN_EXTERNAL.cmd` (workers only in LAN),
-  release stamp + gateway check in the installer, staging copy. Owner had not said whether the Telegram backup file arrives.
-  If the installer rolls back with "8798 ... بدل 'external'", the scheduled task `BIM Tasks External 8798` does not run
-  `RUN_EXTERNAL.cmd`: ask for `schtasks /Query /TN "BIM Tasks External 8798" /V /FO LIST`.
+- 2026-10-31: update `gateway_staging` installed 11:07 (status report: 8797 lan+workers, 8798 external no workers,
+  8799 test copy, all on commit 22e9f34). `main` fast-forwarded to 22e9f34 = server code.
+  Off-site backup to Telegram ran OK at 10:33 (manual, 1 part); first automatic run is 02:00 — ask whether it arrived.
+- Status tool: `deploy/check_status/` (zip it, owner double-clicks `CHECK_STATUS.cmd`, pastes the report). Read-only, no secrets.
+  On Windows each uvicorn shows twice (venv launcher + Python313 child) — normal. Task "Last Result 267009" = still running — normal.
+- Pending on the branch, not shipped yet: fix for `/api/shift-test` (500, seen in server-lan.err.log).
+- To look at: `BIM_Tasks_Full_Google_Sheets_Sync` (every 5 min) showed Last Result -2147020576 (0x800710E0, run refused —
+  probably the previous run was still going). Check `full_sync` logs before changing anything.
 
 ## Open items (agreed with the owner, not started)
 1. (in `gateway_staging`) external process ran the workers too. 2. (in `gateway_staging`) staging copy.

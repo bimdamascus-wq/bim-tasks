@@ -396,3 +396,16 @@ def test_test_copy_cuts_every_outside_link(tmp_path):
     d.close()
     assert (dst / 'data' / 'attachments' / 'a.txt').exists() and (dst / 'TEST_COPY.txt').exists()
     assert sqlite3.connect(src / 'data' / 'bim_tasks.db').execute("SELECT COUNT(*) FROM settings").fetchone()[0] == 4
+
+
+def test_shift_test_button_lists_tasks(env):
+    # Was a 500 on the server: the query has two placeholders and got one value.
+    m = env['m']
+    c = m.connect()
+    c.execute("UPDATE employees SET telegram_enabled=1 WHERE id=?", (env['ids']['بوس'],))
+    c.execute("UPDATE user_mfa SET enabled=0 WHERE user_id=(SELECT id FROM users WHERE username='boss')"); c.close()
+    boss = client(env, 'boss')
+    task(boss, env['ids']['بوس'], title='مهمة الشيفت')
+    for kind in ('start', 'end'):
+        r = boss.post('/api/shift-test', json={'employee_id': env['ids']['بوس'], 'kind': kind})
+        assert r.status_code == 200, r.text
