@@ -11,7 +11,7 @@ PAGES=[
  ('الفريق',[('/employees','الموظفون'),('/users','المستخدمون'),('/access-control','الصلاحيات والقنوات'),('/job-profiles','المسميات الوظيفية'),('/workload','عبء العمل'),('/handover','تسليم الأعمال'),('/shift-center','الشيفتات')]),
  ('الأتمتة',[('/recurring','المهام المتكررة'),('/template-library','قوالب العمل'),('/automation-center','مركز الأتمتة'),('/notification-center','مركز الإشعارات')]),
  ('Telegram والهاتف',[('/telegram-center','مركز Telegram'),('/telegram-groups','مجموعات Telegram'),('/telegram-health','صحة Telegram'),('/telegram-dashboard','تقارير Telegram'),('/iphone-setup','إعداد الهاتف'),('/integrations','الربط والتكامل')]),
- ('التقارير والسجلات',[('/operations-reports','التقارير التشغيلية'),('/activity-log','سجل النشاط'),('/audit','سجل التغييرات'),('/record-management','إدارة السجلات')]),
+ ('التقارير والسجلات',[('/team-performance','أداء الفريق'),('/operations-reports','التقارير التشغيلية'),('/activity-log','سجل النشاط'),('/audit','سجل التغييرات'),('/record-management','إدارة السجلات')]),
  ('النظام',[('/security','الأمان والحماية'),('/permissions','جدول الصلاحيات'),('/company','إعداد الشركة'),('/system-health','صحة النظام'),('/sync','مزامنة Google Sheet'),('/backup','النسخ الاحتياطي')]),
 ]
 ALL_PATHS={p for _,items in PAGES for p,_ in items}

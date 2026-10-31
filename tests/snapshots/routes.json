@@ -238,6 +238,7 @@
      "/system-health": "str",
      "/tasks": "str",
      "/tasks-table": "str",
+     "/team-performance": "str",
      "/telegram-center": "str",
      "/telegram-dashboard": "str",
      "/telegram-groups": "str",
@@ -848,6 +849,31 @@
    },
    "status": 200,
    "type": "application/json"
+  },
+  "boss /api/team-performance": {
+   "shape": {
+    "employees": [
+     "dict"
+    ],
+    "from": "str",
+    "teams": [
+     "dict"
+    ],
+    "to": "str",
+    "total": {
+     "avg_hours": "NoneType",
+     "completed": "int",
+     "completed_late": "int",
+     "created": "int",
+     "overdue_now": "int"
+    }
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/team-performance.csv": {
+   "status": 200,
+   "type": "text/csv"
   },
   "boss /api/telegram-dashboard": {
    "shape": {
@@ -1983,6 +2009,44 @@
    "title": "بيم دمشق | المهام كجدول",
    "type": "text/html"
   },
+  "boss /team-performance": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "perfAvg",
+    "perfCompleted",
+    "perfCreated",
+    "perfFrom",
+    "perfLate",
+    "perfOverdue",
+    "perfRows",
+    "perfTeams",
+    "perfTeamsPanel",
+    "perfTo"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | أداء الفريق",
+   "type": "text/html"
+  },
   "boss /telegram-center": {
    "assets": [
     "/static/bim-plex.css",
@@ -2518,6 +2582,7 @@
      "/system-health": "str",
      "/tasks": "str",
      "/tasks-table": "str",
+     "/team-performance": "str",
      "/telegram-center": "str",
      "/telegram-dashboard": "str",
      "/telegram-groups": "str",
@@ -3128,6 +3193,31 @@
    },
    "status": 200,
    "type": "application/json"
+  },
+  "dep /api/team-performance": {
+   "shape": {
+    "employees": [
+     "dict"
+    ],
+    "from": "str",
+    "teams": [
+     "dict"
+    ],
+    "to": "str",
+    "total": {
+     "avg_hours": "NoneType",
+     "completed": "int",
+     "completed_late": "int",
+     "created": "int",
+     "overdue_now": "int"
+    }
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/team-performance.csv": {
+   "status": 200,
+   "type": "text/csv"
   },
   "dep /api/telegram-dashboard": {
    "shape": {
@@ -4263,6 +4353,44 @@
    "title": "بيم دمشق | المهام كجدول",
    "type": "text/html"
   },
+  "dep /team-performance": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "perfAvg",
+    "perfCompleted",
+    "perfCreated",
+    "perfFrom",
+    "perfLate",
+    "perfOverdue",
+    "perfRows",
+    "perfTeams",
+    "perfTeamsPanel",
+    "perfTo"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | أداء الفريق",
+   "type": "text/html"
+  },
   "dep /telegram-center": {
    "assets": [
     "/static/bim-plex.css",
@@ -5088,6 +5216,20 @@
    "status": 200,
    "type": "application/json"
   },
+  "member /api/team-performance": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/team-performance.csv": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
   "member /api/telegram-dashboard": {
    "shape": {
     "detail": "str"
@@ -5552,6 +5694,13 @@
    "status": 200,
    "title": "بيم دمشق | المهام كجدول",
    "type": "text/html"
+  },
+  "member /team-performance": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
   },
   "member /telegram-center": {
    "shape": {
@@ -6135,6 +6284,31 @@
    "status": 200,
    "type": "application/json"
   },
+  "samer /api/team-performance": {
+   "shape": {
+    "employees": [
+     "dict"
+    ],
+    "from": "str",
+    "teams": [
+     "dict"
+    ],
+    "to": "str",
+    "total": {
+     "avg_hours": "NoneType",
+     "completed": "int",
+     "completed_late": "int",
+     "created": "int",
+     "overdue_now": "int"
+    }
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "samer /api/team-performance.csv": {
+   "status": 200,
+   "type": "text/csv"
+  },
   "samer /api/telegram-dashboard": {
    "shape": {
     "detail": "str"
@@ -6667,6 +6841,43 @@
    "title": "بيم دمشق | المهام كجدول",
    "type": "text/html"
   },
+  "samer /team-performance": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "perfAvg",
+    "perfCompleted",
+    "perfCreated",
+    "perfFrom",
+    "perfLate",
+    "perfOverdue",
+    "perfRows",
+    "perfTeams",
+    "perfTeamsPanel",
+    "perfTo"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | أداء الفريق",
+   "type": "text/html"
+  },
   "samer /telegram-center": {
    "shape": {
     "detail": "str"
@@ -6782,6 +6993,8 @@
   "GET /api/tasks/{tid} api_task",
   "GET /api/tasks/{tid}/delegate-options delegate_options",
   "GET /api/tasks/{tid}/work-profile task_work_profile",
+  "GET /api/team-performance team_performance",
+  "GET /api/team-performance.csv team_performance_csv",
   "GET /api/telegram-dashboard api_telegram_dashboard",
   "GET /api/telegram-groups api_telegram_groups",
   "GET /api/telegram-health api_telegram_health",
@@ -6831,6 +7044,7 @@
   "GET /task/{tid} task_detail_page",
   "GET /tasks tasks_page",
   "GET /tasks-table tasks_table_page",
+  "GET /team-performance team_performance_page",
   "GET /telegram-center telegram_center_page",
   "GET /telegram-dashboard telegram_dashboard_page",
   "GET /telegram-groups telegram_groups_page",

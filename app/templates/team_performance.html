@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% block content %}
+<main class="page-shell"><section class="page-title"><div><h1>📊 أداء الفريق</h1><p>لكل موظف ولكل فريق خلال الفترة: المهام الجديدة، المكتملة، المكتملة بعد موعدها، المتأخرة الآن، ومتوسط وقت الإنجاز. المسؤول يرى فريقه فقط.</p></div></section>
+<section class="panel"><div class="form-grid"><div class="field"><label>من تاريخ</label><input id="perfFrom" type="date"></div><div class="field"><label>إلى تاريخ</label><input id="perfTo" type="date"></div></div>
+<div class="toolbar" style="justify-content:flex-end"><button onclick="loadPerf()">تحديث التقرير</button><button class="btn-light" onclick="exportPerf()">تصدير Excel (CSV)</button></div>
+<p class="notice">تُحسب المهام المسندة مباشرة للموظف. «متأخرة الآن» = مفتوحة وتجاوزت موعدها لحظة فتح التقرير.</p></section>
+<div class="kpi-grid"><div class="kpi"><span>مهام جديدة</span><b id="perfCreated">0</b></div><div class="kpi"><span>مكتملة</span><b id="perfCompleted">0</b></div><div class="kpi"><span>مكتملة متأخرة</span><b id="perfLate">0</b></div><div class="kpi"><span>متأخرة الآن</span><b id="perfOverdue">0</b></div><div class="kpi"><span>متوسط الإنجاز / ساعة</span><b id="perfAvg">—</b></div></div>
+<section class="panel" id="perfTeamsPanel"><div class="section-head"><div><h2>الفرق</h2></div></div><div class="scroll-box"><table class="sticky-table"><thead><tr><th>المسؤول</th><th>الموظفون</th><th>جديدة</th><th>مكتملة</th><th>مكتملة متأخرة</th><th>متأخرة الآن</th><th>متوسط الإنجاز / ساعة</th></tr></thead><tbody id="perfTeams"></tbody></table></div></section>
+<section class="panel"><div class="section-head"><div><h2>الموظفون</h2></div></div><div class="scroll-box"><table class="sticky-table"><thead><tr><th>الموظف</th><th>القسم</th><th>جديدة</th><th>مكتملة</th><th>مكتملة متأخرة</th><th>متأخرة الآن</th><th>متوسط الإنجاز / ساعة</th></tr></thead><tbody id="perfRows"></tbody></table></div></section></main>
+{% endblock %}{% block scripts %}<script>
+const perfQ=()=>'date_from='+encodeURIComponent(perfFrom.value)+'&date_to='+encodeURIComponent(perfTo.value);
+const perfH=v=>v===null||v===undefined?'—':bimArDigits(v);
+function perfRow(name,extra,r){return `<tr><td>${bimEsc(name)}</td><td>${extra}</td><td>${bimArDigits(r.created)}</td><td>${bimArDigits(r.completed)}</td><td>${bimArDigits(r.completed_late)}</td><td>${bimArDigits(r.overdue_now)}</td><td>${perfH(r.avg_hours)}</td></tr>`}
+async function loadPerf(){try{const d=await bimRequest('/api/team-performance?'+perfQ());perfFrom.value=d.from;perfTo.value=d.to;
+ perfCreated.textContent=bimArDigits(d.total.created);perfCompleted.textContent=bimArDigits(d.total.completed);perfLate.textContent=bimArDigits(d.total.completed_late);perfOverdue.textContent=bimArDigits(d.total.overdue_now);perfAvg.textContent=perfH(d.total.avg_hours);
+ perfTeamsPanel.style.display=d.teams.length?'':'none';
+ perfTeams.innerHTML=d.teams.map(t=>perfRow(t.supervisor,bimArDigits(t.members),t)).join('');
+ perfRows.innerHTML=d.employees.map(r=>perfRow(r.name,bimEsc(r.department||'—'),r)).join('')||'<tr><td colspan="7">لا يوجد موظفون</td></tr>'}catch(e){bimToast(e.message,'err')}}
+function exportPerf(){location.href='/api/team-performance.csv?'+perfQ()}
+loadPerf();
+</script>{% endblock %}

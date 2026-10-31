@@ -31,6 +31,7 @@ PERMISSIONS=[
  ('recurring.edit','إدارة المهام المتكررة','المهام'),
  ('users.manage','إدارة حسابات المسؤولين والموظفين والإعدادات','الإدارة'),
  ('audit.view','سجل التغييرات والنشاط','الإدارة'),
+ ('reports.team','تقرير أداء الفريق (المسؤول: فريقه فقط)','الإدارة'),
  ('external.login','الدخول من خارج الشركة','الدخول'),
  ('security.manage','العمليات الحساسة: حسابات المدير والنائب، الصلاحيات، الأمان، الاسترجاع','الأمان'),
 ]
@@ -40,7 +41,7 @@ _ALL=set(PERMISSION_CODES)
 MATRIX={
  'admin':set(_ALL),
  'deputy':_ALL-{'security.manage'},
- 'supervisor':{'tasks.view','tasks.create','tasks.edit','employees.view','recurring.view','recurring.edit','external.login'},
+ 'supervisor':{'tasks.view','tasks.create','tasks.edit','employees.view','recurring.view','recurring.edit','external.login','reports.team'},
  'employee':{'tasks.view'},
  'viewer':{'tasks.view','employees.view'},
 }
@@ -179,6 +180,7 @@ PAGE_PERMS={
  '/telegram-center':'employees.edit','/telegram-groups':'employees.edit','/telegram-health':'employees.edit',
  '/telegram-dashboard':'employees.edit','/shift-center':'employees.edit','/automation-center':'employees.edit',
  '/audit':'audit.view','/activity-log':'audit.view',
+ '/team-performance':'reports.team',
  '/users':'users.manage','/job-profiles':'users.manage','/iphone-setup':'users.manage','/notification-center':'users.manage',
  '/record-management':'users.manage','/company':'users.manage','/template-library':'users.manage','/access-control':'users.manage',
  '/handover':'users.manage','/page-visibility':'users.manage','/security':'users.manage','/permissions':'users.manage',
