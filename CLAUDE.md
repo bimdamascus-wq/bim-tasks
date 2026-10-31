@@ -96,14 +96,41 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   (only `_sync_auth` and the shift lists in workers). Install confirmed -> `main` fast-forwarded (server = 5123848).
   Still read the duplicate breakdown in the next report; normal work (assign then edit) can produce pairs.
 
+- 2026-10-31 (session 3): package `code_split` (commit 6db03f1, branch `claude/new-session-j9yp8h`, base 5123848)
+  given to the owner — NOT yet confirmed installed, NOT merged into `main`. Contents:
+  * Full sync: `audit_logs`, `task_events`, `sync_events`, `notifications` send only rows with id > last id accepted
+    (`sync_full_logs/incremental_state.json`); full upload once a day (first run after 03:00, or `--full`); lock file
+    `sync_full_logs/sync.lock` (overlap exits 0, stale > 30 min ignored). `shift_dispatch_log`/`group_dispatch_log`
+    stay FULL on purpose: workers UPDATE and DELETE their rows (the session-3 plan wrongly called them append-only).
+  * Status tool moved to `tools/check_status/` (ships to the server); installer makes a common-desktop shortcut
+    "تقرير حالة BIM" with the Run-as-administrator flag. Report shows sync mode, incremental state and lock.
+  * `app/main.py` split into `app/routes_*.py` (see "Code layout"). Dead code removed: 3 unused functions.
+  * Tests: `tests/conftest.py` (shared `env`), `tests/test_routes_snapshot.py` + `tests/snapshots/routes.json`,
+    `tests/test_full_sync.py`. 30 pass.
+  * `?secret=` NOT removed: the report only stores the last time each way was seen, so a Sheet function that still
+    uses `?secret=` but did not run between 13:23 and 14:33 would look "not seen". Remove it in the next package
+    if the post-install report (a full working day later) still says "not seen yet".
+
+## Code layout (since package `code_split`)
+- `app/main.py`: settings, app object, middleware, shared helpers (auth/session, Telegram task texts, Sheet push).
+  Route modules `app/routes_{auth,pages,telegram,shifts,reports,employees,tasks,recurring,users,backup,sync}.py`
+  import helpers `from .main import ...` and read run-time-changeable settings as `_main.X` (GATEWAY, RELEASE,
+  PUBLIC_URL, COOKIE_SECURE, IPHONE_SECRET, TELEGRAM_WEBHOOK_SECRET, mfa_*). main.py imports every route module
+  back, so `m.x` in the plugin modules (`register(app, m)`) and `from .main import x` keep working.
+- New routes go in the matching `routes_*.py`. If you add a module, import it in main.py's routes block.
+- `tests/test_routes_snapshot.py` pins every GET answer per role. A deliberate change: regenerate with
+  `BIM_UPDATE_SNAPSHOT=1 python -m pytest tests/test_routes_snapshot.py -q` and say why in the commit.
+
 ## Open items
 - DECIDED by the owner (2026-10-31): personal iPhone shortcut keys must work from outside the company, for every role,
   even roles without external login. That is why `iphone_accounts.eligible` has no gateway check — do not add one.
 - Done in session 2 (package `fixes_tests`): workers no longer run in the external process, staging copy, group tasks
   in shift messages, shift-test 500, full-sync `pause`, failed-Telegram diagnosis (no internet on 2026-10-29).
-- Sheet secret: Apps Script already uses the `X-BIM-Sync-Secret` header. Remove `?secret=` in package `code_split`.
-- Next: package `code_split` (full sync incremental for log tables + lock, status tool in a fixed place with desktop
-  shortcut, page/API tests, split `main.py`, dead code, drop `?secret=`) — see `docs/handoff/SESSION_3.md`.
+- Sheet secret: Apps Script uses the `X-BIM-Sync-Secret` header (seen). Remove `?secret=` once a report after a full
+  working day still shows "?secret= ... not seen yet" (was deferred from `code_split`).
+- `code_split` waiting for: INSTALL_TO_TEST -> click-through on 8799 -> INSTALL_UPDATE -> status report. Then merge into
+  `main`. In that report also read: duplicate-notification breakdown, sync runs (mode=incremental, minutes per run).
+- Next: features — see `docs/handoff/SESSION_4.md`.
 - Then features (supervisor daily summary, team performance report, supervisor mobile page), redesign last.
 - Still ask: did the automatic 02:00 off-site backup (first run 2026-11-01) arrive on Telegram?
 
