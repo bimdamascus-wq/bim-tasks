@@ -1,0 +1,6837 @@
+{
+ "answers": {
+  "boss /": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-logo-trim.png"
+   ],
+   "ids": [
+    "cA",
+    "cD",
+    "cO",
+    "clr",
+    "cmd",
+    "doneLabel",
+    "dueLabel",
+    "feed",
+    "filter",
+    "gA",
+    "gD",
+    "gO",
+    "go",
+    "kDone",
+    "kLate",
+    "kOpen",
+    "kRate",
+    "menuBtn",
+    "pv",
+    "q",
+    "sLate",
+    "sTeam",
+    "seg",
+    "sub",
+    "team",
+    "title",
+    "toast"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | لوحة المدير",
+   "type": "text/html"
+  },
+  "boss /access-control": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css",
+    "/static/universal.js"
+   ],
+   "ids": [
+    "activityNav",
+    "uMessage",
+    "universalApp"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | صلاحيات المستخدمين",
+   "type": "text/html"
+  },
+  "boss /account": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "mfaActions",
+    "mfaCode",
+    "mfaCodeBox",
+    "mfaPanel",
+    "mfaState",
+    "pwCur",
+    "pwForm",
+    "pwHint",
+    "pwNew",
+    "pwNew2"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | حسابي والأمان",
+   "type": "text/html"
+  },
+  "boss /activity-log": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css",
+    "/static/bim-activity-labels.js",
+    "/static/bim-activity-view.js"
+   ],
+   "ids": [
+    "activityCount",
+    "activityEnd",
+    "activityGateway",
+    "activityHead",
+    "activityKind",
+    "activityNav",
+    "activityNext",
+    "activityPage",
+    "activityPrev",
+    "activityRefresh",
+    "activityResult",
+    "activityRows",
+    "activityScope",
+    "activityStart",
+    "activityUser",
+    "changeAfter",
+    "changeBefore",
+    "changeDetails",
+    "closeChange"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | السجل الشامل للمستخدمين",
+   "type": "text/html"
+  },
+  "boss /api/access-control": {
+   "shape": {
+    "ceilings": {
+     "admin": "list",
+     "deputy": "list",
+     "employee": "list",
+     "supervisor": "list",
+     "viewer": "list"
+    },
+    "defaults": {
+     "admin": "list",
+     "deputy": "list",
+     "employee": "list",
+     "supervisor": "list",
+     "viewer": "list"
+    },
+    "overrides": [],
+    "permissions": [
+     "dict"
+    ],
+    "users": [
+     "dict"
+    ]
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/activity/changes": {
+   "shape": {
+    "items": [
+     "dict"
+    ],
+    "total": "int"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/activity/changes/{aid}": {
+   "shape": {
+    "after": {
+     "employee_id": "int",
+     "title": "str"
+    },
+    "before": {},
+    "id": "int"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/activity/events": {
+   "shape": {
+    "items": [
+     "dict"
+    ],
+    "pages": {
+     "/": "str",
+     "/access-control": "str",
+     "/account": "str",
+     "/activity-log": "str",
+     "/archive": "str",
+     "/audit": "str",
+     "/automation-center": "str",
+     "/backup": "str",
+     "/company": "str",
+     "/employees": "str",
+     "/handover": "str",
+     "/integrations": "str",
+     "/iphone-setup": "str",
+     "/job-profiles": "str",
+     "/logout": "str",
+     "/manage": "str",
+     "/my-work": "str",
+     "/notification-center": "str",
+     "/operations-reports": "str",
+     "/permissions": "str",
+     "/record-management": "str",
+     "/recurring": "str",
+     "/security": "str",
+     "/shift-center": "str",
+     "/sync": "str",
+     "/system-health": "str",
+     "/tasks": "str",
+     "/tasks-table": "str",
+     "/telegram-center": "str",
+     "/telegram-dashboard": "str",
+     "/telegram-groups": "str",
+     "/telegram-health": "str",
+     "/template-library": "str",
+     "/users": "str",
+     "/workload": "str"
+    },
+    "total": "int",
+    "users": [
+     "dict"
+    ]
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/activity/sessions": {
+   "shape": {
+    "items": [
+     "dict"
+    ],
+    "total": "int"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/admin-notification-settings": {
+   "shape": {
+    "daily_enabled": "bool",
+    "daily_time": "str",
+    "employee_ids": [],
+    "enabled": "bool"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/attachments/{aid}": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 404,
+   "type": "application/json"
+  },
+  "boss /api/audit": {
+   "shape": [
+    {
+     "action": "str",
+     "after_json": "str",
+     "before_json": "NoneType",
+     "created_at": "str",
+     "entity_id": "str",
+     "entity_type": "str",
+     "gateway": "str",
+     "id": "int",
+     "ip_address": "str",
+     "prev_hash": "str",
+     "reason": "NoneType",
+     "row_hash": "str",
+     "user_id": "int",
+     "username_snapshot": "str"
+    }
+   ],
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/automation-summary": {
+   "shape": {
+    "group_reminders": "int",
+    "queue_pending": "int",
+    "recurring_tasks": "int",
+    "shift_exceptions": "int",
+    "shift_messages": "int",
+    "task_reminders": "int"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/backup/status": {
+   "shape": {
+    "backup_dir": "str",
+    "files": [],
+    "latest_db": "NoneType",
+    "latest_full": "NoneType",
+    "ok": "bool"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/bim-employee-profile/{eid}": {
+   "shape": {
+    "config": {
+     "completion_fields": "list",
+     "instructions": "str",
+     "notifications": "dict",
+     "permissions": "dict",
+     "task_templates": "list"
+    },
+    "config_override": {},
+    "display_mode": "str",
+    "display_mode_override": "NoneType",
+    "instructions": "str",
+    "instructions_read": "bool",
+    "instructions_signature": "str",
+    "jobs": []
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/bim-job-profiles": {
+   "shape": {
+    "jobs": [],
+    "links": [],
+    "preferences": []
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/client-status": {
+   "shape": {
+    "domain": "str",
+    "gateway": "str",
+    "ok": "bool",
+    "sync_failed": "int",
+    "sync_pending": "int"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/company": {
+   "shape": {
+    "configured": "bool",
+    "departments": [],
+    "logo": "bool",
+    "name": "str",
+    "public_url": "str",
+    "timezone": "str",
+    "work_days": [
+     "int"
+    ]
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/dashboard": {
+   "shape": {
+    "by_employee": [
+     "dict"
+    ],
+    "done": "int",
+    "employees": "int",
+    "late": "int",
+    "latest": [
+     "dict"
+    ],
+    "sync_conflicts": "int",
+    "sync_dirty": "int",
+    "today": "int",
+    "total": "int",
+    "unassigned": "int",
+    "unseen": "int",
+    "waiting": "int",
+    "working": "int"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/employees": {
+   "shape": [
+    {
+     "created_at": "str",
+     "department": "NoneType",
+     "id": "int",
+     "is_active": "int",
+     "name": "str",
+     "open_tasks": "int",
+     "shift_end": "NoneType",
+     "shift_start": "NoneType",
+     "shift_type": "str",
+     "sort_order": "int",
+     "telegram_chat_id": "NoneType",
+     "telegram_enabled": "int",
+     "telegram_link_code": "NoneType",
+     "telegram_link_expires_at": "NoneType",
+     "telegram_linked_at": "NoneType",
+     "updated_at": "str",
+     "whatsapp": "NoneType",
+     "whatsapp_enabled": "int",
+     "work_days": "str"
+    }
+   ],
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/group-dispatch-log": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/group-reminders": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/iphone/accounts": {
+   "shape": {
+    "default_employee": "str",
+    "items": [
+     "dict"
+    ],
+    "legacy_owner": "NoneType"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/iphone/setup": {
+   "shape": {
+    "field": "str",
+    "header": "str",
+    "ok": "bool",
+    "secret": "str",
+    "text_url": "str",
+    "voice_url": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/me": {
+   "shape": {
+    "employee_id": "int",
+    "full_name": "str",
+    "gateway": "str",
+    "hidden_pages": [
+     "str"
+    ],
+    "id": "int",
+    "permissions": [
+     "str"
+    ],
+    "public_url": "str",
+    "role": "str",
+    "role_code": "str",
+    "username": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/me/security": {
+   "shape": {
+    "gateway": "str",
+    "mfa_available": "bool",
+    "mfa_enabled": "bool",
+    "role_code": "str",
+    "telegram_linked": "bool"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/operations-report": {
+   "shape": {
+    "days": "int",
+    "departments": [],
+    "employees": [
+     "dict"
+    ],
+    "rows": [
+     "dict"
+    ],
+    "summary": {
+     "avg_complete_minutes": "NoneType",
+     "avg_start_minutes": "NoneType",
+     "completed": "int",
+     "overdue": "int",
+     "problems": "int",
+     "total": "int"
+    }
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/operations-report/tasks": {
+   "shape": {
+    "items": [
+     "dict"
+    ],
+    "next_offset": "int",
+    "total": "int",
+    "truncated": "bool"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/page-visibility": {
+   "shape": {
+    "defaults": [
+     "str"
+    ],
+    "groups": [
+     "dict"
+    ]
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/records": {
+   "shape": {
+    "catalog": [
+     "dict"
+    ],
+    "entity": "str",
+    "has_more": "bool",
+    "rows": []
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/recurring": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/release-health": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 503,
+   "type": "application/json"
+  },
+  "boss /api/security/overview": {
+   "shape": {
+    "backup": {
+     "folder": "str",
+     "hour": "int",
+     "keep": "int",
+     "last": "dict",
+     "passphrase_set": "bool",
+     "telegram": "bool"
+    },
+    "can_change": "bool",
+    "checks": [
+     "dict"
+    ],
+    "denied_logins": [],
+    "mfa": [
+     "dict"
+    ],
+    "offsite_files": [],
+    "sensitive": []
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/settings": {
+   "shape": {
+    "delegation.iphone_backfill": "str",
+    "domain": "str",
+    "gateway": "str",
+    "iphone_secret_configured": "bool",
+    "public_url": "str",
+    "telegram_configured": "bool"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/shift-dispatch-log": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/shift-exceptions": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/shift-messages": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/shift-settings": {
+   "shape": {
+    "shift_due_soon_enabled": "str",
+    "shift_due_soon_minutes": "str",
+    "shift_end_summary_enabled": "str",
+    "shift_end_summary_minutes": "str",
+    "shift_overdue_enabled": "str",
+    "shift_start_tasks_enabled": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/shift-test/employees": {
+   "shape": [
+    {
+     "department": "NoneType",
+     "id": "int",
+     "name": "str",
+     "shift_end": "NoneType",
+     "shift_start": "NoneType",
+     "shift_type": "str",
+     "telegram_chat_id": "NoneType",
+     "telegram_enabled": "int"
+    }
+   ],
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/staff/{eid}/settings": {
+   "shape": {
+    "capacity_minutes": "int",
+    "channel": "str",
+    "employee_id": "int"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/sync/conflicts": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/sync/pull": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 401,
+   "type": "application/json"
+  },
+  "boss /api/sync/snapshot": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 401,
+   "type": "application/json"
+  },
+  "boss /api/sync/status": {
+   "shape": {
+    "dirty_tasks": "int",
+    "instant_push_ready": "bool",
+    "last_event_id": "int",
+    "ok": "bool",
+    "open_conflicts": "int",
+    "spreadsheet_id": "str",
+    "sync_secret_configured": "bool",
+    "webapp_url": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/sync/tasks-page": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 401,
+   "type": "application/json"
+  },
+  "boss /api/sync/test-webapp": {
+   "shape": {
+    "compatible": "bool",
+    "message": "str",
+    "ok": "bool",
+    "stage": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/task-options/employees": {
+   "shape": [
+    {
+     "department": "NoneType",
+     "id": "int",
+     "name": "str"
+    }
+   ],
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/tasks": {
+   "shape": [
+    {
+     "archived_at": "NoneType",
+     "completed_at": "NoneType",
+     "created_at": "str",
+     "created_by": "int",
+     "due_at": "NoneType",
+     "employee_id": "int",
+     "employee_name": "str",
+     "id": "int",
+     "in_progress_at": "NoneType",
+     "is_group": "int",
+     "last_delegation": "NoneType",
+     "notes": "NoneType",
+     "origin": "str",
+     "origin_by": "str",
+     "origin_label": "str",
+     "participant_count": "int",
+     "priority": "str",
+     "reminder_active": "int",
+     "reminder_last_sent_at": "NoneType",
+     "reminder_monthly_day": "NoneType",
+     "reminder_monthly_time": "NoneType",
+     "reminder_specific_at": "NoneType",
+     "reminder_start_at": "NoneType",
+     "reminder_type": "str",
+     "reminder_weekly_day": "NoneType",
+     "reminder_weekly_time": "NoneType",
+     "source": "str",
+     "started_at": "NoneType",
+     "status": "str",
+     "sync_dirty": "int",
+     "sync_last_at": "str",
+     "sync_source": "str",
+     "sync_version": "int",
+     "task_code": "str",
+     "title": "str",
+     "updated_at": "str",
+     "viewed_at": "NoneType"
+    }
+   ],
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/tasks/{tid}": {
+   "shape": {
+    "archived_at": "NoneType",
+    "attachments": [],
+    "comments": [],
+    "completed_at": "NoneType",
+    "completion_entries": [],
+    "created_at": "str",
+    "created_by": "int",
+    "delegations": [],
+    "due_at": "NoneType",
+    "employee_id": "int",
+    "employee_name": "str",
+    "events": [
+     "dict"
+    ],
+    "id": "int",
+    "in_progress_at": "NoneType",
+    "is_group": "int",
+    "last_delegation": "NoneType",
+    "notes": "NoneType",
+    "origin": "str",
+    "origin_by": "str",
+    "origin_label": "str",
+    "participants": [],
+    "priority": "str",
+    "reminder_active": "int",
+    "reminder_last_sent_at": "NoneType",
+    "reminder_monthly_day": "NoneType",
+    "reminder_monthly_time": "NoneType",
+    "reminder_specific_at": "NoneType",
+    "reminder_start_at": "NoneType",
+    "reminder_type": "str",
+    "reminder_weekly_day": "NoneType",
+    "reminder_weekly_time": "NoneType",
+    "source": "str",
+    "started_at": "NoneType",
+    "status": "str",
+    "subtasks": [],
+    "sync_dirty": "int",
+    "sync_last_at": "str",
+    "sync_source": "str",
+    "sync_version": "int",
+    "task_code": "str",
+    "title": "str",
+    "updated_at": "str",
+    "viewed_at": "NoneType"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/tasks/{tid}/delegate-options": {
+   "shape": {
+    "employees": [
+     "dict"
+    ],
+    "message": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/tasks/{tid}/work-profile": {
+   "shape": {
+    "completion_fields": [],
+    "estimated_minutes": "int",
+    "instructions": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/telegram-dashboard": {
+   "shape": {
+    "active_group_reminders": "int",
+    "bot": {
+     "error": "str",
+     "ok": "bool"
+    },
+    "bot_identity": {},
+    "daily": [
+     "dict"
+    ],
+    "days": "int",
+    "employees": [
+     "dict"
+    ],
+    "failures": [],
+    "group_dispatch": {},
+    "groups": [],
+    "linked_employees": "int",
+    "linked_groups": "int",
+    "notifications": {
+     "sent": "int"
+    },
+    "queue": {
+     "failed": "int",
+     "pending": "int",
+     "retrying": "int",
+     "sent": "int"
+    },
+    "today_status": {
+     "completed": "int",
+     "groups_today": "int",
+     "in_progress": "int",
+     "overdue": "int",
+     "problems": "int",
+     "started": "int"
+    },
+    "unlinked_employees": "int",
+    "webhook": {
+     "error": "str",
+     "ok": "bool"
+    }
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/telegram-groups": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/telegram-health": {
+   "shape": {
+    "bot": {
+     "error": "str",
+     "ok": "bool"
+    },
+    "bot_identity": {},
+    "last_error": "NoneType",
+    "last_success": {
+     "at": "str",
+     "employee_id": "int",
+     "kind": "str"
+    },
+    "linked_employee_rows": [
+     "dict"
+    ],
+    "linked_employees": "int",
+    "linked_groups": "int",
+    "notifications_today": {
+     "sent": "int"
+    },
+    "queue": {
+     "failed": "int",
+     "pending": "int",
+     "retrying": "int",
+     "sent": "int",
+     "sent_today": "int"
+    },
+    "recent": [],
+    "unlinked_employees": "int",
+    "webhook": {
+     "error": "str",
+     "ok": "bool"
+    }
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/telegram-queue": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/telegram-report.csv": {
+   "status": 200,
+   "type": "text/csv"
+  },
+  "boss /api/telegram/status": {
+   "shape": {
+    "bot": "NoneType",
+    "bot_error": "str",
+    "linked": "int",
+    "ok": "bool",
+    "total": "int",
+    "webhook": "NoneType",
+    "webhook_error": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/templates": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/templates/{tid}/preview": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 404,
+   "type": "application/json"
+  },
+  "boss /api/users": {
+   "shape": [
+    {
+     "deleted_at": "NoneType",
+     "employee_id": "int",
+     "external_access_allowed": "int",
+     "full_name": "str",
+     "id": "int",
+     "is_active": "int",
+     "last_activity_at": "str",
+     "last_login_at": "str",
+     "last_login_ip": "str",
+     "last_logout_at": "NoneType",
+     "role_code": "str",
+     "role_name": "str",
+     "team_size": "int",
+     "username": "str"
+    }
+   ],
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/users/{uid}/team": {
+   "shape": {
+    "employee_ids": [
+     "int"
+    ],
+    "role_code": "str",
+    "user_id": "int"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/v2/dashboard": {
+   "shape": {
+    "feed": [],
+    "groups": {
+     "attention": "list",
+     "done": "list",
+     "due": "list"
+    },
+    "scope": "str",
+    "stats": {
+     "delegated_today": "int",
+     "done_today": "int",
+     "late": "int",
+     "on_time": "NoneType",
+     "open": "int"
+    },
+    "team": [
+     "dict"
+    ]
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/v2/parse-task": {
+   "shape": {
+    "employee": "NoneType",
+    "employee_id": "NoneType",
+    "priority": "str",
+    "title": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /api/workload": {
+   "shape": {
+    "as_of": "str",
+    "employees": [
+     "dict"
+    ],
+    "note": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /archive": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "body"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | الأرشيف",
+   "type": "text/html"
+  },
+  "boss /audit": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "body"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | سجل النشاط",
+   "type": "text/html"
+  },
+  "boss /automation-center": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "aEx",
+    "aGroup",
+    "aQueue",
+    "aRecurring",
+    "aShift",
+    "aTask",
+    "activityNav"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | مركز الأتمتة",
+   "type": "text/html"
+  },
+  "boss /backup": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "backupDir",
+    "backupList",
+    "lastDb",
+    "lastFull"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | النسخ الاحتياطي والطوارئ",
+   "type": "text/html"
+  },
+  "boss /company": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css",
+    "/static/universal.js"
+   ],
+   "ids": [
+    "activityNav",
+    "uMessage",
+    "universalApp"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | إعداد الشركة",
+   "type": "text/html"
+  },
+  "boss /company-logo": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 404,
+   "type": "application/json"
+  },
+  "boss /employees": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "body",
+    "companyDepartments",
+    "department",
+    "employeeInstructionMode",
+    "employeeJobs",
+    "employeeWorkEditor",
+    "is_active",
+    "modal",
+    "modalTitle",
+    "name",
+    "profileError",
+    "saveEmployeeButton",
+    "shift_end",
+    "shift_start",
+    "shift_type",
+    "staffCapacity",
+    "staffChannel",
+    "telegramInfo",
+    "telegram_enabled",
+    "whatsapp",
+    "whatsapp_enabled",
+    "workDays"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | الموظفون",
+   "type": "text/html"
+  },
+  "boss /handover": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css",
+    "/static/universal.js"
+   ],
+   "ids": [
+    "activityNav",
+    "uMessage",
+    "universalApp"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | تسليم الأعمال",
+   "type": "text/html"
+  },
+  "boss /health": {
+   "shape": {
+    "domain": "str",
+    "gateway": "str",
+    "public_url": "str",
+    "status": "str",
+    "system": "str",
+    "tasks": "int",
+    "version": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "boss /integrations": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "iphoneUrl",
+    "state"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | الربط والتكامل",
+   "type": "text/html"
+  },
+  "boss /iphone-setup": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "copyPersonalKey",
+    "issueKey",
+    "keyResult",
+    "keyStatus",
+    "legacyOwner",
+    "personalKey",
+    "revokeKey",
+    "saveOwner",
+    "secretBox",
+    "shortcutUser",
+    "textUrl",
+    "voiceUrl"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | إعداد اختصارات iPhone",
+   "type": "text/html"
+  },
+  "boss /job-profiles": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "jobActive",
+    "jobMode",
+    "jobName",
+    "jobResult",
+    "jobSelect",
+    "jobWorkEditor",
+    "saveJob"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | الوظائف والتعليمات",
+   "type": "text/html"
+  },
+  "boss /login": {
+   "assets": [
+    "/static/bim-system-v510.css",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-plex.css",
+    "/static/bim-theme-v63.css",
+    "/static/bim-logo-trim.png"
+   ],
+   "ids": [],
+   "status": 200,
+   "title": "بيم دمشق | تسجيل الدخول",
+   "type": "text/html"
+  },
+  "boss /login/verify": {
+   "location": "/login",
+   "status": 303,
+   "type": ""
+  },
+  "boss /manage": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "body",
+    "q"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | إدارة المهام",
+   "type": "text/html"
+  },
+  "boss /manifest.webmanifest": {
+   "status": 200,
+   "type": "application/manifest+json"
+  },
+  "boss /my-work": {
+   "location": "/tasks",
+   "status": 303,
+   "type": ""
+  },
+  "boss /notification-center": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "adminEnabled",
+    "adminRecipients",
+    "adminResult",
+    "dailyEnabled",
+    "dailyTime"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | مركز الإشعارات",
+   "type": "text/html"
+  },
+  "boss /operations-reports": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "avgComplete",
+    "avgStart",
+    "bimTaskDrill",
+    "bimTaskDrillClose",
+    "bimTaskDrillCount",
+    "bimTaskDrillHeading",
+    "bimTaskDrillMore",
+    "bimTaskDrillRows",
+    "bimTaskDrillSearch",
+    "completed",
+    "days",
+    "department",
+    "employee",
+    "interactiveKpis",
+    "overdue",
+    "problems",
+    "rows",
+    "total"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | التقارير التشغيلية",
+   "type": "text/html"
+  },
+  "boss /page-visibility": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "pvAll",
+    "pvDefault",
+    "pvGroups",
+    "pvSave"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | الصفحات الظاهرة",
+   "type": "text/html"
+  },
+  "boss /permissions": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | جدول الصلاحيات",
+   "type": "text/html"
+  },
+  "boss /record-management": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "recordApp"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | إدارة السجلات والحذف",
+   "type": "text/html"
+  },
+  "boss /recurring": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "employeeFilter",
+    "pageError",
+    "recEmployee",
+    "recExtra",
+    "recMonth",
+    "recNotes",
+    "recPriority",
+    "recTime",
+    "recTitle",
+    "recType",
+    "recWeek",
+    "recWorkdays",
+    "recurringBody",
+    "recurringModal",
+    "saveError",
+    "saveRecurringButton"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | المهام المتكررة",
+   "type": "text/html"
+  },
+  "boss /security": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "bkAttempt",
+    "bkDir",
+    "bkError",
+    "bkFiles",
+    "bkFolder",
+    "bkForm",
+    "bkHour",
+    "bkKeep",
+    "bkLast",
+    "bkSave",
+    "bkTg",
+    "chain",
+    "checks",
+    "denied",
+    "mfa",
+    "sens"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | الأمان والحماية",
+   "type": "text/html"
+  },
+  "boss /service-worker.js": {
+   "status": 200,
+   "type": "application/javascript"
+  },
+  "boss /shift-center": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "audience_type",
+    "deptTargetWrap",
+    "end_date",
+    "exEmployee",
+    "exEnd",
+    "exNote",
+    "exStart",
+    "exType",
+    "exceptionRows",
+    "is_active",
+    "logRows",
+    "message_text",
+    "message_type",
+    "msgModal",
+    "msgRows",
+    "preview",
+    "shiftTargetWrap",
+    "shiftTestEmployee",
+    "shift_due_soon_enabled",
+    "shift_due_soon_minutes",
+    "shift_end_summary_enabled",
+    "shift_end_summary_minutes",
+    "shift_overdue_enabled",
+    "shift_start_tasks_enabled",
+    "start_date",
+    "target_department",
+    "target_shift"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | الشيفتات والتذكيرات",
+   "type": "text/html"
+  },
+  "boss /sync": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "conflictList",
+    "conflicts",
+    "cursor",
+    "dirty",
+    "instantReady",
+    "retryBtn",
+    "syncProgress",
+    "testBtn",
+    "webapp"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | مركز المزامنة",
+   "type": "text/html"
+  },
+  "boss /system-health": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "state"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | صحة النظام",
+   "type": "text/html"
+  },
+  "boss /task/{tid}": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "attachments",
+    "commentText",
+    "comments",
+    "detailStatusActions",
+    "fileInput",
+    "participationBlock",
+    "participationList",
+    "taskCode",
+    "taskHistory",
+    "taskInfo",
+    "taskTitle"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | تفاصيل المهمة",
+   "type": "text/html"
+  },
+  "boss /tasks": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "cards",
+    "due",
+    "employee",
+    "filterDepartment",
+    "filterEmployee",
+    "filterFrom",
+    "filterOverdue",
+    "filterPriority",
+    "filterProblems",
+    "filterTo",
+    "groupEmployees",
+    "groupSelect",
+    "isGroup",
+    "modal",
+    "monthDay",
+    "monthTime",
+    "notes",
+    "priority",
+    "q",
+    "remAt",
+    "remExtra",
+    "remType",
+    "retryTasks",
+    "status",
+    "taskLoadState",
+    "title",
+    "weekDay",
+    "weekTime"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | كل المهام",
+   "type": "text/html"
+  },
+  "boss /tasks-table": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "body",
+    "q",
+    "status"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | المهام كجدول",
+   "type": "text/html"
+  },
+  "boss /telegram-center": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "botId",
+    "botName",
+    "botUser",
+    "linked",
+    "rows",
+    "shift_due_soon_enabled",
+    "shift_due_soon_minutes",
+    "shift_end_summary_enabled",
+    "shift_end_summary_minutes",
+    "shift_overdue_enabled",
+    "shift_start_tasks_enabled",
+    "webhook"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | مركز Telegram",
+   "type": "text/html"
+  },
+  "boss /telegram-dashboard": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "dailyRows",
+    "days",
+    "empSearch",
+    "employeeRows",
+    "failureRows",
+    "gFailed",
+    "gSent",
+    "groupRows",
+    "kBot",
+    "kDone",
+    "kEmpLinked",
+    "kEmpUnlinked",
+    "kFailed",
+    "kGroups",
+    "kGroupsToday",
+    "kOverdue",
+    "kProblems",
+    "kProgress",
+    "kQueue",
+    "kReminders",
+    "kStarted",
+    "kWebhook",
+    "nFailed",
+    "nSent",
+    "periodText"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | Telegram Dashboard",
+   "type": "text/html"
+  },
+  "boss /telegram-groups": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "fEvery",
+    "fMonth",
+    "fSpecific",
+    "fTime",
+    "fWeek",
+    "gActive",
+    "gDepartment",
+    "gName",
+    "groupModal",
+    "groupTitle",
+    "groupsBody",
+    "kGroups",
+    "kLinked",
+    "kReminders",
+    "logBody",
+    "rActive",
+    "rEnd",
+    "rEvery",
+    "rGroup",
+    "rGroupHelp",
+    "rMonth",
+    "rSpecific",
+    "rStart",
+    "rText",
+    "rTime",
+    "rTitle",
+    "rType",
+    "rWeek",
+    "remBody",
+    "remModal",
+    "remTitle",
+    "saveReminderBtn"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | مجموعات Telegram",
+   "type": "text/html"
+  },
+  "boss /telegram-health": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "botName",
+    "botState",
+    "botUser",
+    "empRows",
+    "failedCount",
+    "lastState",
+    "linkedEmployees",
+    "linkedGroups",
+    "pendingCount",
+    "queueRows",
+    "webhookState"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | Telegram Health",
+   "type": "text/html"
+  },
+  "boss /template-library": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css",
+    "/static/template-bundles.js"
+   ],
+   "ids": [
+    "activityNav",
+    "uMessage",
+    "universalApp"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | قوالب العمل",
+   "type": "text/html"
+  },
+  "boss /users": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "active",
+    "activityNav",
+    "employee",
+    "fullName",
+    "modalTitle",
+    "password",
+    "passwordTip",
+    "role",
+    "teamField",
+    "teamList",
+    "teamSearch",
+    "userFilter",
+    "userModal",
+    "userSearch",
+    "username",
+    "usersBody"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | المستخدمون",
+   "type": "text/html"
+  },
+  "boss /workload": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css",
+    "/static/universal.js"
+   ],
+   "ids": [
+    "activityNav",
+    "uMessage",
+    "universalApp"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | عبء العمل",
+   "type": "text/html"
+  },
+  "dep /": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-logo-trim.png"
+   ],
+   "ids": [
+    "cA",
+    "cD",
+    "cO",
+    "clr",
+    "cmd",
+    "doneLabel",
+    "dueLabel",
+    "feed",
+    "filter",
+    "gA",
+    "gD",
+    "gO",
+    "go",
+    "kDone",
+    "kLate",
+    "kOpen",
+    "kRate",
+    "menuBtn",
+    "pv",
+    "q",
+    "sLate",
+    "sTeam",
+    "seg",
+    "sub",
+    "team",
+    "title",
+    "toast"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | لوحة المدير",
+   "type": "text/html"
+  },
+  "dep /access-control": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css",
+    "/static/universal.js"
+   ],
+   "ids": [
+    "activityNav",
+    "uMessage",
+    "universalApp"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | صلاحيات المستخدمين",
+   "type": "text/html"
+  },
+  "dep /account": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "mfaActions",
+    "mfaCode",
+    "mfaCodeBox",
+    "mfaPanel",
+    "mfaState",
+    "pwCur",
+    "pwForm",
+    "pwHint",
+    "pwNew",
+    "pwNew2"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | حسابي والأمان",
+   "type": "text/html"
+  },
+  "dep /activity-log": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css",
+    "/static/bim-activity-labels.js",
+    "/static/bim-activity-view.js"
+   ],
+   "ids": [
+    "activityCount",
+    "activityEnd",
+    "activityGateway",
+    "activityHead",
+    "activityKind",
+    "activityNav",
+    "activityNext",
+    "activityPage",
+    "activityPrev",
+    "activityRefresh",
+    "activityResult",
+    "activityRows",
+    "activityScope",
+    "activityStart",
+    "activityUser",
+    "changeAfter",
+    "changeBefore",
+    "changeDetails",
+    "closeChange"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | السجل الشامل للمستخدمين",
+   "type": "text/html"
+  },
+  "dep /api/access-control": {
+   "shape": {
+    "ceilings": {
+     "admin": "list",
+     "deputy": "list",
+     "employee": "list",
+     "supervisor": "list",
+     "viewer": "list"
+    },
+    "defaults": {
+     "admin": "list",
+     "deputy": "list",
+     "employee": "list",
+     "supervisor": "list",
+     "viewer": "list"
+    },
+    "overrides": [],
+    "permissions": [
+     "dict"
+    ],
+    "users": [
+     "dict"
+    ]
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/activity/changes": {
+   "shape": {
+    "items": [
+     "dict"
+    ],
+    "total": "int"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/activity/changes/{aid}": {
+   "shape": {
+    "after": {
+     "employee_id": "int",
+     "title": "str"
+    },
+    "before": {},
+    "id": "int"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/activity/events": {
+   "shape": {
+    "items": [
+     "dict"
+    ],
+    "pages": {
+     "/": "str",
+     "/access-control": "str",
+     "/account": "str",
+     "/activity-log": "str",
+     "/archive": "str",
+     "/audit": "str",
+     "/automation-center": "str",
+     "/backup": "str",
+     "/company": "str",
+     "/employees": "str",
+     "/handover": "str",
+     "/integrations": "str",
+     "/iphone-setup": "str",
+     "/job-profiles": "str",
+     "/logout": "str",
+     "/manage": "str",
+     "/my-work": "str",
+     "/notification-center": "str",
+     "/operations-reports": "str",
+     "/permissions": "str",
+     "/record-management": "str",
+     "/recurring": "str",
+     "/security": "str",
+     "/shift-center": "str",
+     "/sync": "str",
+     "/system-health": "str",
+     "/tasks": "str",
+     "/tasks-table": "str",
+     "/telegram-center": "str",
+     "/telegram-dashboard": "str",
+     "/telegram-groups": "str",
+     "/telegram-health": "str",
+     "/template-library": "str",
+     "/users": "str",
+     "/workload": "str"
+    },
+    "total": "int",
+    "users": [
+     "dict"
+    ]
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/activity/sessions": {
+   "shape": {
+    "items": [
+     "dict"
+    ],
+    "total": "int"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/admin-notification-settings": {
+   "shape": {
+    "daily_enabled": "bool",
+    "daily_time": "str",
+    "employee_ids": [],
+    "enabled": "bool"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/attachments/{aid}": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 404,
+   "type": "application/json"
+  },
+  "dep /api/audit": {
+   "shape": [
+    {
+     "action": "str",
+     "after_json": "str",
+     "before_json": "NoneType",
+     "created_at": "str",
+     "entity_id": "str",
+     "entity_type": "str",
+     "gateway": "str",
+     "id": "int",
+     "ip_address": "str",
+     "prev_hash": "str",
+     "reason": "NoneType",
+     "row_hash": "str",
+     "user_id": "int",
+     "username_snapshot": "str"
+    }
+   ],
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/automation-summary": {
+   "shape": {
+    "group_reminders": "int",
+    "queue_pending": "int",
+    "recurring_tasks": "int",
+    "shift_exceptions": "int",
+    "shift_messages": "int",
+    "task_reminders": "int"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/backup/status": {
+   "shape": {
+    "backup_dir": "str",
+    "files": [],
+    "latest_db": "NoneType",
+    "latest_full": "NoneType",
+    "ok": "bool"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/bim-employee-profile/{eid}": {
+   "shape": {
+    "config": {
+     "completion_fields": "list",
+     "instructions": "str",
+     "notifications": "dict",
+     "permissions": "dict",
+     "task_templates": "list"
+    },
+    "config_override": {},
+    "display_mode": "str",
+    "display_mode_override": "NoneType",
+    "instructions": "str",
+    "instructions_read": "bool",
+    "instructions_signature": "str",
+    "jobs": []
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/bim-job-profiles": {
+   "shape": {
+    "jobs": [],
+    "links": [],
+    "preferences": []
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/client-status": {
+   "shape": {
+    "domain": "str",
+    "gateway": "str",
+    "ok": "bool",
+    "sync_failed": "int",
+    "sync_pending": "int"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/company": {
+   "shape": {
+    "configured": "bool",
+    "departments": [],
+    "logo": "bool",
+    "name": "str",
+    "public_url": "str",
+    "timezone": "str",
+    "work_days": [
+     "int"
+    ]
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/dashboard": {
+   "shape": {
+    "by_employee": [
+     "dict"
+    ],
+    "done": "int",
+    "employees": "int",
+    "late": "int",
+    "latest": [
+     "dict"
+    ],
+    "sync_conflicts": "int",
+    "sync_dirty": "int",
+    "today": "int",
+    "total": "int",
+    "unassigned": "int",
+    "unseen": "int",
+    "waiting": "int",
+    "working": "int"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/employees": {
+   "shape": [
+    {
+     "created_at": "str",
+     "department": "NoneType",
+     "id": "int",
+     "is_active": "int",
+     "name": "str",
+     "open_tasks": "int",
+     "shift_end": "NoneType",
+     "shift_start": "NoneType",
+     "shift_type": "str",
+     "sort_order": "int",
+     "telegram_chat_id": "NoneType",
+     "telegram_enabled": "int",
+     "telegram_link_code": "NoneType",
+     "telegram_link_expires_at": "NoneType",
+     "telegram_linked_at": "NoneType",
+     "updated_at": "str",
+     "whatsapp": "NoneType",
+     "whatsapp_enabled": "int",
+     "work_days": "str"
+    }
+   ],
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/group-dispatch-log": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/group-reminders": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/iphone/accounts": {
+   "shape": {
+    "default_employee": "str",
+    "items": [
+     "dict"
+    ],
+    "legacy_owner": "NoneType"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/iphone/setup": {
+   "shape": {
+    "field": "str",
+    "header": "str",
+    "ok": "bool",
+    "secret": "str",
+    "text_url": "str",
+    "voice_url": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/me": {
+   "shape": {
+    "employee_id": "int",
+    "full_name": "str",
+    "gateway": "str",
+    "hidden_pages": [
+     "str"
+    ],
+    "id": "int",
+    "permissions": [
+     "str"
+    ],
+    "public_url": "str",
+    "role": "str",
+    "role_code": "str",
+    "username": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/me/security": {
+   "shape": {
+    "gateway": "str",
+    "mfa_available": "bool",
+    "mfa_enabled": "bool",
+    "role_code": "str",
+    "telegram_linked": "bool"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/operations-report": {
+   "shape": {
+    "days": "int",
+    "departments": [],
+    "employees": [
+     "dict"
+    ],
+    "rows": [
+     "dict"
+    ],
+    "summary": {
+     "avg_complete_minutes": "NoneType",
+     "avg_start_minutes": "NoneType",
+     "completed": "int",
+     "overdue": "int",
+     "problems": "int",
+     "total": "int"
+    }
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/operations-report/tasks": {
+   "shape": {
+    "items": [
+     "dict"
+    ],
+    "next_offset": "int",
+    "total": "int",
+    "truncated": "bool"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/page-visibility": {
+   "shape": {
+    "defaults": [
+     "str"
+    ],
+    "groups": [
+     "dict"
+    ]
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/records": {
+   "shape": {
+    "catalog": [
+     "dict"
+    ],
+    "entity": "str",
+    "has_more": "bool",
+    "rows": []
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/recurring": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/release-health": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 503,
+   "type": "application/json"
+  },
+  "dep /api/security/overview": {
+   "shape": {
+    "backup": {
+     "folder": "str",
+     "hour": "int",
+     "keep": "int",
+     "last": "dict",
+     "passphrase_set": "bool",
+     "telegram": "bool"
+    },
+    "can_change": "bool",
+    "checks": [
+     "dict"
+    ],
+    "denied_logins": [],
+    "mfa": [
+     "dict"
+    ],
+    "offsite_files": [],
+    "sensitive": []
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/settings": {
+   "shape": {
+    "delegation.iphone_backfill": "str",
+    "domain": "str",
+    "gateway": "str",
+    "iphone_secret_configured": "bool",
+    "public_url": "str",
+    "telegram_configured": "bool"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/shift-dispatch-log": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/shift-exceptions": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/shift-messages": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/shift-settings": {
+   "shape": {
+    "shift_due_soon_enabled": "str",
+    "shift_due_soon_minutes": "str",
+    "shift_end_summary_enabled": "str",
+    "shift_end_summary_minutes": "str",
+    "shift_overdue_enabled": "str",
+    "shift_start_tasks_enabled": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/shift-test/employees": {
+   "shape": [
+    {
+     "department": "NoneType",
+     "id": "int",
+     "name": "str",
+     "shift_end": "NoneType",
+     "shift_start": "NoneType",
+     "shift_type": "str",
+     "telegram_chat_id": "NoneType",
+     "telegram_enabled": "int"
+    }
+   ],
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/staff/{eid}/settings": {
+   "shape": {
+    "capacity_minutes": "int",
+    "channel": "str",
+    "employee_id": "int"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/sync/conflicts": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/sync/pull": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 401,
+   "type": "application/json"
+  },
+  "dep /api/sync/snapshot": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 401,
+   "type": "application/json"
+  },
+  "dep /api/sync/status": {
+   "shape": {
+    "dirty_tasks": "int",
+    "instant_push_ready": "bool",
+    "last_event_id": "int",
+    "ok": "bool",
+    "open_conflicts": "int",
+    "spreadsheet_id": "str",
+    "sync_secret_configured": "bool",
+    "webapp_url": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/sync/tasks-page": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 401,
+   "type": "application/json"
+  },
+  "dep /api/sync/test-webapp": {
+   "shape": {
+    "compatible": "bool",
+    "message": "str",
+    "ok": "bool",
+    "stage": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/task-options/employees": {
+   "shape": [
+    {
+     "department": "NoneType",
+     "id": "int",
+     "name": "str"
+    }
+   ],
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/tasks": {
+   "shape": [
+    {
+     "archived_at": "NoneType",
+     "completed_at": "NoneType",
+     "created_at": "str",
+     "created_by": "int",
+     "due_at": "NoneType",
+     "employee_id": "int",
+     "employee_name": "str",
+     "id": "int",
+     "in_progress_at": "NoneType",
+     "is_group": "int",
+     "last_delegation": "NoneType",
+     "notes": "NoneType",
+     "origin": "str",
+     "origin_by": "str",
+     "origin_label": "str",
+     "participant_count": "int",
+     "priority": "str",
+     "reminder_active": "int",
+     "reminder_last_sent_at": "NoneType",
+     "reminder_monthly_day": "NoneType",
+     "reminder_monthly_time": "NoneType",
+     "reminder_specific_at": "NoneType",
+     "reminder_start_at": "NoneType",
+     "reminder_type": "str",
+     "reminder_weekly_day": "NoneType",
+     "reminder_weekly_time": "NoneType",
+     "source": "str",
+     "started_at": "NoneType",
+     "status": "str",
+     "sync_dirty": "int",
+     "sync_last_at": "str",
+     "sync_source": "str",
+     "sync_version": "int",
+     "task_code": "str",
+     "title": "str",
+     "updated_at": "str",
+     "viewed_at": "NoneType"
+    }
+   ],
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/tasks/{tid}": {
+   "shape": {
+    "archived_at": "NoneType",
+    "attachments": [],
+    "comments": [],
+    "completed_at": "NoneType",
+    "completion_entries": [],
+    "created_at": "str",
+    "created_by": "int",
+    "delegations": [],
+    "due_at": "NoneType",
+    "employee_id": "int",
+    "employee_name": "str",
+    "events": [
+     "dict"
+    ],
+    "id": "int",
+    "in_progress_at": "NoneType",
+    "is_group": "int",
+    "last_delegation": "NoneType",
+    "notes": "NoneType",
+    "origin": "str",
+    "origin_by": "str",
+    "origin_label": "str",
+    "participants": [],
+    "priority": "str",
+    "reminder_active": "int",
+    "reminder_last_sent_at": "NoneType",
+    "reminder_monthly_day": "NoneType",
+    "reminder_monthly_time": "NoneType",
+    "reminder_specific_at": "NoneType",
+    "reminder_start_at": "NoneType",
+    "reminder_type": "str",
+    "reminder_weekly_day": "NoneType",
+    "reminder_weekly_time": "NoneType",
+    "source": "str",
+    "started_at": "NoneType",
+    "status": "str",
+    "subtasks": [],
+    "sync_dirty": "int",
+    "sync_last_at": "str",
+    "sync_source": "str",
+    "sync_version": "int",
+    "task_code": "str",
+    "title": "str",
+    "updated_at": "str",
+    "viewed_at": "NoneType"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/tasks/{tid}/delegate-options": {
+   "shape": {
+    "employees": [
+     "dict"
+    ],
+    "message": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/tasks/{tid}/work-profile": {
+   "shape": {
+    "completion_fields": [],
+    "estimated_minutes": "int",
+    "instructions": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/telegram-dashboard": {
+   "shape": {
+    "active_group_reminders": "int",
+    "bot": {
+     "error": "str",
+     "ok": "bool"
+    },
+    "bot_identity": {},
+    "daily": [
+     "dict"
+    ],
+    "days": "int",
+    "employees": [
+     "dict"
+    ],
+    "failures": [],
+    "group_dispatch": {},
+    "groups": [],
+    "linked_employees": "int",
+    "linked_groups": "int",
+    "notifications": {
+     "sent": "int"
+    },
+    "queue": {
+     "failed": "int",
+     "pending": "int",
+     "retrying": "int",
+     "sent": "int"
+    },
+    "today_status": {
+     "completed": "int",
+     "groups_today": "int",
+     "in_progress": "int",
+     "overdue": "int",
+     "problems": "int",
+     "started": "int"
+    },
+    "unlinked_employees": "int",
+    "webhook": {
+     "error": "str",
+     "ok": "bool"
+    }
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/telegram-groups": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/telegram-health": {
+   "shape": {
+    "bot": {
+     "error": "str",
+     "ok": "bool"
+    },
+    "bot_identity": {},
+    "last_error": "NoneType",
+    "last_success": {
+     "at": "str",
+     "employee_id": "int",
+     "kind": "str"
+    },
+    "linked_employee_rows": [
+     "dict"
+    ],
+    "linked_employees": "int",
+    "linked_groups": "int",
+    "notifications_today": {
+     "sent": "int"
+    },
+    "queue": {
+     "failed": "int",
+     "pending": "int",
+     "retrying": "int",
+     "sent": "int",
+     "sent_today": "int"
+    },
+    "recent": [],
+    "unlinked_employees": "int",
+    "webhook": {
+     "error": "str",
+     "ok": "bool"
+    }
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/telegram-queue": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/telegram-report.csv": {
+   "status": 200,
+   "type": "text/csv"
+  },
+  "dep /api/telegram/status": {
+   "shape": {
+    "bot": "NoneType",
+    "bot_error": "str",
+    "linked": "int",
+    "ok": "bool",
+    "total": "int",
+    "webhook": "NoneType",
+    "webhook_error": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/templates": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/templates/{tid}/preview": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 404,
+   "type": "application/json"
+  },
+  "dep /api/users": {
+   "shape": [
+    {
+     "deleted_at": "NoneType",
+     "employee_id": "int",
+     "external_access_allowed": "int",
+     "full_name": "str",
+     "id": "int",
+     "is_active": "int",
+     "last_activity_at": "str",
+     "last_login_at": "str",
+     "last_login_ip": "str",
+     "last_logout_at": "NoneType",
+     "role_code": "str",
+     "role_name": "str",
+     "team_size": "int",
+     "username": "str"
+    }
+   ],
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/users/{uid}/team": {
+   "shape": {
+    "employee_ids": [
+     "int"
+    ],
+    "role_code": "str",
+    "user_id": "int"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/v2/dashboard": {
+   "shape": {
+    "feed": [],
+    "groups": {
+     "attention": "list",
+     "done": "list",
+     "due": "list"
+    },
+    "scope": "str",
+    "stats": {
+     "delegated_today": "int",
+     "done_today": "int",
+     "late": "int",
+     "on_time": "NoneType",
+     "open": "int"
+    },
+    "team": [
+     "dict"
+    ]
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/v2/parse-task": {
+   "shape": {
+    "employee": "NoneType",
+    "employee_id": "NoneType",
+    "priority": "str",
+    "title": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/workload": {
+   "shape": {
+    "as_of": "str",
+    "employees": [
+     "dict"
+    ],
+    "note": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /archive": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "body"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | الأرشيف",
+   "type": "text/html"
+  },
+  "dep /audit": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "body"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | سجل النشاط",
+   "type": "text/html"
+  },
+  "dep /automation-center": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "aEx",
+    "aGroup",
+    "aQueue",
+    "aRecurring",
+    "aShift",
+    "aTask",
+    "activityNav"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | مركز الأتمتة",
+   "type": "text/html"
+  },
+  "dep /backup": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "backupDir",
+    "backupList",
+    "lastDb",
+    "lastFull"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | النسخ الاحتياطي والطوارئ",
+   "type": "text/html"
+  },
+  "dep /company": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css",
+    "/static/universal.js"
+   ],
+   "ids": [
+    "activityNav",
+    "uMessage",
+    "universalApp"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | إعداد الشركة",
+   "type": "text/html"
+  },
+  "dep /company-logo": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 404,
+   "type": "application/json"
+  },
+  "dep /employees": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "body",
+    "companyDepartments",
+    "department",
+    "employeeInstructionMode",
+    "employeeJobs",
+    "employeeWorkEditor",
+    "is_active",
+    "modal",
+    "modalTitle",
+    "name",
+    "profileError",
+    "saveEmployeeButton",
+    "shift_end",
+    "shift_start",
+    "shift_type",
+    "staffCapacity",
+    "staffChannel",
+    "telegramInfo",
+    "telegram_enabled",
+    "whatsapp",
+    "whatsapp_enabled",
+    "workDays"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | الموظفون",
+   "type": "text/html"
+  },
+  "dep /handover": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css",
+    "/static/universal.js"
+   ],
+   "ids": [
+    "activityNav",
+    "uMessage",
+    "universalApp"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | تسليم الأعمال",
+   "type": "text/html"
+  },
+  "dep /health": {
+   "shape": {
+    "domain": "str",
+    "gateway": "str",
+    "public_url": "str",
+    "status": "str",
+    "system": "str",
+    "tasks": "int",
+    "version": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /integrations": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "iphoneUrl",
+    "state"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | الربط والتكامل",
+   "type": "text/html"
+  },
+  "dep /iphone-setup": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "copyPersonalKey",
+    "issueKey",
+    "keyResult",
+    "keyStatus",
+    "legacyOwner",
+    "personalKey",
+    "revokeKey",
+    "saveOwner",
+    "secretBox",
+    "shortcutUser",
+    "textUrl",
+    "voiceUrl"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | إعداد اختصارات iPhone",
+   "type": "text/html"
+  },
+  "dep /job-profiles": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "jobActive",
+    "jobMode",
+    "jobName",
+    "jobResult",
+    "jobSelect",
+    "jobWorkEditor",
+    "saveJob"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | الوظائف والتعليمات",
+   "type": "text/html"
+  },
+  "dep /login": {
+   "assets": [
+    "/static/bim-system-v510.css",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-plex.css",
+    "/static/bim-theme-v63.css",
+    "/static/bim-logo-trim.png"
+   ],
+   "ids": [],
+   "status": 200,
+   "title": "بيم دمشق | تسجيل الدخول",
+   "type": "text/html"
+  },
+  "dep /login/verify": {
+   "location": "/login",
+   "status": 303,
+   "type": ""
+  },
+  "dep /manage": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "body",
+    "q"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | إدارة المهام",
+   "type": "text/html"
+  },
+  "dep /manifest.webmanifest": {
+   "status": 200,
+   "type": "application/manifest+json"
+  },
+  "dep /my-work": {
+   "location": "/tasks",
+   "status": 303,
+   "type": ""
+  },
+  "dep /notification-center": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "adminEnabled",
+    "adminRecipients",
+    "adminResult",
+    "dailyEnabled",
+    "dailyTime"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | مركز الإشعارات",
+   "type": "text/html"
+  },
+  "dep /operations-reports": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "avgComplete",
+    "avgStart",
+    "bimTaskDrill",
+    "bimTaskDrillClose",
+    "bimTaskDrillCount",
+    "bimTaskDrillHeading",
+    "bimTaskDrillMore",
+    "bimTaskDrillRows",
+    "bimTaskDrillSearch",
+    "completed",
+    "days",
+    "department",
+    "employee",
+    "interactiveKpis",
+    "overdue",
+    "problems",
+    "rows",
+    "total"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | التقارير التشغيلية",
+   "type": "text/html"
+  },
+  "dep /page-visibility": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "pvAll",
+    "pvDefault",
+    "pvGroups",
+    "pvSave"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | الصفحات الظاهرة",
+   "type": "text/html"
+  },
+  "dep /permissions": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | جدول الصلاحيات",
+   "type": "text/html"
+  },
+  "dep /record-management": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "recordApp"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | إدارة السجلات والحذف",
+   "type": "text/html"
+  },
+  "dep /recurring": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "employeeFilter",
+    "pageError",
+    "recEmployee",
+    "recExtra",
+    "recMonth",
+    "recNotes",
+    "recPriority",
+    "recTime",
+    "recTitle",
+    "recType",
+    "recWeek",
+    "recWorkdays",
+    "recurringBody",
+    "recurringModal",
+    "saveError",
+    "saveRecurringButton"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | المهام المتكررة",
+   "type": "text/html"
+  },
+  "dep /security": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "bkAttempt",
+    "bkDir",
+    "bkError",
+    "bkFiles",
+    "bkFolder",
+    "bkForm",
+    "bkHour",
+    "bkKeep",
+    "bkLast",
+    "bkSave",
+    "bkTg",
+    "chain",
+    "checks",
+    "denied",
+    "mfa",
+    "sens"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | الأمان والحماية",
+   "type": "text/html"
+  },
+  "dep /service-worker.js": {
+   "status": 200,
+   "type": "application/javascript"
+  },
+  "dep /shift-center": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "audience_type",
+    "deptTargetWrap",
+    "end_date",
+    "exEmployee",
+    "exEnd",
+    "exNote",
+    "exStart",
+    "exType",
+    "exceptionRows",
+    "is_active",
+    "logRows",
+    "message_text",
+    "message_type",
+    "msgModal",
+    "msgRows",
+    "preview",
+    "shiftTargetWrap",
+    "shiftTestEmployee",
+    "shift_due_soon_enabled",
+    "shift_due_soon_minutes",
+    "shift_end_summary_enabled",
+    "shift_end_summary_minutes",
+    "shift_overdue_enabled",
+    "shift_start_tasks_enabled",
+    "start_date",
+    "target_department",
+    "target_shift"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | الشيفتات والتذكيرات",
+   "type": "text/html"
+  },
+  "dep /sync": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "conflictList",
+    "conflicts",
+    "cursor",
+    "dirty",
+    "instantReady",
+    "retryBtn",
+    "syncProgress",
+    "testBtn",
+    "webapp"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | مركز المزامنة",
+   "type": "text/html"
+  },
+  "dep /system-health": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "state"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | صحة النظام",
+   "type": "text/html"
+  },
+  "dep /task/{tid}": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "attachments",
+    "commentText",
+    "comments",
+    "detailStatusActions",
+    "fileInput",
+    "participationBlock",
+    "participationList",
+    "taskCode",
+    "taskHistory",
+    "taskInfo",
+    "taskTitle"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | تفاصيل المهمة",
+   "type": "text/html"
+  },
+  "dep /tasks": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "cards",
+    "due",
+    "employee",
+    "filterDepartment",
+    "filterEmployee",
+    "filterFrom",
+    "filterOverdue",
+    "filterPriority",
+    "filterProblems",
+    "filterTo",
+    "groupEmployees",
+    "groupSelect",
+    "isGroup",
+    "modal",
+    "monthDay",
+    "monthTime",
+    "notes",
+    "priority",
+    "q",
+    "remAt",
+    "remExtra",
+    "remType",
+    "retryTasks",
+    "status",
+    "taskLoadState",
+    "title",
+    "weekDay",
+    "weekTime"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | كل المهام",
+   "type": "text/html"
+  },
+  "dep /tasks-table": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "body",
+    "q",
+    "status"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | المهام كجدول",
+   "type": "text/html"
+  },
+  "dep /telegram-center": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "botId",
+    "botName",
+    "botUser",
+    "linked",
+    "rows",
+    "shift_due_soon_enabled",
+    "shift_due_soon_minutes",
+    "shift_end_summary_enabled",
+    "shift_end_summary_minutes",
+    "shift_overdue_enabled",
+    "shift_start_tasks_enabled",
+    "webhook"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | مركز Telegram",
+   "type": "text/html"
+  },
+  "dep /telegram-dashboard": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "dailyRows",
+    "days",
+    "empSearch",
+    "employeeRows",
+    "failureRows",
+    "gFailed",
+    "gSent",
+    "groupRows",
+    "kBot",
+    "kDone",
+    "kEmpLinked",
+    "kEmpUnlinked",
+    "kFailed",
+    "kGroups",
+    "kGroupsToday",
+    "kOverdue",
+    "kProblems",
+    "kProgress",
+    "kQueue",
+    "kReminders",
+    "kStarted",
+    "kWebhook",
+    "nFailed",
+    "nSent",
+    "periodText"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | Telegram Dashboard",
+   "type": "text/html"
+  },
+  "dep /telegram-groups": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "fEvery",
+    "fMonth",
+    "fSpecific",
+    "fTime",
+    "fWeek",
+    "gActive",
+    "gDepartment",
+    "gName",
+    "groupModal",
+    "groupTitle",
+    "groupsBody",
+    "kGroups",
+    "kLinked",
+    "kReminders",
+    "logBody",
+    "rActive",
+    "rEnd",
+    "rEvery",
+    "rGroup",
+    "rGroupHelp",
+    "rMonth",
+    "rSpecific",
+    "rStart",
+    "rText",
+    "rTime",
+    "rTitle",
+    "rType",
+    "rWeek",
+    "remBody",
+    "remModal",
+    "remTitle",
+    "saveReminderBtn"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | مجموعات Telegram",
+   "type": "text/html"
+  },
+  "dep /telegram-health": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "botName",
+    "botState",
+    "botUser",
+    "empRows",
+    "failedCount",
+    "lastState",
+    "linkedEmployees",
+    "linkedGroups",
+    "pendingCount",
+    "queueRows",
+    "webhookState"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | Telegram Health",
+   "type": "text/html"
+  },
+  "dep /template-library": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css",
+    "/static/template-bundles.js"
+   ],
+   "ids": [
+    "activityNav",
+    "uMessage",
+    "universalApp"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | قوالب العمل",
+   "type": "text/html"
+  },
+  "dep /users": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "active",
+    "activityNav",
+    "employee",
+    "fullName",
+    "modalTitle",
+    "password",
+    "passwordTip",
+    "role",
+    "teamField",
+    "teamList",
+    "teamSearch",
+    "userFilter",
+    "userModal",
+    "userSearch",
+    "username",
+    "usersBody"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | المستخدمون",
+   "type": "text/html"
+  },
+  "dep /workload": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css",
+    "/static/universal.js"
+   ],
+   "ids": [
+    "activityNav",
+    "uMessage",
+    "universalApp"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | عبء العمل",
+   "type": "text/html"
+  },
+  "member /": {
+   "location": "/my-work",
+   "status": 303,
+   "type": ""
+  },
+  "member /access-control": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /account": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "mfaActions",
+    "mfaCode",
+    "mfaCodeBox",
+    "mfaPanel",
+    "mfaState",
+    "pwCur",
+    "pwForm",
+    "pwHint",
+    "pwNew",
+    "pwNew2"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | حسابي والأمان",
+   "type": "text/html"
+  },
+  "member /activity-log": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/access-control": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/activity/changes": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/activity/changes/{aid}": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/activity/events": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/activity/sessions": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/admin-notification-settings": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/attachments/{aid}": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 404,
+   "type": "application/json"
+  },
+  "member /api/audit": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/automation-summary": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/backup/status": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/bim-employee-profile/{eid}": {
+   "shape": {
+    "config": {
+     "completion_fields": "list",
+     "instructions": "str",
+     "notifications": "dict",
+     "permissions": "dict",
+     "task_templates": "list"
+    },
+    "config_override": {},
+    "display_mode": "str",
+    "display_mode_override": "NoneType",
+    "instructions": "str",
+    "instructions_read": "bool",
+    "instructions_signature": "str",
+    "jobs": []
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "member /api/bim-job-profiles": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/client-status": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/company": {
+   "shape": {
+    "configured": "bool",
+    "departments": [],
+    "logo": "bool",
+    "name": "str",
+    "public_url": "str",
+    "timezone": "str",
+    "work_days": [
+     "int"
+    ]
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "member /api/dashboard": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/employees": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/group-dispatch-log": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/group-reminders": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/iphone/accounts": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/iphone/setup": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/me": {
+   "shape": {
+    "employee_id": "int",
+    "full_name": "str",
+    "gateway": "str",
+    "hidden_pages": [
+     "str"
+    ],
+    "id": "int",
+    "permissions": [
+     "str"
+    ],
+    "public_url": "str",
+    "role": "str",
+    "role_code": "str",
+    "username": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "member /api/me/security": {
+   "shape": {
+    "gateway": "str",
+    "mfa_available": "bool",
+    "mfa_enabled": "bool",
+    "role_code": "str",
+    "telegram_linked": "bool"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "member /api/operations-report": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/operations-report/tasks": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/page-visibility": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/records": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/recurring": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/release-health": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 503,
+   "type": "application/json"
+  },
+  "member /api/security/overview": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/settings": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/shift-dispatch-log": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/shift-exceptions": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/shift-messages": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/shift-settings": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/shift-test/employees": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/staff/{eid}/settings": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/sync/conflicts": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/sync/pull": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 401,
+   "type": "application/json"
+  },
+  "member /api/sync/snapshot": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 401,
+   "type": "application/json"
+  },
+  "member /api/sync/status": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/sync/tasks-page": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 401,
+   "type": "application/json"
+  },
+  "member /api/sync/test-webapp": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/task-options/employees": {
+   "shape": [
+    {
+     "department": "NoneType",
+     "id": "int",
+     "name": "str"
+    }
+   ],
+   "status": 200,
+   "type": "application/json"
+  },
+  "member /api/tasks": {
+   "shape": [
+    {
+     "archived_at": "NoneType",
+     "completed_at": "NoneType",
+     "created_at": "str",
+     "created_by": "int",
+     "due_at": "NoneType",
+     "employee_id": "int",
+     "employee_name": "str",
+     "id": "int",
+     "in_progress_at": "NoneType",
+     "is_group": "int",
+     "last_delegation": "NoneType",
+     "notes": "NoneType",
+     "origin": "str",
+     "origin_by": "str",
+     "origin_label": "str",
+     "participant_count": "int",
+     "priority": "str",
+     "reminder_active": "int",
+     "reminder_last_sent_at": "NoneType",
+     "reminder_monthly_day": "NoneType",
+     "reminder_monthly_time": "NoneType",
+     "reminder_specific_at": "NoneType",
+     "reminder_start_at": "NoneType",
+     "reminder_type": "str",
+     "reminder_weekly_day": "NoneType",
+     "reminder_weekly_time": "NoneType",
+     "source": "str",
+     "started_at": "NoneType",
+     "status": "str",
+     "sync_dirty": "int",
+     "sync_last_at": "str",
+     "sync_source": "str",
+     "sync_version": "int",
+     "task_code": "str",
+     "title": "str",
+     "updated_at": "str",
+     "viewed_at": "NoneType"
+    }
+   ],
+   "status": 200,
+   "type": "application/json"
+  },
+  "member /api/tasks/{tid}": {
+   "shape": {
+    "archived_at": "NoneType",
+    "attachments": [],
+    "comments": [],
+    "completed_at": "NoneType",
+    "completion_entries": [],
+    "created_at": "str",
+    "created_by": "int",
+    "delegations": [],
+    "due_at": "NoneType",
+    "employee_id": "int",
+    "employee_name": "str",
+    "events": [
+     "dict"
+    ],
+    "id": "int",
+    "in_progress_at": "NoneType",
+    "is_group": "int",
+    "last_delegation": "NoneType",
+    "notes": "NoneType",
+    "origin": "str",
+    "origin_by": "str",
+    "origin_label": "str",
+    "participants": [],
+    "priority": "str",
+    "reminder_active": "int",
+    "reminder_last_sent_at": "NoneType",
+    "reminder_monthly_day": "NoneType",
+    "reminder_monthly_time": "NoneType",
+    "reminder_specific_at": "NoneType",
+    "reminder_start_at": "NoneType",
+    "reminder_type": "str",
+    "reminder_weekly_day": "NoneType",
+    "reminder_weekly_time": "NoneType",
+    "source": "str",
+    "started_at": "NoneType",
+    "status": "str",
+    "subtasks": [],
+    "sync_dirty": "int",
+    "sync_last_at": "str",
+    "sync_source": "str",
+    "sync_version": "int",
+    "task_code": "str",
+    "title": "str",
+    "updated_at": "str",
+    "viewed_at": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "member /api/tasks/{tid}/delegate-options": {
+   "shape": {
+    "employees": [
+     "dict"
+    ],
+    "message": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "member /api/tasks/{tid}/work-profile": {
+   "shape": {
+    "completion_fields": [],
+    "estimated_minutes": "int",
+    "instructions": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "member /api/telegram-dashboard": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/telegram-groups": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/telegram-health": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/telegram-queue": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/telegram-report.csv": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/telegram/status": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/templates": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/templates/{tid}/preview": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/users": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/users/{uid}/team": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/v2/dashboard": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/v2/parse-task": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/workload": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /archive": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "body"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | الأرشيف",
+   "type": "text/html"
+  },
+  "member /audit": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /automation-center": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /backup": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /company": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /company-logo": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 404,
+   "type": "application/json"
+  },
+  "member /employees": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /handover": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /health": {
+   "shape": {
+    "domain": "str",
+    "gateway": "str",
+    "public_url": "str",
+    "status": "str",
+    "system": "str",
+    "tasks": "int",
+    "version": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "member /integrations": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /iphone-setup": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /job-profiles": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /login": {
+   "assets": [
+    "/static/bim-system-v510.css",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-plex.css",
+    "/static/bim-theme-v63.css",
+    "/static/bim-logo-trim.png"
+   ],
+   "ids": [],
+   "status": 200,
+   "title": "بيم دمشق | تسجيل الدخول",
+   "type": "text/html"
+  },
+  "member /login/verify": {
+   "location": "/login",
+   "status": 303,
+   "type": ""
+  },
+  "member /manage": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /manifest.webmanifest": {
+   "status": 200,
+   "type": "application/manifest+json"
+  },
+  "member /my-work": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "mineCards",
+    "mineNotice",
+    "workInstructionText",
+    "workInstructions",
+    "workReadButton"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | مهامي",
+   "type": "text/html"
+  },
+  "member /notification-center": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /operations-reports": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /page-visibility": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /permissions": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /record-management": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /recurring": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /security": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /service-worker.js": {
+   "status": 200,
+   "type": "application/javascript"
+  },
+  "member /shift-center": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /sync": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /system-health": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /task/{tid}": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "attachments",
+    "commentText",
+    "comments",
+    "detailStatusActions",
+    "fileInput",
+    "participationBlock",
+    "participationList",
+    "taskCode",
+    "taskHistory",
+    "taskInfo",
+    "taskTitle",
+    "workInstructionText",
+    "workInstructions",
+    "workReadButton"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | تفاصيل المهمة",
+   "type": "text/html"
+  },
+  "member /tasks": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "cards",
+    "due",
+    "employee",
+    "filterDepartment",
+    "filterEmployee",
+    "filterFrom",
+    "filterOverdue",
+    "filterPriority",
+    "filterProblems",
+    "filterTo",
+    "groupEmployees",
+    "groupSelect",
+    "isGroup",
+    "modal",
+    "monthDay",
+    "monthTime",
+    "notes",
+    "priority",
+    "q",
+    "remAt",
+    "remExtra",
+    "remType",
+    "retryTasks",
+    "status",
+    "taskLoadState",
+    "title",
+    "weekDay",
+    "weekTime"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | كل المهام",
+   "type": "text/html"
+  },
+  "member /tasks-table": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "body",
+    "q",
+    "status"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | المهام كجدول",
+   "type": "text/html"
+  },
+  "member /telegram-center": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /telegram-dashboard": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /telegram-groups": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /telegram-health": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /template-library": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /users": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /workload": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /": {
+   "location": "/tasks",
+   "status": 303,
+   "type": ""
+  },
+  "samer /access-control": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /account": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "mfaActions",
+    "mfaCode",
+    "mfaCodeBox",
+    "mfaPanel",
+    "mfaState",
+    "pwCur",
+    "pwForm",
+    "pwHint",
+    "pwNew",
+    "pwNew2"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | حسابي والأمان",
+   "type": "text/html"
+  },
+  "samer /activity-log": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/access-control": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/activity/changes": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/activity/changes/{aid}": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/activity/events": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/activity/sessions": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/admin-notification-settings": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/attachments/{aid}": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 404,
+   "type": "application/json"
+  },
+  "samer /api/audit": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/automation-summary": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/backup/status": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/bim-employee-profile/{eid}": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/bim-job-profiles": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/client-status": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/company": {
+   "shape": {
+    "configured": "bool",
+    "departments": [],
+    "logo": "bool",
+    "name": "str",
+    "public_url": "str",
+    "timezone": "str",
+    "work_days": [
+     "int"
+    ]
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "samer /api/dashboard": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/employees": {
+   "shape": [
+    {
+     "created_at": "str",
+     "department": "NoneType",
+     "id": "int",
+     "is_active": "int",
+     "name": "str",
+     "open_tasks": "int",
+     "shift_end": "NoneType",
+     "shift_start": "NoneType",
+     "shift_type": "str",
+     "sort_order": "int",
+     "telegram_chat_id": "str",
+     "telegram_enabled": "int",
+     "telegram_link_code": "NoneType",
+     "telegram_link_expires_at": "NoneType",
+     "telegram_linked_at": "NoneType",
+     "updated_at": "str",
+     "whatsapp": "NoneType",
+     "whatsapp_enabled": "int",
+     "work_days": "str"
+    }
+   ],
+   "status": 200,
+   "type": "application/json"
+  },
+  "samer /api/group-dispatch-log": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/group-reminders": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/iphone/accounts": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/iphone/setup": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/me": {
+   "shape": {
+    "employee_id": "int",
+    "full_name": "str",
+    "gateway": "str",
+    "hidden_pages": [
+     "str"
+    ],
+    "id": "int",
+    "permissions": [
+     "str"
+    ],
+    "public_url": "str",
+    "role": "str",
+    "role_code": "str",
+    "username": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "samer /api/me/security": {
+   "shape": {
+    "gateway": "str",
+    "mfa_available": "bool",
+    "mfa_enabled": "bool",
+    "role_code": "str",
+    "telegram_linked": "bool"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "samer /api/operations-report": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/operations-report/tasks": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/page-visibility": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/records": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/recurring": {
+   "shape": [],
+   "status": 200,
+   "type": "application/json"
+  },
+  "samer /api/release-health": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 503,
+   "type": "application/json"
+  },
+  "samer /api/security/overview": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/settings": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/shift-dispatch-log": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/shift-exceptions": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/shift-messages": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/shift-settings": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/shift-test/employees": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/staff/{eid}/settings": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/sync/conflicts": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/sync/pull": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 401,
+   "type": "application/json"
+  },
+  "samer /api/sync/snapshot": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 401,
+   "type": "application/json"
+  },
+  "samer /api/sync/status": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/sync/tasks-page": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 401,
+   "type": "application/json"
+  },
+  "samer /api/sync/test-webapp": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/task-options/employees": {
+   "shape": [
+    {
+     "department": "NoneType",
+     "id": "int",
+     "name": "str"
+    }
+   ],
+   "status": 200,
+   "type": "application/json"
+  },
+  "samer /api/tasks": {
+   "shape": [
+    {
+     "archived_at": "NoneType",
+     "completed_at": "NoneType",
+     "created_at": "str",
+     "created_by": "int",
+     "due_at": "NoneType",
+     "employee_id": "int",
+     "employee_name": "str",
+     "id": "int",
+     "in_progress_at": "NoneType",
+     "is_group": "int",
+     "last_delegation": "NoneType",
+     "notes": "NoneType",
+     "origin": "str",
+     "origin_by": "str",
+     "origin_label": "str",
+     "participant_count": "int",
+     "priority": "str",
+     "reminder_active": "int",
+     "reminder_last_sent_at": "NoneType",
+     "reminder_monthly_day": "NoneType",
+     "reminder_monthly_time": "NoneType",
+     "reminder_specific_at": "NoneType",
+     "reminder_start_at": "NoneType",
+     "reminder_type": "str",
+     "reminder_weekly_day": "NoneType",
+     "reminder_weekly_time": "NoneType",
+     "source": "str",
+     "started_at": "NoneType",
+     "status": "str",
+     "sync_dirty": "int",
+     "sync_last_at": "str",
+     "sync_source": "str",
+     "sync_version": "int",
+     "task_code": "str",
+     "title": "str",
+     "updated_at": "str",
+     "viewed_at": "NoneType"
+    }
+   ],
+   "status": 200,
+   "type": "application/json"
+  },
+  "samer /api/tasks/{tid}": {
+   "shape": {
+    "archived_at": "NoneType",
+    "attachments": [],
+    "comments": [],
+    "completed_at": "NoneType",
+    "completion_entries": [],
+    "created_at": "str",
+    "created_by": "int",
+    "delegations": [],
+    "due_at": "NoneType",
+    "employee_id": "int",
+    "employee_name": "str",
+    "events": [
+     "dict"
+    ],
+    "id": "int",
+    "in_progress_at": "NoneType",
+    "is_group": "int",
+    "last_delegation": "NoneType",
+    "notes": "NoneType",
+    "origin": "str",
+    "origin_by": "str",
+    "origin_label": "str",
+    "participants": [],
+    "priority": "str",
+    "reminder_active": "int",
+    "reminder_last_sent_at": "NoneType",
+    "reminder_monthly_day": "NoneType",
+    "reminder_monthly_time": "NoneType",
+    "reminder_specific_at": "NoneType",
+    "reminder_start_at": "NoneType",
+    "reminder_type": "str",
+    "reminder_weekly_day": "NoneType",
+    "reminder_weekly_time": "NoneType",
+    "source": "str",
+    "started_at": "NoneType",
+    "status": "str",
+    "subtasks": [],
+    "sync_dirty": "int",
+    "sync_last_at": "str",
+    "sync_source": "str",
+    "sync_version": "int",
+    "task_code": "str",
+    "title": "str",
+    "updated_at": "str",
+    "viewed_at": "NoneType"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "samer /api/tasks/{tid}/delegate-options": {
+   "shape": {
+    "employees": [
+     "dict"
+    ],
+    "message": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "samer /api/tasks/{tid}/work-profile": {
+   "shape": {
+    "completion_fields": [],
+    "estimated_minutes": "int",
+    "instructions": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "samer /api/telegram-dashboard": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/telegram-groups": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/telegram-health": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/telegram-queue": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/telegram-report.csv": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/telegram/status": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/templates": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/templates/{tid}/preview": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/users": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/users/{uid}/team": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/v2/dashboard": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /api/v2/parse-task": {
+   "shape": {
+    "employee": "NoneType",
+    "employee_id": "NoneType",
+    "priority": "str",
+    "title": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "samer /api/workload": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /archive": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "body"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | الأرشيف",
+   "type": "text/html"
+  },
+  "samer /audit": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /automation-center": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /backup": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /company": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /company-logo": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 404,
+   "type": "application/json"
+  },
+  "samer /employees": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "body",
+    "companyDepartments",
+    "department",
+    "is_active",
+    "modal",
+    "modalTitle",
+    "name",
+    "saveEmployeeButton",
+    "shift_end",
+    "shift_start",
+    "shift_type",
+    "telegramInfo",
+    "telegram_enabled",
+    "whatsapp",
+    "whatsapp_enabled",
+    "workDays"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | الموظفون",
+   "type": "text/html"
+  },
+  "samer /handover": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /health": {
+   "shape": {
+    "domain": "str",
+    "gateway": "str",
+    "public_url": "str",
+    "status": "str",
+    "system": "str",
+    "tasks": "int",
+    "version": "str"
+   },
+   "status": 200,
+   "type": "application/json"
+  },
+  "samer /integrations": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /iphone-setup": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /job-profiles": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /login": {
+   "assets": [
+    "/static/bim-system-v510.css",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-plex.css",
+    "/static/bim-theme-v63.css",
+    "/static/bim-logo-trim.png"
+   ],
+   "ids": [],
+   "status": 200,
+   "title": "بيم دمشق | تسجيل الدخول",
+   "type": "text/html"
+  },
+  "samer /login/verify": {
+   "location": "/login",
+   "status": 303,
+   "type": ""
+  },
+  "samer /manage": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "body",
+    "q"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | إدارة المهام",
+   "type": "text/html"
+  },
+  "samer /manifest.webmanifest": {
+   "status": 200,
+   "type": "application/manifest+json"
+  },
+  "samer /my-work": {
+   "location": "/tasks",
+   "status": 303,
+   "type": ""
+  },
+  "samer /notification-center": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /operations-reports": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /page-visibility": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /permissions": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /record-management": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /recurring": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "employeeFilter",
+    "pageError",
+    "recEmployee",
+    "recExtra",
+    "recMonth",
+    "recNotes",
+    "recPriority",
+    "recTime",
+    "recTitle",
+    "recType",
+    "recWeek",
+    "recWorkdays",
+    "recurringBody",
+    "recurringModal",
+    "saveError",
+    "saveRecurringButton"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | المهام المتكررة",
+   "type": "text/html"
+  },
+  "samer /security": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /service-worker.js": {
+   "status": 200,
+   "type": "application/javascript"
+  },
+  "samer /shift-center": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /sync": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /system-health": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /task/{tid}": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "attachments",
+    "commentText",
+    "comments",
+    "detailStatusActions",
+    "fileInput",
+    "participationBlock",
+    "participationList",
+    "taskCode",
+    "taskHistory",
+    "taskInfo",
+    "taskTitle"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | تفاصيل المهمة",
+   "type": "text/html"
+  },
+  "samer /tasks": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "cards",
+    "due",
+    "employee",
+    "filterDepartment",
+    "filterEmployee",
+    "filterFrom",
+    "filterOverdue",
+    "filterPriority",
+    "filterProblems",
+    "filterTo",
+    "groupEmployees",
+    "groupSelect",
+    "isGroup",
+    "modal",
+    "monthDay",
+    "monthTime",
+    "notes",
+    "priority",
+    "q",
+    "remAt",
+    "remExtra",
+    "remType",
+    "retryTasks",
+    "status",
+    "taskLoadState",
+    "title",
+    "weekDay",
+    "weekTime"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | كل المهام",
+   "type": "text/html"
+  },
+  "samer /tasks-table": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "body",
+    "q",
+    "status"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | المهام كجدول",
+   "type": "text/html"
+  },
+  "samer /telegram-center": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /telegram-dashboard": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /telegram-groups": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /telegram-health": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /template-library": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /users": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "samer /workload": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  }
+ },
+ "routes": [
+  "DELETE /api/bim-job-profiles/{jid} delete_job",
+  "DELETE /api/employees/{eid} delete_employee",
+  "DELETE /api/group-reminders/{rid} delete_group_reminder",
+  "DELETE /api/iphone/accounts/{uid}/key revoke",
+  "DELETE /api/recurring/{rid} delete_recurring",
+  "DELETE /api/shift-exceptions/{xid} shift_exception_delete",
+  "DELETE /api/shift-messages/{mid} delete_shift_message",
+  "DELETE /api/tasks/{tid} delete_task",
+  "DELETE /api/telegram-groups/{gid} delete_telegram_group",
+  "DELETE /api/templates/{tid} delete_template",
+  "DELETE /api/users/{uid} archive_user",
+  "GET / dashboard",
+  "GET /access-control access_page",
+  "GET /account account_page",
+  "GET /activity-log activity_page",
+  "GET /api/access-control access_list",
+  "GET /api/activity/changes change_list",
+  "GET /api/activity/changes/{aid} changes",
+  "GET /api/activity/events events",
+  "GET /api/activity/sessions sessions",
+  "GET /api/admin-notification-settings admin_notification_settings",
+  "GET /api/attachments/{aid} get_attachment",
+  "GET /api/audit api_audit",
+  "GET /api/automation-summary automation_summary",
+  "GET /api/backup/status backup_status",
+  "GET /api/bim-employee-profile/{eid} bim_employee_profile",
+  "GET /api/bim-job-profiles bim_job_profiles_list",
+  "GET /api/client-status client_status",
+  "GET /api/company get_company",
+  "GET /api/dashboard api_dashboard",
+  "GET /api/employees api_employees",
+  "GET /api/group-dispatch-log group_dispatch_log",
+  "GET /api/group-reminders api_group_reminders",
+  "GET /api/iphone/accounts accounts",
+  "GET /api/iphone/setup iphone_setup_api",
+  "GET /api/me api_me",
+  "GET /api/me/security my_security",
+  "GET /api/operations-report operations_report",
+  "GET /api/operations-report/tasks operations_report_tasks",
+  "GET /api/page-visibility get_visibility",
+  "GET /api/records records",
+  "GET /api/recurring api_recurring",
+  "GET /api/release-health release_health",
+  "GET /api/security/overview overview",
+  "GET /api/settings api_settings",
+  "GET /api/shift-dispatch-log shift_dispatch_log",
+  "GET /api/shift-exceptions shift_exceptions_list",
+  "GET /api/shift-messages get_shift_messages",
+  "GET /api/shift-settings get_shift_settings",
+  "GET /api/shift-test/employees shift_test_employees",
+  "GET /api/staff/{eid}/settings staff_settings",
+  "GET /api/sync/conflicts sync_conflicts",
+  "GET /api/sync/pull sync_pull",
+  "GET /api/sync/snapshot sync_snapshot",
+  "GET /api/sync/status sync_status",
+  "GET /api/sync/tasks-page sync_tasks_page",
+  "GET /api/sync/test-webapp sync_test_webapp",
+  "GET /api/task-options/employees api_task_employee_options",
+  "GET /api/tasks api_tasks",
+  "GET /api/tasks/{tid} api_task",
+  "GET /api/tasks/{tid}/delegate-options delegate_options",
+  "GET /api/tasks/{tid}/work-profile task_work_profile",
+  "GET /api/telegram-dashboard api_telegram_dashboard",
+  "GET /api/telegram-groups api_telegram_groups",
+  "GET /api/telegram-health api_telegram_health",
+  "GET /api/telegram-queue telegram_queue_list",
+  "GET /api/telegram-report.csv telegram_report_csv",
+  "GET /api/telegram/status telegram_status_api",
+  "GET /api/templates list_templates",
+  "GET /api/templates/{tid}/preview preview",
+  "GET /api/users api_users",
+  "GET /api/users/{uid}/team get_supervisor_team",
+  "GET /api/v2/dashboard v2_dashboard",
+  "GET /api/v2/parse-task v2_parse",
+  "GET /api/workload workload",
+  "GET /archive archive_page",
+  "GET /audit audit_page",
+  "GET /automation-center automation_center_page",
+  "GET /backup backup_page",
+  "GET /company company_page",
+  "GET /company-logo logo",
+  "GET /docs swagger_ui_html",
+  "GET /docs/oauth2-redirect swagger_ui_redirect",
+  "GET /employees employees_page",
+  "GET /handover handover_page",
+  "GET /health health",
+  "GET /integrations integrations_page",
+  "GET /iphone-setup iphone_setup_page",
+  "GET /job-profiles bim_job_profiles_page",
+  "GET /login login_page",
+  "GET /login/verify verify_page",
+  "GET /logout logout",
+  "GET /manage manage_page",
+  "GET /manifest.webmanifest manifest",
+  "GET /my-work my_work",
+  "GET /notification-center notification_center",
+  "GET /openapi.json openapi",
+  "GET /operations-reports operations_reports_page",
+  "GET /page-visibility visibility_page",
+  "GET /permissions permissions_page",
+  "GET /record-management page",
+  "GET /recurring recurring_page",
+  "GET /redoc redoc_html",
+  "GET /security security_page",
+  "GET /service-worker.js sw",
+  "GET /shift-center shift_center_page",
+  "GET /sync sync_page",
+  "GET /system-health health_page",
+  "GET /task/{tid} task_detail_page",
+  "GET /tasks tasks_page",
+  "GET /tasks-table tasks_table_page",
+  "GET /telegram-center telegram_center_page",
+  "GET /telegram-dashboard telegram_dashboard_page",
+  "GET /telegram-groups telegram_groups_page",
+  "GET /telegram-health telegram_health_page",
+  "GET /template-library library_page",
+  "GET /users users_page",
+  "GET /workload workload_page",
+  "HEAD /docs swagger_ui_html",
+  "HEAD /docs/oauth2-redirect swagger_ui_redirect",
+  "HEAD /openapi.json openapi",
+  "HEAD /redoc redoc_html",
+  "PATCH /api/bim-job-profiles/{jid} bim_job_profiles_update",
+  "PATCH /api/employees/{eid} edit_employee",
+  "PATCH /api/group-reminders/{rid} edit_group_reminder",
+  "PATCH /api/recurring/{rid} edit_recurring",
+  "PATCH /api/shift-messages/{mid} update_shift_message",
+  "PATCH /api/shift-settings save_shift_settings",
+  "PATCH /api/tasks/{tid} edit_task",
+  "PATCH /api/tasks/{tid}/participants/{eid}/status participant_status",
+  "PATCH /api/tasks/{tid}/status change_status",
+  "PATCH /api/telegram-groups/{gid} edit_telegram_group",
+  "PATCH /api/templates/{tid} edit_template",
+  "PATCH /api/users/{uid} edit_user",
+  "POST /api/activity/events client_event",
+  "POST /api/backup/run backup_run",
+  "POST /api/bim-employee-profile/{eid}/acknowledge acknowledge_instructions",
+  "POST /api/bim-job-profiles bim_job_profiles_create",
+  "POST /api/company/logo logo_upload",
+  "POST /api/employees add_employee",
+  "POST /api/employees/{eid}/telegram-link employee_telegram_link",
+  "POST /api/employees/{eid}/telegram-unlink employee_telegram_unlink",
+  "POST /api/group-reminders add_group_reminder",
+  "POST /api/handover handover",
+  "POST /api/handover/preview handover_preview",
+  "POST /api/iphone/accounts/{uid}/key issue",
+  "POST /api/iphone/task iphone_task",
+  "POST /api/iphone/text iphone_text",
+  "POST /api/iphone/voice iphone_voice",
+  "POST /api/me/mfa/confirm mfa_confirm",
+  "POST /api/me/mfa/start mfa_start",
+  "POST /api/me/password change_my_password",
+  "POST /api/quick/voice quick_voice_task",
+  "POST /api/records/{entity}/{rid}/{action} action",
+  "POST /api/recurring add_recurring",
+  "POST /api/security/backup-now backup_now",
+  "POST /api/security/mfa/{uid}/reset mfa_reset",
+  "POST /api/shift-exceptions shift_exception_add",
+  "POST /api/shift-messages create_shift_message",
+  "POST /api/shift-test run_shift_test",
+  "POST /api/sync/push-employee sync_push_employee",
+  "POST /api/sync/push-task sync_push_task",
+  "POST /api/sync/retry-dirty sync_retry_dirty",
+  "POST /api/sync/settings sync_settings",
+  "POST /api/tasks create_task",
+  "POST /api/tasks/{tid}/attachments add_task_attachment",
+  "POST /api/tasks/{tid}/comments add_task_comment",
+  "POST /api/tasks/{tid}/delegate delegate",
+  "POST /api/tasks/{tid}/restore restore_task",
+  "POST /api/tasks/{tid}/telegram resend_telegram",
+  "POST /api/telegram-groups add_telegram_group",
+  "POST /api/telegram-groups/{gid}/link-code telegram_group_link_code",
+  "POST /api/telegram-groups/{gid}/unlink telegram_group_unlink",
+  "POST /api/telegram-queue/retry-failed telegram_queue_retry_failed",
+  "POST /api/telegram-queue/{qid}/retry telegram_queue_retry",
+  "POST /api/telegram/setup-webhook telegram_setup_webhook",
+  "POST /api/telegram/webhook telegram_webhook",
+  "POST /api/templates create_template",
+  "POST /api/templates/{tid}/apply-open apply_open",
+  "POST /api/templates/{tid}/generate run_template",
+  "POST /api/users add_user",
+  "POST /login login",
+  "POST /login/verify verify_submit",
+  "PUT /api/access-control/{uid} access_update",
+  "PUT /api/admin-notification-settings update_admin_notification_settings",
+  "PUT /api/bim-employee-profile/{eid} bim_employee_profile_update",
+  "PUT /api/company put_company",
+  "PUT /api/iphone/legacy-owner owner",
+  "PUT /api/page-visibility put_visibility",
+  "PUT /api/security/backup-settings backup_settings",
+  "PUT /api/security/backup-telegram backup_telegram",
+  "PUT /api/staff/{eid}/settings set_staff",
+  "PUT /api/templates/{tid}/employee/{eid} override_template",
+  "PUT /api/templates/{tid}/employee/{eid}/items/{key} override_item",
+  "PUT /api/templates/{tid}/links link_template",
+  "PUT /api/users/{uid}/team set_supervisor_team",
+  "WS /static static"
+ ]
+}
