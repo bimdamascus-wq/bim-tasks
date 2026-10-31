@@ -66,6 +66,12 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   app pushes each change instantly (`_try_instant_sheet_push`); the full sync is the catch-up. After install, the status
   report should show that task "Ready" with Last Result 0 between runs.
 - Owner confirmed: manual Telegram backup file arrived. Still ask about the automatic 02:00 one.
+- 2026-10-31 (session 2): package `fixes_tests` (commit 5123848, branch `claude/confident-darwin-2zs0qr`, base 22e9f34)
+  given to the owner with `BIM_Check_Status.zip` — NOT yet confirmed installed. Contains the shift-test fix, the
+  RUN_FULL_SYNC pause fix, group tasks in shift-start/end messages (open item 5), the pytest gate in build_update.py,
+  failed Telegram rows in the status report (open item 6), and a note of how the Sheet sends its secret.
+  Apps Script code is not in the repo: the status report's "[google sheet -> server ...]" section shows whether
+  `?secret=` is still used. Only if it is, ask the owner to paste the Apps Script (secret value removed) and give exact lines.
 
 ## Open items (agreed with the owner, not started)
 1. (in `gateway_staging`) external process ran the workers too. 2. (in `gateway_staging`) staging copy.
