@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(ROOT / '.env')
 templates = Jinja2Templates(directory=str(ROOT / 'app' / 'templates'))
 from . import shell_nav as _shell_nav  # navigation of the page shell (base.html)
-templates.env.globals.update(ds_nav=_shell_nav.nav, ds_icon=_shell_nav.icon, ds_titles=_shell_nav.TITLES)
+templates.env.globals.update(ds_nav=_shell_nav.nav, ds_icon=_shell_nav.icon, ds_titles=_shell_nav.TITLES, ds_page=_shell_nav.page)
 # Set by the run script of each process: 'lan' (8797, runs the workers), 'external' (8798, behind the tunnel),
 # 'test' (staging copy on 8799, no workers). Only 'lan' starts reminders, the Telegram queue and backups.
 GATEWAY = os.environ.get('BIM_GATEWAY', 'lan').strip().lower()

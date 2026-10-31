@@ -30,7 +30,7 @@
         <div class="ds-nav-label">{{ group }}</div>
         {% for l in links %}
         <a href="{{ l.path }}" class="ds-nav-link{% if l.active %} is-active{% endif %}"{% if l.active %} aria-current="page"{% endif %}>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="{{ l.icon }}"></path></svg><span>{{ l.label }}</span>
+          <span class="ds-ico c-{{ l.color }}" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="{{ l.icon }}"></path></svg></span><span>{{ l.label }}</span>
         </a>
         {% endfor %}
       </div>
@@ -47,7 +47,7 @@
   <div class="ds-body">
     <header class="ds-top">
       <button type="button" class="ds-menu" id="dsMenu" aria-controls="dsSide" aria-expanded="false" aria-label="فتح القائمة"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"></path></svg></button>
-      <div class="ds-top-title">{{ ds_titles.get(request.url.path, title) }}</div>
+      {% set pg = ds_page(request.url.path) %}<div class="ds-top-title"><span class="ds-ico ds-ico-lg c-{{ pg.color }}" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="{{ pg.icon }}"></path></svg></span><span>{{ ds_titles.get(request.url.path, title) }}</span></div>
       <label class="ds-search"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg><input id="dsSearch" type="search" placeholder="ابحث عن مهمة أو موظف" aria-label="بحث في المهام"></label>
       <span class="ds-today" id="dsToday"></span>
       <span class="ds-state" id="dsState"><i></i><span>جاري التحقق</span></span>

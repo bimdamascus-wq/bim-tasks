@@ -60,7 +60,24 @@ ICONS = {
     'logout': 'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9',
 }
 
+# Colour of each page's 3D icon (bim-ds.css .c-<name>): related pages share a colour family.
+COLORS = {
+    '/': 'indigo', '/my-work': 'green', '/my-team': 'teal',
+    '/tasks': 'blue', '/tasks-table': 'blue', '/manage': 'orange', '/recurring': 'purple', '/archive': 'slate',
+    '/employees': 'teal', '/users': 'indigo', '/access-control': 'amber', '/job-profiles': 'pink', '/workload': 'orange',
+    '/handover': 'purple', '/shift-center': 'amber',
+    '/team-performance': 'green', '/operations-reports': 'blue', '/activity-log': 'slate', '/audit': 'slate',
+    '/record-management': 'red',
+    '/template-library': 'pink', '/automation-center': 'amber', '/notification-center': 'red', '/telegram-center': 'sky',
+    '/telegram-groups': 'sky', '/telegram-health': 'green', '/telegram-dashboard': 'sky', '/iphone-setup': 'slate',
+    '/integrations': 'purple',
+    '/security': 'red', '/permissions': 'amber', '/company': 'indigo', '/page-visibility': 'teal', '/system-health': 'green',
+    '/sync': 'blue', '/backup': 'purple', '/account': 'indigo',
+}
+
 TITLES = {p: l for _, items in GROUPS for p, l, _ in items}
+PAGE_ICON = {p: ic for _, items in GROUPS for p, _, ic in items}
+PAGE_ICON['/account'] = 'account'
 TITLES.update({'/account': 'حسابي'})
 
 
@@ -99,7 +116,7 @@ def nav(user, permissions, path='/'):
             if need and need not in perms:
                 continue
             active = path == p or (p != '/' and path.startswith(p + '/'))
-            item = {'path': p, 'label': label, 'icon': ICONS[icon], 'active': active}
+            item = {'path': p, 'label': label, 'icon': ICONS[icon], 'active': active, 'color': COLORS.get(p, 'blue')}
             (more if p in hidden and p not in ('/', '/my-work', '/my-team') else links).append(item)
         if links:
             out.append((group, links))
@@ -110,3 +127,9 @@ def nav(user, permissions, path='/'):
 
 def icon(name):
     return ICONS.get(name, '')
+
+
+def page(path):
+    """3D icon of the page shown in the top bar: {'icon', 'color'}."""
+    key = path if path in PAGE_ICON else ('/tasks' if path.startswith('/task/') else '')
+    return {'icon': ICONS.get(PAGE_ICON.get(key, 'list'), ''), 'color': COLORS.get(key, 'blue')}

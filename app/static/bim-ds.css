@@ -350,3 +350,140 @@ body.ds .ds-badge:empty{display:none}
   .ds-login-form{padding:28px 22px}
 }
 @media print{.ds-side,.ds-top{display:none!important}body.ds{background:#fff}}
+
+/* =====================================================================================================
+   v3 (owner feedback 2026-10-31): lighter and narrower side menu, colourful 3D icons, coloured boxes,
+   tables with column lines and coloured status, compact /manage rows. Overrides the rules above.
+   ===================================================================================================== */
+:root{
+  --c-blue-1:#5B9BFF;--c-blue-2:#2563EB; --c-sky-1:#5BC8F5;--c-sky-2:#0E8AC7; --c-indigo-1:#8B8CFF;--c-indigo-2:#4F46E5;
+  --c-purple-1:#C084FC;--c-purple-2:#8B3FD9; --c-pink-1:#F57BC0;--c-pink-2:#CC2E8A; --c-red-1:#FF7A7F;--c-red-2:#D92D3A;
+  --c-orange-1:#FFA35C;--c-orange-2:#E8620C; --c-amber-1:#FFCB4D;--c-amber-2:#D98E04; --c-green-1:#4ADE9A;--c-green-2:#13955B;
+  --c-teal-1:#3EDBC6;--c-teal-2:#0D9488; --c-slate-1:#A3B1C4;--c-slate-2:#5B6B80;
+}
+/* ---- 3D icon tile: glossy gradient square, light from the top, soft coloured shadow ---- */
+.ds-ico{--a:var(--c-blue-1);--b:var(--c-blue-2);position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(160deg,var(--a) 0%,var(--b) 100%);
+  box-shadow:0 4px 10px -3px var(--b),inset 0 1px 0 rgba(255,255,255,.55),inset 0 -3px 0 rgba(0,0,0,.14)}
+.ds-ico::after{content:"";position:absolute;inset:2px 3px 52% 3px;border-radius:8px 8px 14px 14px;background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,0));pointer-events:none}
+.ds-ico svg{position:relative;z-index:1;width:19px;height:19px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}
+.ds-ico-lg{width:42px;height:42px;border-radius:12px}.ds-ico-lg svg{width:23px;height:23px}
+.c-blue{--a:var(--c-blue-1);--b:var(--c-blue-2)}.c-sky{--a:var(--c-sky-1);--b:var(--c-sky-2)}.c-indigo{--a:var(--c-indigo-1);--b:var(--c-indigo-2)}
+.c-purple{--a:var(--c-purple-1);--b:var(--c-purple-2)}.c-pink{--a:var(--c-pink-1);--b:var(--c-pink-2)}.c-red{--a:var(--c-red-1);--b:var(--c-red-2)}
+.c-orange{--a:var(--c-orange-1);--b:var(--c-orange-2)}.c-amber{--a:var(--c-amber-1);--b:var(--c-amber-2)}.c-green{--a:var(--c-green-1);--b:var(--c-green-2)}
+.c-teal{--a:var(--c-teal-1);--b:var(--c-teal-2)}.c-slate{--a:var(--c-slate-1);--b:var(--c-slate-2)}
+
+/* ---- side menu: light, narrower ---- */
+.ds-side{width:248px;background:#FFFFFF;color:var(--ds-ink);border-inline-end:1px solid var(--ds-line);box-shadow:none}
+.ds-brand{padding:18px 16px 12px}
+.ds-brand-logo{width:46px;height:46px;border:1px solid var(--ds-line)}
+.ds-brand-text b{color:var(--ds-ink);font-size:17px}
+.ds-brand-text small{color:var(--ds-muted)}
+.ds-nav{padding:0 10px 14px;scrollbar-color:#D5DAE0 transparent}
+.ds-nav-group{margin-top:12px}
+.ds-nav-label{color:#6B7684;font-size:13px;padding:0 10px 4px}
+body.ds .ds-nav-link{color:var(--ds-ink-2);font-size:15.5px;font-weight:600;min-height:44px;padding:5px 8px;gap:11px}
+body.ds .ds-nav-link:hover{background:#F2F5F9;color:var(--ds-ink)}
+body.ds .ds-nav-link.is-active{background:#EAF1FF;color:#173B7A}
+body.ds .ds-nav-link.is-active::before{background:var(--c-blue-2);inset-inline-start:-10px;top:8px;bottom:8px}
+.ds-user{border-top:1px solid var(--ds-line);padding:12px 14px}
+.ds-avatar{background:linear-gradient(160deg,var(--c-indigo-1),var(--c-indigo-2));color:#fff;box-shadow:0 4px 10px -3px var(--c-indigo-2)}
+.ds-user-text b{color:var(--ds-ink)}
+.ds-user-text small{color:var(--ds-muted)}
+body.ds .ds-user-link{color:var(--ds-ink-2)}
+body.ds .ds-user-link:hover,body.ds .ds-user-link.is-active{background:#F2F5F9;color:var(--ds-ink)}
+.ds-top{background:rgba(255,255,255,.97)}
+.ds-top-title{display:flex;align-items:center;gap:12px}
+body.ds{background:#F4F6FA}
+
+/* ---- coloured number boxes (KPI) everywhere: each box its own colour ---- */
+body.ds .kpi{--a:var(--c-blue-1);--b:var(--c-blue-2);position:relative;overflow:hidden;border:0;color:var(--ds-ink);
+  background:linear-gradient(160deg,color-mix(in srgb,var(--a) 16%,#fff) 0%,#fff 70%);
+  box-shadow:0 1px 2px rgba(16,24,40,.06),inset 0 0 0 1px color-mix(in srgb,var(--b) 22%,#fff)}
+body.ds .kpi::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,var(--a),var(--b))}
+body.ds .kpi span,body.ds .kpi small,body.ds .kpi label{color:color-mix(in srgb,var(--b) 70%,#1C2128)}
+body.ds .kpi b,body.ds .kpi strong,body.ds .kpi .num{color:var(--b)}
+body.ds :is(.kpi-grid,.ds-home-kpis,.stats)>.kpi:nth-child(6n+1){--a:var(--c-blue-1);--b:var(--c-blue-2)}
+body.ds :is(.kpi-grid,.ds-home-kpis,.stats)>.kpi:nth-child(6n+2){--a:var(--c-red-1);--b:var(--c-red-2)}
+body.ds :is(.kpi-grid,.ds-home-kpis,.stats)>.kpi:nth-child(6n+3){--a:var(--c-green-1);--b:var(--c-green-2)}
+body.ds :is(.kpi-grid,.ds-home-kpis,.stats)>.kpi:nth-child(6n+4){--a:var(--c-purple-1);--b:var(--c-purple-2)}
+body.ds :is(.kpi-grid,.ds-home-kpis,.stats)>.kpi:nth-child(6n+5){--a:var(--c-amber-1);--b:var(--c-amber-2)}
+body.ds :is(.kpi-grid,.ds-home-kpis,.stats)>.kpi:nth-child(6n+6){--a:var(--c-teal-1);--b:var(--c-teal-2)}
+.ds-kpi-row{display:flex;align-items:center;justify-content:space-between;gap:10px;order:2}
+
+/* ---- coloured cards: every panel gets a colour band, cycling ---- */
+body.ds .panel,body.ds details.bim-section,body.ds .detail-card,body.ds .ds-card,body.ds .employee-card,body.ds .team-card{--a:var(--c-blue-1);--b:var(--c-blue-2);border:1px solid #E3E8EF;border-top:4px solid var(--b);border-radius:16px;box-shadow:0 2px 6px -2px rgba(16,24,40,.08)}
+body.ds :is(.page-shell,.ds-home-col,.grid-cards,.team-cards,.detail-grid,.two-col)>:is(.panel,details.bim-section,.detail-card,.ds-card,.employee-card,.team-card):nth-of-type(7n+1){--a:var(--c-blue-1);--b:var(--c-blue-2)}
+body.ds :is(.page-shell,.ds-home-col,.grid-cards,.team-cards,.detail-grid,.two-col)>:is(.panel,details.bim-section,.detail-card,.ds-card,.employee-card,.team-card):nth-of-type(7n+2){--a:var(--c-purple-1);--b:var(--c-purple-2)}
+body.ds :is(.page-shell,.ds-home-col,.grid-cards,.team-cards,.detail-grid,.two-col)>:is(.panel,details.bim-section,.detail-card,.ds-card,.employee-card,.team-card):nth-of-type(7n+3){--a:var(--c-teal-1);--b:var(--c-teal-2)}
+body.ds :is(.page-shell,.ds-home-col,.grid-cards,.team-cards,.detail-grid,.two-col)>:is(.panel,details.bim-section,.detail-card,.ds-card,.employee-card,.team-card):nth-of-type(7n+4){--a:var(--c-orange-1);--b:var(--c-orange-2)}
+body.ds :is(.page-shell,.ds-home-col,.grid-cards,.team-cards,.detail-grid,.two-col)>:is(.panel,details.bim-section,.detail-card,.ds-card,.employee-card,.team-card):nth-of-type(7n+5){--a:var(--c-pink-1);--b:var(--c-pink-2)}
+body.ds :is(.page-shell,.ds-home-col,.grid-cards,.team-cards,.detail-grid,.two-col)>:is(.panel,details.bim-section,.detail-card,.ds-card,.employee-card,.team-card):nth-of-type(7n+6){--a:var(--c-indigo-1);--b:var(--c-indigo-2)}
+body.ds :is(.page-shell,.ds-home-col,.grid-cards,.team-cards,.detail-grid,.two-col)>:is(.panel,details.bim-section,.detail-card,.ds-card,.employee-card,.team-card):nth-of-type(7n+7){--a:var(--c-green-1);--b:var(--c-green-2)}
+body.ds .ds-card.is-late{--a:var(--c-red-1);--b:var(--c-red-2)}
+body.ds .ds-card.is-due{--a:var(--c-amber-1);--b:var(--c-amber-2)}
+body.ds .ds-card.is-done{--a:var(--c-green-1);--b:var(--c-green-2)}
+body.ds .panel h2,body.ds .ds-card-head h2,body.ds details.bim-section>summary,body.ds .detail-card h2{color:color-mix(in srgb,var(--b) 75%,#1C2128)}
+body.ds .employee-card-head{background:linear-gradient(160deg,color-mix(in srgb,var(--a) 18%,#fff),#fff)}
+body.ds .employee-card-head :is(button,b,h2,h3){background:linear-gradient(160deg,var(--a),var(--b))!important;color:#fff!important;border:0!important;border-radius:10px;padding:4px 14px!important;box-shadow:0 4px 10px -4px var(--b)}
+body.ds .employee-count{background:#fff;color:var(--b);border:1px solid color-mix(in srgb,var(--b) 35%,#fff)}
+
+/* ---- tables: coloured header, column lines, zebra rows ---- */
+body.ds .scroll-box{border:1px solid #D9E0EA;border-radius:12px}
+body.ds table{border-collapse:separate;border-spacing:0}
+body.ds th{background:linear-gradient(180deg,#EEF3FB,#E3EAF5);color:#22385C;border-bottom:2px solid #C9D5E6;border-inline-start:1px solid #D9E0EA;padding:10px 12px}
+body.ds td{border-inline-start:1px solid #E6EBF1;border-bottom:1px solid #E6EBF1;padding:10px 12px}
+body.ds tr>th:first-child,body.ds tr>td:first-child{border-inline-start:0}
+body.ds tbody tr:nth-child(even) td{background:#F8FAFD}
+body.ds tbody tr:hover td{background:#EEF4FF}
+/* status and priority words become coloured pills (bim-shell.js adds .ds-tag + data-v) */
+body.ds .ds-tag{display:inline-flex;align-items:center;border-radius:999px;padding:2px 12px;font-size:14.5px;font-weight:700;white-space:nowrap;background:#EEF1F5;color:#3A424D}
+body.ds .ds-tag[data-v="جديدة"]{background:#E6F0FF;color:#1D4ED8}
+body.ds .ds-tag[data-v="بدأت"]{background:#F1E9FF;color:#6D28D9}
+body.ds .ds-tag[data-v="قيد التنفيذ"]{background:#FFF1DB;color:#B45309}
+body.ds .ds-tag[data-v="بانتظار"]{background:#FDF2E3;color:#9A5B13}
+body.ds .ds-tag[data-v="تم"]{background:#DDF7EA;color:#0F7A47}
+body.ds .ds-tag[data-v="ملغاة"]{background:#ECEEF1;color:#5B6470;text-decoration:line-through}
+body.ds .ds-tag[data-v="عاجلة"]{background:#FFE1E3;color:#B4232C}
+body.ds .ds-tag[data-v="عالية"]{background:#FFE9DA;color:#C2410C}
+body.ds .ds-tag[data-v="عادي"]{background:#EEF1F5;color:#3A424D}
+body.ds .ds-tag[data-v="منخفضة"]{background:#E7F6F3;color:#0F766E}
+body.ds .ds-tag[data-v="نشط"],body.ds .ds-tag[data-v="مربوط"]{background:#DDF7EA;color:#0F7A47}
+body.ds .ds-tag[data-v="معطل"],body.ds .ds-tag[data-v="غير مربوط"]{background:#ECEEF1;color:#5B6470}
+body.ds select[data-v="عاجلة"]{color:#B4232C;font-weight:700}
+body.ds select[data-v="عالية"]{color:#C2410C;font-weight:700}
+body.ds select[data-v="تم"]{color:#0F7A47;font-weight:700}
+body.ds select[data-v="قيد التنفيذ"]{color:#B45309;font-weight:700}
+body.ds select[data-v="جديدة"]{color:#1D4ED8;font-weight:700}
+
+/* ---- /manage: compact rows so more lines fit ---- */
+body.ds .manage-table td,body.ds .manage-table th{padding:5px 6px!important;font-size:14.5px!important}
+body.ds .manage-table input,body.ds .manage-table select{min-height:36px!important;height:36px;font-size:14.5px!important;padding:3px 8px!important;border-radius:8px}
+body.ds .manage-table .employee-select{max-width:150px}
+body.ds .manage-table .task-input{min-width:220px}
+body.ds .manage-table .actions .btn-sm,body.ds .manage-table button{min-height:34px!important;height:34px;padding:0 10px;font-size:14px}
+
+/* ---- Arabic date shown over native date inputs (bim-shell.js) ---- */
+.ds-date{position:relative;display:inline-block;width:100%}
+.ds-date>input{width:100%}
+.ds-date>.ds-date-text{position:absolute;inset-inline-start:12px;inset-inline-end:36px;top:50%;transform:translateY(-50%);pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ds-ink);font-size:inherit}
+.ds-date.has-text>input:not(:focus){color:transparent}
+.ds-date>input:focus+.ds-date-text{display:none}
+
+/* ---- buttons: a little more life ---- */
+body.ds button:not(.btn-light):not(.btn-danger):not(.ds-menu):not(.ck):not(.tm):not(.mem):not(.bim-filter-toggle):not(.xbtn){background:linear-gradient(160deg,#4A5666,#2E3742);border-color:#2E3742;box-shadow:0 3px 8px -4px rgba(16,24,40,.5)}
+body.ds .page-title .toolbar>button:not(.btn-light):not(.btn-danger):last-child,body.ds .ds-quick .go,body.ds .ds-login-form button{background:linear-gradient(160deg,#F04B5A,#C8102E)!important;border-color:#C8102E!important;box-shadow:0 6px 14px -6px #C8102E!important}
+body.ds .seg button{background:transparent!important;box-shadow:none!important;color:var(--ds-ink-2)}
+body.ds .seg button.on{background:#fff!important;color:var(--ds-ink);box-shadow:0 1px 3px rgba(16,24,40,.15)!important}
+body.ds .team-filter button:not(.on){background:#fff!important;color:var(--ds-ink)!important;border-color:#CDD3DA!important;box-shadow:none!important}
+@media (max-width:1000px){.ds-side{width:min(290px,86vw)}}
+body.ds .ds-date.has-text>input:not(:focus){color:transparent!important;-webkit-text-fill-color:transparent}
+body.ds .ds-date.has-text>input:not(:focus)::-webkit-datetime-edit{opacity:0}
+body.ds .manage-table{min-width:1080px!important}
+body.ds .manage-table .actions{flex-wrap:nowrap;gap:4px}
+body.ds .manage-table .task-input{min-width:200px}
+body.ds .manage-table input.due{min-width:200px}
+body.ds .manage-table .task-input{min-width:170px}
+body.ds .manage-table input.due{min-width:190px}
+body.ds .manage-table :is(select.st,select.pr){min-width:104px}
+body.ds .manage-table select.rem{min-width:96px}
