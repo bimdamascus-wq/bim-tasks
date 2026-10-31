@@ -155,6 +155,11 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   (base.html + app/shell_nav.py + bim-shell.js), one stylesheet `app/static/bim-ds.css`, new admin home/login markup,
   12 old CSS/JS files deleted. Old-vs-new browser comparison (admin/supervisor/employee, 38 pages): nothing missing.
 
+- 2026-10-31 night: owner feedback on `new_design`: menu too wide/dark, wants colourful 3D icons, coloured boxes everywhere,
+  tables with column lines and colours, /manage rows shorter with Arabic dates. Package `new_design2` (base 7195f1f, so it
+  works whether or not `new_design` was installed) given — NOT yet confirmed. If he sends a picture of the 3D icons he made
+  in another conversation, match `.ds-ico` in bim-ds.css to it.
+
 ## Code layout (since package `code_split`)
 - `app/main.py`: settings, app object, middleware, shared helpers (auth/session, Telegram task texts, Sheet push).
   Route modules `app/routes_{auth,pages,telegram,shifts,reports,employees,tasks,recurring,users,backup,sync}.py`
