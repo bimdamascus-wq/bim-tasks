@@ -325,3 +325,74 @@ def test_backup_to_telegram_in_parts(env, tmp_path):
         backup_offsite.join_parts(first, tmp_path / 'again.bimbak')
     checks = {c['key']: c for c in boss.get('/api/security/overview').json()['checks']}
     assert checks['backup_folder']['ok'] and checks['backup_fresh']['ok']
+
+
+# ---------- Gateways, release stamp, staging copy ----------
+def test_release_health_reports_commit_and_gateway(env):
+    m = env['m']
+    (env['root'] / 'app' / 'release.json').write_text('{"commit": "abc1234", "name": "t"}', encoding='utf-8')
+    saved, saved_gw = m.RELEASE, m.GATEWAY
+    m.RELEASE, m.GATEWAY = m._release(), 'external'  # no worker thread in tests; 'lan' would answer 503
+    try:
+        local = env['TestClient'](m.app, base_url='http://127.0.0.1')
+        r = local.get('/api/release-health')
+        assert r.status_code == 200, r.text
+        assert r.json()['commit'] == 'abc1234' and r.json()['gateway'] == 'external'
+    finally:
+        m.RELEASE, m.GATEWAY = saved, saved_gw
+        (env['root'] / 'app' / 'release.json').unlink()
+
+
+def test_iphone_key_unchanged_by_external_gateway(env):
+    # The external process now really runs as 'external'. Shortcut keys must keep working the way they did
+    # (that process used to report 'lan'), and an admin outside can still issue a key for an employee.
+    m = env['m']
+    c = m.connect()
+    member = c.execute("SELECT id FROM users WHERE username='member'").fetchone()[0]
+    c.execute("UPDATE user_mfa SET enabled=0 WHERE user_id=(SELECT id FROM users WHERE username='boss')")
+    c.execute("DELETE FROM login_attempts WHERE username='[iphone]'"); c.close()  # earlier test locked this client out
+    saved, m.GATEWAY = m.GATEWAY, 'external'
+    try:
+        boss = client(env, 'boss', external=True)
+        r = boss.post(f'/api/iphone/accounts/{member}/key')
+        assert r.status_code == 200, r.text
+        phone = env['TestClient'](m.app, base_url='https://testserver', headers={'cf-ray': 'x'})
+        r = phone.post('/api/iphone/task', json={'text': 'مهمة من برا'}, headers={'x-bim-secret': r.json()['secret']})
+        assert r.status_code == 200, r.text
+        assert r.json()['employee'] == 'عضو فريق'
+    finally:
+        m.GATEWAY = saved
+
+
+def test_test_copy_cuts_every_outside_link(tmp_path):
+    sys.path.insert(0, str(SRC / 'tools'))
+    try:
+        import make_test_copy as mtc
+    finally:
+        sys.path.remove(str(SRC / 'tools'))
+    src, dst = tmp_path / 'real', tmp_path / 'test'
+    (src / 'data' / 'attachments').mkdir(parents=True)
+    (src / 'data' / 'attachments' / 'a.txt').write_text('x')
+    (src / '.env').write_text('TELEGRAM_BOT_TOKEN=123:abc\nBIM_SYNC_SECRET=s\nBIM_ADMIN_PASSWORD=keep\n# BIM_IPHONE_SECRET=c\n'
+                              'BIM_BACKUP_PASSPHRASE=p\nBIM_BACKUP_DIR=C:\\BIM_Tasks_Backups\n', encoding='utf-8')
+    c = sqlite3.connect(src / 'data' / 'bim_tasks.db')
+    c.executescript("PRAGMA journal_mode=WAL; CREATE TABLE settings(key TEXT PRIMARY KEY, value TEXT);"
+                    "CREATE TABLE user_mfa(user_id INTEGER PRIMARY KEY, enabled INTEGER);"
+                    "INSERT INTO settings VALUES('sync.webapp_url','https://script.google.com/x'),('backup.offsite_dir','D:/off'),"
+                    "('backup.telegram','1'),('company.name','BIM'); INSERT INTO user_mfa VALUES(1,1);")
+    c.commit()  # left open on purpose: the real system is running while the copy is made
+    with pytest.raises(SystemExit):
+        mtc.main(['--src', str(src), '--dst', str(src / 'sub')])
+    mtc.main(['--src', str(src), '--dst', str(dst)])
+    c.close()
+    env_text = (dst / '.env').read_text(encoding='utf-8')
+    for key in ('TELEGRAM_BOT_TOKEN', 'BIM_SYNC_SECRET', 'BIM_BACKUP_PASSPHRASE', 'BIM_IPHONE_SECRET', 'BIM_OFFSITE_DIR'):
+        assert re.search(rf'^{key}=$', env_text, re.M), key
+    assert '123:abc' not in env_text and 'BIM_ADMIN_PASSWORD=keep' in env_text
+    assert f'BIM_BACKUP_DIR={dst / "backups"}' in env_text
+    d = sqlite3.connect(dst / 'data' / 'bim_tasks.db')
+    assert dict(d.execute('SELECT key,value FROM settings').fetchall()) == {'company.name': 'BIM'}
+    assert d.execute('SELECT enabled FROM user_mfa').fetchone()[0] == 0
+    d.close()
+    assert (dst / 'data' / 'attachments' / 'a.txt').exists() and (dst / 'TEST_COPY.txt').exists()
+    assert sqlite3.connect(src / 'data' / 'bim_tasks.db').execute("SELECT COUNT(*) FROM settings").fetchone()[0] == 4

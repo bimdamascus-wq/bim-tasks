@@ -18,7 +18,10 @@ def eligible(c,m,uid):
  e=c.execute('SELECT * FROM employees WHERE id=? AND is_active=1',(u['employee_id'],)).fetchone()
  if not e:raise HTTPException(403,'اربط الحساب بموظف فعال أولاً')
  if m.channel(c,e['id'])=='telegram':raise HTTPException(403,'قناة هذا الموظف مخصصة لتلغرام فقط')
- if m.GATEWAY=='external' and not u['external_access_allowed']:raise HTTPException(403,'الدخول الخارجي غير مسموح لهذا الحساب')
+ # No gateway check here on purpose. The external process used to report 'lan', so this check never ran and
+ # employees' personal shortcuts work from outside today. Keeping that until the owner decides otherwise;
+ # a key only creates the holder's own task and is rate limited. (It also wrongly blocked an admin issuing
+ # a key for an employee while the admin was outside.)
  if 'tasks.view' not in m.perms(uid):raise HTTPException(403,'الحساب لا يملك صلاحية الوصول إلى المهام')
  return dict(u),e
 

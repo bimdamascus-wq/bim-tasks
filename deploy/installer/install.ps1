@@ -1,5 +1,7 @@
 ﻿# BIM Tasks - generic update installer. Reads update.json next to this file.
 # Lessons kept here on purpose: see CLAUDE.md "How updates reach the server".
+# -Test (INSTALL_TO_TEST.cmd): install into the staging copy C:\BIM_Tasks_Test on port 8799 instead.
+param([switch]$Test)
 # Continue: in Windows PowerShell 5.1 any stderr text from a native tool (pip warnings) would otherwise abort.
 $ErrorActionPreference = 'Continue'
 $PSDefaultParameterValues['Copy-Item:ErrorAction'] = 'Stop'
@@ -8,6 +10,10 @@ $PSDefaultParameterValues['New-Item:ErrorAction'] = 'Stop'
 $Here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $U = Get-Content "$Here\update.json" -Raw -Encoding UTF8 | ConvertFrom-Json
 $Root = 'C:\BIM_Tasks_Server'
+if ($Test) {
+    $Root = 'C:\BIM_Tasks_Test'
+    if (-not (Test-Path "$Root\TEST_COPY.txt")) { Write-Host 'ما في نسخة تجريبية. شغّل أول TEST_COPY_CREATE.cmd من C:\BIM_Tasks_Server.' -ForegroundColor Red; exit 1 }
+}
 if (-not (Test-Path "$Root\app\main.py")) {
     $Root = (Read-Host 'ما لقيت C:\BIM_Tasks_Server. اكتب مسار مجلد النظام').Trim('"', ' ')
     if (-not (Test-Path "$Root\app\main.py")) { Write-Host 'المسار غير صحيح. تم الإلغاء.' -ForegroundColor Red; exit 1 }
@@ -31,6 +37,10 @@ Set-Content $InProgress $Bk -Encoding UTF8
 Start-Transcript -Path "$Root\logs\update_$($U.name)_$Stamp.log" | Out-Null
 $LanTask = '\BIM Tasks\LAN'
 $ExtTask = 'BIM Tasks External 8798'
+# Each port must answer with the new commit and its own gateway (only 'lan' runs the workers).
+if ($Test) { $Gates = @(@{ Port = 8799; Gateway = 'test'; Must = $true }) }
+else { $Gates = @(@{ Port = 8797; Gateway = 'lan'; Must = $true }, @{ Port = 8798; Gateway = 'external'; Must = $false }) }
+$PortRe = ($Gates | ForEach-Object { $_.Port }) -join '|'
 $Payload = "$Here\payload"
 $Files = @()
 if (Test-Path $Payload) { $Files = @(Get-ChildItem $Payload -Recurse -File | ForEach-Object { $_.FullName.Substring($Payload.Length + 1) }) }
@@ -38,18 +48,21 @@ $Deletes = @($U.delete | Where-Object { $_ })
 
 function Step($t) { Write-Host ''; Write-Host "== $t" -ForegroundColor Cyan }
 function Stop-Bim {
-    foreach ($t in $LanTask, $ExtTask) { schtasks /End /TN $t 2>$null | Out-Null }
+    if (-not $Test) { foreach ($t in $LanTask, $ExtTask) { schtasks /End /TN $t 2>$null | Out-Null } }
     # The venv launcher starts a child python whose command line may not contain $Root, so match on uvicorn app.main.
+    # The test copy (8799) and the real system never stop each other.
     Get-CimInstance Win32_Process -Filter "Name='python.exe' OR Name='pythonw.exe'" |
-        Where-Object { $_.CommandLine -match 'uvicorn' -and $_.CommandLine -match 'app\.main:app' } |
+        Where-Object { $_.CommandLine -match 'uvicorn' -and $_.CommandLine -match 'app\.main:app' -and
+                       (($Test -and $_.CommandLine -match '--port\s+8799') -or (-not $Test -and $_.CommandLine -notmatch '--port\s+8799')) } |
         ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
     for ($i = 0; $i -lt 15; $i++) {
-        if (-not (netstat -ano | Select-String -Pattern ':(8797|8798)\s.*LISTENING')) { return }
+        if (-not (netstat -ano | Select-String -Pattern ":($PortRe)\s.*LISTENING")) { return }
         Start-Sleep -Seconds 2
     }
-    Write-Host '   تنبيه: المنفذ 8797/8798 لسا محجوز' -ForegroundColor Yellow
+    Write-Host "   تنبيه: المنفذ $PortRe لسا محجوز" -ForegroundColor Yellow
 }
 function Start-Bim {
+    if ($Test) { Start-Process -FilePath "$Root\RUN_TEST.cmd" -WorkingDirectory $Root -WindowStyle Minimized; return }
     schtasks /Run /TN $LanTask 2>$null | Out-Null
     if ($LASTEXITCODE -ne 0) { Start-Process -FilePath "$Root\RUN_LAN.cmd" -WorkingDirectory $Root -WindowStyle Minimized }
     schtasks /Run /TN $ExtTask 2>$null | Out-Null
@@ -59,6 +72,22 @@ function Answers($port, $path) {
     # Any HTTP answer except 404 means the route exists, i.e. the new code is running.
     try { Invoke-WebRequest -UseBasicParsing -TimeoutSec 4 "http://127.0.0.1:$port$path" -ErrorAction Stop | Out-Null; return $true }
     catch { $r = $_.Exception.Response; return ($r -and [int]$r.StatusCode -ne 404) }
+}
+function Release($port) {
+    # Local-only route; returns the commit and gateway of the process that answers on $port.
+    for ($i = 0; $i -lt 10; $i++) {
+        try { $c = (Invoke-WebRequest -UseBasicParsing -TimeoutSec 4 "http://127.0.0.1:$port/api/release-health" -ErrorAction Stop).Content; return ($c | ConvertFrom-Json) }
+        catch { Start-Sleep -Seconds 2 }
+    }
+    return $null
+}
+function Check-Gate($g) {
+    # Returns an error text, or '' when the port runs the new commit with the right gateway.
+    $r = Release $g.Port
+    if (-not $r) { return "البوابة $($g.Port) ما ردّت على فحص النسخة" }
+    if ($U.commit -and $r.commit -ne $U.commit) { return "البوابة $($g.Port) عم تشغّل نسخة قديمة ($($r.commit)) بدل $($U.commit)" }
+    if ($r.gateway -ne $g.Gateway) { return "البوابة $($g.Port) شغّالة بوضع '$($r.gateway)' بدل '$($g.Gateway)' (ملف التشغيل أو المهمة المجدولة ما عم يمرر BIM_GATEWAY)" }
+    return ''
 }
 function Wait-Health($port) {
     for ($i = 0; $i -lt 40; $i++) { if (Answers $port '/health') { return $true }; Start-Sleep -Seconds 2 }
@@ -78,7 +107,7 @@ function Rollback($why) {
         if (Test-Path "$Bk\data\$d") { Copy-Item "$Bk\data\$d" "$Root\data\$d" -Force }
     }
     Start-Bim
-    $back = Wait-Health 8797
+    $back = Wait-Health $Gates[0].Port
     Remove-Item $InProgress -Force -ErrorAction SilentlyContinue
     if ($back) { Write-Host '!! رجع النظام متل ما كان وشغّال.' -ForegroundColor Yellow } else { Write-Host '!! الملفات رجعت، بس النظام ما ردّ. شغّل START_BIM_NOW.cmd' -ForegroundColor Red }
     Write-Host "!! ابعت ملف السجل: $Root\logs\update_$($U.name)_$Stamp.log"
@@ -86,6 +115,7 @@ function Rollback($why) {
 }
 
 Write-Host "تحديث: $($U.title)" -ForegroundColor Green
+if ($Test) { Write-Host 'على النسخة التجريبية C:\BIM_Tasks_Test (النظام الحقيقي ما بيتأثر)' -ForegroundColor Yellow }
 Write-Host "المجلد: $Root   (لا تكبس بالماوس جوّا هالنافذة وقت التثبيت)" -ForegroundColor DarkGray
 
 Step '1/6 إيقاف النظام'
@@ -130,10 +160,17 @@ try {
 
 Step '6/6 تشغيل النظام'
 Start-Bim
-if (-not (Wait-Health 8797)) { Rollback 'البوابة الداخلية 8797 ما ردّت بعد التشغيل' }
-if ($U.check_path -and -not (Answers 8797 $U.check_path)) { Rollback 'البوابة 8797 عم تشغّل النسخة القديمة (عملية قديمة ما توقفت)' }
-Write-Host '   البوابة الداخلية 8797: تعمل بالنسخة الجديدة' -ForegroundColor Green
-if (Wait-Health 8798) { Write-Host '   البوابة الخارجية 8798: تعمل' -ForegroundColor Green } else { Write-Host '   البوابة الخارجية 8798 ما ردّت — راجع logs\server-external.log' -ForegroundColor Yellow }
+foreach ($g in $Gates) {
+    $p = $g.Port
+    if (-not (Wait-Health $p)) {
+        if ($g.Must) { Rollback "البوابة $p ما ردّت بعد التشغيل" }
+        Write-Host "   البوابة $p ما ردّت — راجع مجلد logs" -ForegroundColor Yellow; continue
+    }
+    if ($U.check_path -and -not (Answers $p $U.check_path)) { Rollback "البوابة $p عم تشغّل النسخة القديمة (عملية قديمة ما توقفت)" }
+    $err = Check-Gate $g
+    if ($err) { Rollback $err }
+    Write-Host "   البوابة $p ($($g.Gateway)): تعمل بالنسخة الجديدة $($U.commit)" -ForegroundColor Green
+}
 
 Move-Item $InProgress $Done -Force
 Stop-Transcript | Out-Null

@@ -16,3 +16,4 @@ __pycache__/
 BACKUP_PASSWORD_KEEP_OUTSIDE.txt
 *.bimbak
 dist/
+app/release.json

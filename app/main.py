@@ -23,6 +23,8 @@ from . import access
 ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(ROOT / '.env')
 templates = Jinja2Templates(directory=str(ROOT / 'app' / 'templates'))
+# Set by the run script of each process: 'lan' (8797, runs the workers), 'external' (8798, behind the tunnel),
+# 'test' (staging copy on 8799, no workers). Only 'lan' starts reminders, the Telegram queue and backups.
 GATEWAY = os.environ.get('BIM_GATEWAY', 'lan').strip().lower()
 COOKIE_SECURE = os.environ.get('BIM_COOKIE_SECURE', '0') == '1'
 COOKIE = 'bim_tasks_session'
@@ -32,6 +34,12 @@ DOMAIN = 'task.bimdamascus.com'
 TELEGRAM_WEBHOOK_SECRET = os.environ.get('BIM_TELEGRAM_WEBHOOK_SECRET','').strip()
 
 APP_VERSION = '6.3.1-unified'
+
+def _release():
+    # Written into the update package by deploy/build_update.py; lets the installer prove the new code is running.
+    try: return json.loads((ROOT / 'app' / 'release.json').read_text(encoding='utf-8'))
+    except Exception: return {}
+RELEASE = _release()
 LOGIN_WINDOW_MINUTES = 15
 LOGIN_MAX_FAILS_USER = 8
 LOGIN_MAX_FAILS_IP = 25
@@ -1637,7 +1645,8 @@ def release_health(req: Request):
     if GATEWAY == 'lan' and not worker_ok:
         raise HTTPException(503, 'Background worker unavailable')
     return {'service': 'bim-tasks', 'release': '2026-10-22-bundles-r6',
-            'database': 'ready', 'gateway': GATEWAY, 'worker_alive': worker_ok}
+            'database': 'ready', 'gateway': GATEWAY, 'worker_alive': worker_ok,
+            'commit': RELEASE.get('commit', '')}
 
 
 @app.get('/api/client-status')

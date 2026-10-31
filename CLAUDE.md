@@ -22,6 +22,14 @@ Build every update with the generic installer (`deploy/installer/`), never a han
 python deploy/build_update.py <name> main "<Arabic title>" --check <route that only the new code has>
 ```
 It ships the git diff between `main` (= what the server runs) and HEAD, refuses to run twice, and rolls back on failure.
+`--check` is optional: every package carries `app/release.json` (commit), and the installer requires each port's
+`/api/release-health` to report that commit and its own gateway (8797 `lan`, 8798 `external`, 8799 `test`).
+
+Staging copy: `TEST_COPY_CREATE.cmd` (server root, double-click as admin) builds/refreshes `C:\BIM_Tasks_Test`
+on `127.0.0.1:8799` from the live data (`tools/make_test_copy.ps1` + `.py`). The copy has no Telegram token, no Sheet
+secret/URL, no off-site backup settings, its own backup dir, login confirmation off, and `BIM_GATEWAY=test` (no workers).
+`RUN_TEST.cmd` refuses to start without `TEST_COPY.txt`. Every package also has `INSTALL_TO_TEST.cmd`
+(= `install.ps1 -Test`): try it there first. The real installer and the test one never stop each other's processes.
 Work on a branch; merge into `main` only after the owner confirms the install succeeded.
 
 Lessons from the first install (2026-10-31), keep them in every installer:
@@ -47,11 +55,17 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 - 2026-10-31: update `telegram_backup` (branch `next-update`, package built with `deploy/build_update.py`) given to the owner.
   Owner confirmed it is installed; merged into `main`. Still ask whether the daily backup file arrives on Telegram.
 
+- 2026-10-31: update `gateway_staging` (branch `claude/wonderful-edison-kzadbl`) built and given to the owner — NOT yet confirmed installed.
+  Contains: `BIM_GATEWAY`/`BIM_PORT`/`BIM_COOKIE_SECURE` in `RUN_LAN.cmd` / `RUN_EXTERNAL.cmd` (workers only in LAN),
+  release stamp + gateway check in the installer, staging copy. Owner had not said whether the Telegram backup file arrives.
+  If the installer rolls back with "8798 ... بدل 'external'", the scheduled task `BIM Tasks External 8798` does not run
+  `RUN_EXTERNAL.cmd`: ask for `schtasks /Query /TN "BIM Tasks External 8798" /V /FO LIST`.
+
 ## Open items (agreed with the owner, not started)
-1. `RUN_EXTERNAL.cmd` never sets `BIM_GATEWAY=external` / `BIM_COOKIE_SECURE=1`, so the external process also starts
-   the workers (reminders, Telegram queue, backups run twice → possible duplicate messages). External detection itself works
-   through Cloudflare headers. Fix: set both variables in `RUN_EXTERNAL.cmd` (and `BIM_GATEWAY=lan` in `RUN_LAN.cmd`).
-2. Staging copy on the server (e.g. `C:\BIM_Tasks_Test`, port 8799, copy of data) created by a double-click file, to try updates first.
+1. (in `gateway_staging`) external process ran the workers too. 2. (in `gateway_staging`) staging copy.
+- Decision for the owner: personal iPhone shortcut keys work from outside even for employees whose role has no external
+  access. The old check in `iphone_accounts.eligible` read the process gateway, which was always `lan`, so it never ran;
+  it was removed (behaviour unchanged) instead of being switched on. Switch it on per request only if the owner wants that.
 3. Google Sheet sync sends its secret in the URL query (`?secret=`); move to the `X-BIM-Sync-Secret` header (needs the Apps Script changed too).
 4. Feature ideas offered, owner has not chosen yet: supervisor dashboard for their team, daily Telegram summary for supervisors,
    per-team performance report. Ask the owner what slows down their daily work before building anything.
