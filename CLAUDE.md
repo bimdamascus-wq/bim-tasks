@@ -120,6 +120,12 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   sends Telegram inside the request, so repeated clicks re-archived, re-logged and re-notified (3-6x per task).
   Fixed on the branch (already-archived -> no-op, test). Asked the owner whether that mass archive was intended.
 
+- 2026-10-31 (session 3, cont.): owner confirmed the mass archive by آية نسب was on his request. Package
+  `supervisor_tools` (commit c94b3e6, base 6db03f1, branch `claude/new-session-j9yp8h`) given — NOT yet confirmed:
+  archive no-op fix; daily supervisor Telegram summary (`app/supervisor_summary.py`, LAN worker, default ON at 18:00,
+  settings at the end of /shift-center); /team-performance (+ CSV, new permission `reports.team` for admin/deputy/
+  supervisor); /my-team mobile page (tasks.edit). Merge into `main` only after the post-install report.
+
 ## Code layout (since package `code_split`)
 - `app/main.py`: settings, app object, middleware, shared helpers (auth/session, Telegram task texts, Sheet push).
   Route modules `app/routes_{auth,pages,telegram,shifts,reports,employees,tasks,recurring,users,backup,sync}.py`
@@ -138,9 +144,8 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 - Sheet secret: Apps Script uses the `X-BIM-Sync-Secret` header (seen). Remove `?secret=` once a report after a full
   working day still shows "?secret= ... not seen yet" (was deferred from `code_split`).
 - `code_split` installed and merged. Next report: check sync runs are mode=incremental and short; one full after 03:00.
-- Pending on the branch for the next package: archive idempotency fix (duplicate "cancelled" messages).
-- Next: features — see `docs/handoff/SESSION_4.md`.
-- Then features (supervisor daily summary, team performance report, supervisor mobile page), redesign last.
+- `supervisor_tools` waiting for install + report. Then: did supervisors get the 18:00 summary? any complaints?
+- Next: drop `?secret=` (if still unseen), then the redesign — see `docs/handoff/SESSION_5.md`.
 - Still ask: did the automatic 02:00 off-site backup (first run 2026-11-01) arrive on Telegram?
 
 ## Roadmap agreed with the owner (2026-10-31) — session-by-session plan in `docs/handoff/SESSION_<n>.md` — phases 1–2 were done in another conversation, not in this repo
