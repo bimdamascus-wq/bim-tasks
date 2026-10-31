@@ -34,3 +34,6 @@ Do not grant permissions by editing `role_permissions` in the DB — `seed()` re
 ## Tests
 `python -m pytest tests -q` — runs against a temporary copy, never touches `data/`.
 Known pre-existing issue: on a completely empty database `delegation.py` reads `settings` at import time and fails; tests call `init_db()` first.
+
+## Deployment log
+- 2026-10-31: security update installed on the server with `deploy/security_update` (v2). Repository `main` matches the server code.
