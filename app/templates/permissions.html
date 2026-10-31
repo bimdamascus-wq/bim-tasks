@@ -1,0 +1,39 @@
+{% extends "base.html" %}{% block content %}
+<main class="page-shell">
+<section class="page-title"><div><h1>جدول الصلاحيات</h1><p>مين بيشوف شو، مين بيعدّل شو، ومين بيوزّع. هالجدول مولّد من نفس الملف اللي السيرفر بيتحقق منه بكل طلب (<code>app/access.py</code>) — فما بيختلف عن الواقع.</p></div></section>
+
+<section class="panel">
+<h2>الأدوار والنطاق</h2>
+<div style="overflow-x:auto"><table>
+<thead><tr><th>الدور</th><th>النطاق (على أي بيانات)</th><th>الدخول من خارج الشركة</th></tr></thead>
+<tbody>{% for code,name,ext in A.ROLES %}<tr><td><b>{{ name }}</b></td><td>{{ A.SCOPE[code] }}</td><td>{{ 'مسموح' if ext else 'ممنوع' }}{% if code in A.MANAGERS %} — مع خيار رمز تأكيد على Telegram{% endif %}</td></tr>{% endfor %}</tbody>
+</table></div>
+</section>
+
+<section class="panel">
+<h2>الصلاحيات</h2>
+<p><b>✓</b> مسموح افتراضياً · <b>◐</b> ممكن يتفعّل لشخص بعينه من «الصلاحيات والقنوات» · <b>—</b> ممنوع ولا يمكن منحه</p>
+<div style="overflow-x:auto"><table>
+<thead><tr><th>الصلاحية</th>{% for code,name,_ in A.ROLES %}<th style="text-align:center">{{ name }}</th>{% endfor %}<th>الصفحات المرتبطة</th></tr></thead>
+<tbody>{% for code,label,group in A.PERMISSIONS %}<tr><td>{{ label }}<br><small><code>{{ code }}</code></small></td>
+{% for role,_,_ in A.ROLES %}<td style="text-align:center;font-size:18px">{% if code in A.MATRIX[role] %}✓{% elif code in A.OPTIONAL[role] %}◐{% else %}<span style="opacity:.35">—</span>{% endif %}</td>{% endfor %}
+<td><small>{{ (pages_by_perm.get(code) or [])|join(' · ') }}</small></td></tr>{% endfor %}</tbody>
+</table></div>
+</section>
+
+<section class="panel">
+<h2>من بيوزّع المهام؟</h2>
+<ul>
+<li><b>المدير ونائب المدير:</b> لأي موظف بالشركة.</li>
+<li><b>المسؤول:</b> لموظفي فريقه فقط. السيرفر بيرفض أي إسناد أو تحويل أو توزيع لموظف برّا فريقه، وبيخفي عنه مهام باقي الفرق. الفريق بيتحدد من صفحة «المستخدمون».</li>
+<li><b>الموظف:</b> ما بيوزّع مهام للإدارة؛ بيشوف مهامه ويحدّث حالتها حسب إعدادات وظيفته.</li>
+</ul>
+</section>
+
+<section class="panel">
+<h2>العمليات الحساسة — للمدير فقط</h2>
+<ul>{% for op in A.SENSITIVE_OPERATIONS %}<li>{{ op }}</li>{% endfor %}</ul>
+<p><small>نائب المدير بيقدر يعمل كل شي تاني. كل عملية من هدول بتتسجل بـ«سجل العمليات الحساسة» بصفحة <a href="/security">الأمان والحماية</a>.</small></p>
+</section>
+</main>
+{% endblock %}

@@ -1,6 +1,6 @@
 from __future__ import annotations
 import sqlite3
-import os, json, time, calendar, re, urllib.request, urllib.error, subprocess, secrets
+import os, json, time, calendar, re, urllib.request, urllib.error, subprocess, secrets, hmac
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Optional
@@ -18,6 +18,7 @@ from .telegram_service import answer_callback, edit_message, get_me, set_webhook
 from .telegram_queue import send_resilient as send
 from .telegram_media import send_attachment
 from .workers import start as start_workers, stop as stop_workers
+from . import access
 
 ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(ROOT / '.env')
@@ -79,10 +80,9 @@ async def security_guard(req: Request, call_next):
     # Cross-site request protection: a logged-in browser may only change data from this system's own pages.
     if req.method not in ('GET', 'HEAD', 'OPTIONS') and req.cookies.get(COOKIE) and not req.url.path.startswith(CSRF_EXEMPT_PREFIXES):
         origin = req.headers.get('origin') or req.headers.get('referer') or ''
-        if origin:
-            host = origin.split('://')[-1].split('/')[0].strip().lower()
-            if origin.strip().lower() == 'null' or host not in _allowed_hosts(req):
-                return Response('{"detail":"طلب مرفوض لأسباب أمنية"}', status_code=403, media_type='application/json')
+        host = origin.split('://')[-1].split('/')[0].strip().lower()
+        if not origin or origin.strip().lower() == 'null' or host not in _allowed_hosts(req):
+            return Response('{"detail":"طلب مرفوض لأسباب أمنية"}', status_code=403, media_type='application/json')
     resp = await call_next(req)
     h = resp.headers
     h.setdefault('X-Content-Type-Options', 'nosniff')
@@ -92,6 +92,25 @@ async def security_guard(req: Request, call_next):
     if gateway_of(req) == 'external':
         h.setdefault('Strict-Transport-Security', 'max-age=31536000')
     return resp
+
+@app.middleware('http')
+async def auth_guard(req: Request, call_next):
+    # Default deny: a route is reachable without a session only if listed in access.PUBLIC_PATHS.
+    # Pages are also checked against access.PAGE_PERMS so the permissions table is enforced, not just documented.
+    path = req.url.path
+    if path in access.PUBLIC_PATHS or path.startswith(access.PUBLIC_PREFIXES) or req.method == 'OPTIONS':
+        return await call_next(req)
+    from starlette.concurrency import run_in_threadpool
+    u = await run_in_threadpool(session, req)
+    wants_html = not path.startswith('/api/') and req.method == 'GET'
+    if not u:
+        if wants_html: return RedirectResponse('/login', status_code=303)
+        return Response('{"detail":"يجب تسجيل الدخول"}', status_code=401, media_type='application/json')
+    code = access.page_permission(path)
+    if code and req.method == 'GET' and code not in await run_in_threadpool(perms, u['user_id']):
+        if path == '/': return RedirectResponse('/my-work' if u['role_code'] == 'employee' else '/tasks', status_code=303)
+        return Response('{"detail":"لا تملك صلاحية هذه الصفحة"}', status_code=403, media_type='application/json')
+    return await call_next(req)
 
 def session(req: Request):
     sid = req.cookies.get(COOKIE)
@@ -119,15 +138,14 @@ def session(req: Request):
     return r
 
 def perms(uid: int):
+    # Effective permissions come from app/access.py; per-user switches can never exceed the role ceiling.
     c = connect()
-    rs = c.execute('''SELECT p.code FROM permissions p
-      JOIN role_permissions rp ON rp.permission_id=p.id
-      JOIN users u ON u.role_id=rp.role_id WHERE u.id=?''', (uid,)).fetchall()
-    result={x['code'] for x in rs}
-    for r in c.execute('SELECT permission,allowed FROM universal_user_permissions WHERE user_id=?',(uid,)):
-        if r['allowed']:result.add(r['permission'])
-        else:result.discard(r['permission'])
-    c.close(); return result
+    try:
+        role = c.execute('SELECT r.code FROM users u JOIN roles r ON r.id=u.role_id WHERE u.id=?', (uid,)).fetchone()
+        if not role: return set()
+        overrides = [(r['permission'], r['allowed']) for r in c.execute('SELECT permission,allowed FROM universal_user_permissions WHERE user_id=?', (uid,))]
+        return access.effective(role['code'], overrides)
+    finally: c.close()
 
 def need(req: Request, code: str):
     u = session(req)
@@ -155,14 +173,13 @@ def ctx(req: Request, title: str):
 
 def audit(c, req, u, action, etype=None, eid=None, before=None, after=None, reason=None):
     from .activity_log import sanitize
+    from .security_center import append_audit
     before=sanitize(before); after=sanitize(after)
-    c.execute('''INSERT INTO audit_logs(user_id,username_snapshot,action,entity_type,entity_id,
-      before_json,after_json,reason,gateway,ip_address) VALUES(?,?,?,?,?,?,?,?,?,?)''',
-      (u['user_id'] if u else None, u['username'] if u else None, action, etype,
-       str(eid) if eid is not None else None,
-       json.dumps(before, ensure_ascii=False, default=str) if before else None,
-       json.dumps(after, ensure_ascii=False, default=str) if after else None,
-       reason, GATEWAY, ip(req)))
+    append_audit(c,{'user_id':u['user_id'] if u else None,'username_snapshot':u['username'] if u else None,'action':action,
+      'entity_type':etype,'entity_id':str(eid) if eid is not None else None,
+      'before_json':json.dumps(before, ensure_ascii=False, default=str) if before else None,
+      'after_json':json.dumps(after, ensure_ascii=False, default=str) if after else None,
+      'reason':reason,'gateway':gateway_of(req),'ip_address':ip(req)})
 
 def _employee_row(c, employee_id):
     if not employee_id: return None
@@ -171,12 +188,7 @@ def _employee_row(c, employee_id):
 def _task_accessible(c, u, tid:int):
     row=c.execute('SELECT * FROM tasks WHERE id=?',(tid,)).fetchone()
     if not row: return None
-    if u['role_code']=='employee':
-        eid=int(u['employee_id'] or -1)
-        if int(row['employee_id'] or -2)!=eid and not c.execute(
-            'SELECT 1 FROM task_participants WHERE task_id=? AND employee_id=?',(tid,eid)
-        ).fetchone():
-            return None
+    if not access.is_manager(u) and not access.can_view_task(c,u,tid): return None
     return row
 
 def _safe_filename(name:str):
@@ -407,7 +419,7 @@ def _sync_secret():
 
 def _sync_auth(req:Request):
     secret=req.headers.get('x-bim-sync-secret','') or req.query_params.get('secret','')
-    if not _sync_secret() or secret != _sync_secret():
+    if not _sync_secret() or not hmac.compare_digest(secret,_sync_secret()):
         raise HTTPException(401,'Sync secret غير صحيح')
 
 def _task_sync_payload(c, tid:int):
@@ -581,13 +593,20 @@ def login(req: Request, username: str=Form(...), password: str=Form(...)):
         from .activity_log import failed_login
         failed_login(c,req,u,uname,gw,ip(req),status=403)
         c.close();return templates.TemplateResponse(request=req,name='login.html',context={**ctx(req,'تسجيل الدخول'),'error':'هذا الحساب مضبوط لاستخدام Telegram فقط؛ راجع الإدارة لتفعيل الويب'},status_code=403)
+    if gw == 'external' and mfa_required(c, u['id']):
+        try: return mfa_login_challenge(c, req, u, gw)
+        finally: c.close()
+    try: return _open_session(c, req, u, gw)
+    finally: c.close()
+
+def _open_session(c, req, u, gw):
     sid = new_session_id(); csrf = new_csrf_token()
     c.execute('INSERT INTO login_sessions(id,user_id,csrf_token,gateway,expires_at,ip_address,user_agent) VALUES(?,?,?,?,?,?,?)',
               (sid, u['id'], csrf, gw, session_expiry(), ip(req), req.headers.get('user-agent','')))
     c.execute('UPDATE users SET last_login_at=?,last_login_ip=? WHERE id=?', (iso(now()), ip(req), u['id']))
     from .activity_log import auth_event
     auth_event(c,req,{'user_id':u['id'],'username':u['username']},sid,'login',gw,ip(req))
-    c.close(); resp = RedirectResponse('/' if u['role_code'] in ('admin','deputy') else ('/my-work' if u['role_code']=='employee' else '/tasks'), 303)
+    resp = RedirectResponse('/' if u['role_code'] in access.MANAGERS else ('/my-work' if u['role_code']=='employee' else '/tasks'), 303)
     resp.set_cookie(COOKIE, sid, httponly=True, secure=COOKIE_SECURE or gw == 'external', samesite='lax', max_age=43200)
     return resp
 
@@ -652,7 +671,7 @@ def telegram_status_api(req:Request):
 
 @app.post('/api/telegram/setup-webhook')
 def telegram_setup_webhook(req:Request):
-    u=need(req,'employees.edit')
+    u=need(req,'security.manage')
     if not TELEGRAM_WEBHOOK_SECRET:
         raise HTTPException(500,'Webhook secret غير مضبوط')
     c=connect()
@@ -665,12 +684,20 @@ def telegram_setup_webhook(req:Request):
         raise HTTPException(502,r.get('error') or 'تعذر تفعيل Webhook')
     return {'ok':True,'url':url}
 
+def _guard_manager_telegram(c,u,eid):
+    # The Telegram chat of a manager receives login codes, so only the administrator (or that deputy) may change it.
+    owners=c.execute("SELECT u.id,r.code FROM users u JOIN roles r ON r.id=u.role_id WHERE u.employee_id=? AND u.is_active=1 AND u.deleted_at IS NULL AND r.code IN ('admin','deputy')",(eid,)).fetchall()
+    if owners and 'security.manage' not in perms(u['user_id']) and not all(o['code']=='deputy' and o['id']==u['user_id'] for o in owners):
+        raise HTTPException(403,'ربط Telegram لحساب إدارة يتم من المدير فقط')
+
 @app.post('/api/employees/{eid}/telegram-link')
 def employee_telegram_link(eid:int,req:Request):
     u=need(req,'employees.edit'); c=connect()
     e=c.execute('SELECT * FROM employees WHERE id=?',(eid,)).fetchone()
     if not e:
         c.close(); raise HTTPException(404,'الموظف غير موجود')
+    try: _guard_manager_telegram(c,u,eid)
+    except HTTPException: c.close(); raise
     code=secrets.token_urlsafe(18)
     c.execute("UPDATE employees SET telegram_link_code=?,telegram_link_expires_at=datetime('now','+24 hours'),updated_at=CURRENT_TIMESTAMP WHERE id=?",(code,eid))
     me=get_me()
@@ -689,6 +716,8 @@ def employee_telegram_unlink(eid:int, req:Request):
     e=c.execute('SELECT * FROM employees WHERE id=?',(eid,)).fetchone()
     if not e:
         c.close(); raise HTTPException(404,'الموظف غير موجود')
+    try: _guard_manager_telegram(c,u,eid)
+    except HTTPException: c.close(); raise
     before=dict(e)
     c.execute("""UPDATE employees SET telegram_chat_id=NULL,telegram_link_code=NULL,
       telegram_link_expires_at=NULL,telegram_linked_at=NULL,updated_at=CURRENT_TIMESTAMP
@@ -700,7 +729,10 @@ def employee_telegram_unlink(eid:int, req:Request):
 
 @app.post('/api/telegram/webhook')
 async def telegram_webhook(req:Request):
-    if TELEGRAM_WEBHOOK_SECRET and req.headers.get('x-telegram-bot-api-secret-token','')!=TELEGRAM_WEBHOOK_SECRET:
+    # Without the secret anyone could post fake updates and act as any linked employee.
+    if not TELEGRAM_WEBHOOK_SECRET:
+        raise HTTPException(503,'Telegram webhook secret غير مضبوط')
+    if not hmac.compare_digest(req.headers.get('x-telegram-bot-api-secret-token',''),TELEGRAM_WEBHOOK_SECRET):
         raise HTTPException(401,'Telegram secret غير صحيح')
     update=await req.json(); update_id=update.get('update_id'); c=connect()
     if update_id is not None:
@@ -852,7 +884,7 @@ def shift_center_page(req:Request):
 _SHIFT_SETTING_KEYS={'shift_due_soon_enabled':'1','shift_due_soon_minutes':'30','shift_overdue_enabled':'1','shift_start_tasks_enabled':'1','shift_end_summary_enabled':'1','shift_end_summary_minutes':'60'}
 @app.get('/api/shift-settings')
 def get_shift_settings(req:Request):
-    need(req,'employees.view'); c=connect(); out={}
+    need(req,'employees.edit'); c=connect(); out={}
     for k,d in _SHIFT_SETTING_KEYS.items():
         r=c.execute('SELECT value FROM settings WHERE key=?',(k,)).fetchone(); out[k]=r['value'] if r else d
     c.close(); return out
@@ -865,7 +897,7 @@ async def save_shift_settings(req:Request):
     audit(c,req,u,'shift_settings_update','system',None,after=changed); c.close(); return {'ok':True}
 @app.get('/api/shift-messages')
 def get_shift_messages(req:Request):
-    need(req,'employees.view'); c=connect(); rows=[dict(x) for x in c.execute("SELECT * FROM shift_messages WHERE id NOT IN(SELECT record_id FROM record_lifecycle WHERE entity='shift_messages' AND deleted_at IS NOT NULL) ORDER BY is_active DESC,id DESC")]; c.close(); return rows
+    need(req,'employees.edit'); c=connect(); rows=[dict(x) for x in c.execute("SELECT * FROM shift_messages WHERE id NOT IN(SELECT record_id FROM record_lifecycle WHERE entity='shift_messages' AND deleted_at IS NOT NULL) ORDER BY is_active DESC,id DESC")]; c.close(); return rows
 @app.post('/api/shift-messages')
 async def create_shift_message(req:Request):
     u=need(req,'employees.edit'); d=await req.json(); text=str(d.get('message_text') or '').strip()
@@ -889,7 +921,7 @@ def delete_shift_message(mid:int, req:Request):
 
 @app.get('/api/shift-dispatch-log')
 def shift_dispatch_log(req:Request, limit:int=100):
-    need(req,'employees.view'); c=connect(); rows=[dict(x) for x in c.execute("SELECT l.*,e.name employee_name,t.title task_title FROM shift_dispatch_log l LEFT JOIN employees e ON e.id=l.employee_id LEFT JOIN tasks t ON t.id=l.task_id ORDER BY l.id DESC LIMIT ?",(min(max(limit,1),500),))]; c.close(); return rows
+    need(req,'employees.edit'); c=connect(); rows=[dict(x) for x in c.execute("SELECT l.*,e.name employee_name,t.title task_title FROM shift_dispatch_log l LEFT JOIN employees e ON e.id=l.employee_id LEFT JOIN tasks t ON t.id=l.task_id ORDER BY l.id DESC LIMIT ?",(min(max(limit,1),500),))]; c.close(); return rows
 
 
 
@@ -1111,7 +1143,7 @@ def group_dispatch_log(req:Request, limit:int=200):
 # ---------- Shift exceptions / leave ----------
 @app.get('/api/shift-exceptions')
 def shift_exceptions_list(req:Request):
-    need(req,'employees.view'); c=connect()
+    need(req,'employees.edit'); c=connect()
     rows=[dict(x) for x in c.execute("""SELECT x.*,e.name employee_name,e.department
       FROM shift_exceptions x JOIN employees e ON e.id=x.employee_id
       WHERE x.id NOT IN(SELECT record_id FROM record_lifecycle WHERE entity='shift_exceptions' AND deleted_at IS NOT NULL) ORDER BY x.is_active DESC,date(x.start_date) DESC,x.id DESC""")]
@@ -1145,7 +1177,7 @@ def automation_center_page(req:Request):
 
 @app.get('/api/automation-summary')
 def automation_summary(req:Request):
-    need(req,'employees.view'); c=connect()
+    need(req,'employees.edit'); c=connect()
     out={
       'shift_messages':c.execute("SELECT COUNT(*) n FROM shift_messages WHERE is_active=1").fetchone()['n'],
       'shift_exceptions':c.execute("SELECT COUNT(*) n FROM shift_exceptions WHERE is_active=1").fetchone()['n'],
@@ -1640,21 +1672,21 @@ def api_dashboard(req: Request):
 # ---------- employees ----------
 @app.get('/api/employees')
 def api_employees(req: Request, all: int=0):
-    need(req,'employees.view'); c=connect(); wh="WHERE e.id NOT IN(SELECT record_id FROM record_lifecycle WHERE entity='employees' AND deleted_at IS NOT NULL)"+('' if all else ' AND e.is_active=1')
+    u=need(req,'employees.view'); c=connect(); wh="WHERE e.id NOT IN(SELECT record_id FROM record_lifecycle WHERE entity='employees' AND deleted_at IS NOT NULL)"+('' if all else ' AND e.is_active=1')
+    scope=access.employee_scope(c,u)
     rows=[dict(x) for x in c.execute(f'''SELECT e.*,(SELECT COUNT(*) FROM tasks t WHERE t.employee_id=e.id AND t.status NOT IN('تم','ملغاة')) open_tasks
-      FROM employees e {wh} ORDER BY sort_order,name''')]; c.close(); return rows
+      FROM employees e {wh} ORDER BY sort_order,name''')]; c.close()
+    return [r for r in rows if scope is None or r['id'] in scope]
 
 @app.get('/api/task-options/employees')
 def api_task_employee_options(req:Request):
-    need(req,'tasks.view'); c=connect()
-    if u := session(req):
-        if u['role_code'] == 'employee':
-            if not u['employee_id']:
-                c.close(); raise HTTPException(403, 'الحساب غير مربوط بموظف')
-            rows=[dict(x) for x in c.execute('SELECT id,name,department FROM employees WHERE is_active=1 AND id=?',(u['employee_id'],))]
-            c.close(); return rows
-    rows=[dict(x) for x in c.execute('SELECT id,name,department FROM employees WHERE is_active=1 ORDER BY sort_order,name')]
-    c.close(); return rows
+    u=need(req,'tasks.view'); c=connect()
+    try:
+        if u['role_code'] == 'employee' and not u['employee_id']: raise HTTPException(403, 'الحساب غير مربوط بموظف')
+        scope=access.employee_scope(c,u)
+        rows=[dict(x) for x in c.execute('SELECT id,name,department FROM employees WHERE is_active=1 ORDER BY sort_order,name')]
+        return [r for r in rows if scope is None or r['id'] in scope]
+    finally: c.close()
 
 @app.post('/api/employees')
 async def add_employee(req: Request):
@@ -1694,11 +1726,10 @@ async def edit_employee(eid:int, req:Request):
 def api_tasks(req: Request, status:Optional[str]=None, employee_id:Optional[int]=None, q:Optional[str]=None, archived:int=0, department:Optional[str]=None, priority:Optional[str]=None, date_from:Optional[str]=None, date_to:Optional[str]=None, overdue:bool=False, problems:bool=False):
     u=need(req,'tasks.view'); c=connect(); where=[]; p=[]
     where.append('t.archived_at IS NOT NULL' if archived else 't.archived_at IS NULL')
-    if u['role_code']=='employee':
-        if not u['employee_id']:
-            c.close()
-            raise HTTPException(403, 'الحساب غير مربوط بموظف، راجع الإدارة')
-        where.append('(t.employee_id=? OR EXISTS(SELECT 1 FROM task_participants p2 WHERE p2.task_id=t.id AND p2.employee_id=?))'); p += [u['employee_id'],u['employee_id']]
+    if u['role_code']=='employee' and not u['employee_id']:
+        c.close()
+        raise HTTPException(403, 'الحساب غير مربوط بموظف، راجع الإدارة')
+    scope_sql,scope_args=access.task_filter_sql(c,u); where.append(scope_sql); p += scope_args
     if status: where.append('t.status=?'); p.append(status)
     if employee_id is not None: where.append('t.employee_id=?'); p.append(employee_id)
     if department:where.append('e.department=?');p.append(department)
@@ -1753,6 +1784,10 @@ async def create_task(req: Request):
         count=c.execute('SELECT COUNT(*) FROM employees WHERE is_active=1 AND id IN ('+marks+')',participants).fetchone()[0]
         if count!=len(participants): c.close();raise HTTPException(400,'أحد المشاركين غير موجود أو غير فعال')
         d['participants']=participants
+    try:
+        access.require_assignable(c,u,[emp]+participants)
+        if emp and not c.execute('SELECT 1 FROM employees WHERE id=? AND is_active=1',(emp,)).fetchone(): raise HTTPException(400,'الموظف غير موجود أو غير فعال')
+    except HTTPException: c.close(); raise
     c.execute('''INSERT INTO tasks(task_code,employee_id,title,notes,priority,status,due_at,created_by,source,is_group)
       VALUES(?,?,?,?,?,?,?,?,?,?)''',(code,emp,title,d.get('notes'),d.get('priority','عادي'),'جديدة',d.get('due_at') or None,u['user_id'],d.get('source','dashboard'),1 if d.get('participants') else 0))
     tid=c.execute('SELECT last_insert_rowid()').fetchone()[0]
@@ -1777,6 +1812,9 @@ async def edit_task(tid:int, req:Request):
     try:
         old=c.execute('SELECT * FROM tasks WHERE id=?',(tid,)).fetchone()
         if not old: raise HTTPException(404,'المهمة غير موجودة')
+        access.require_manage_task(c,u,old)
+        if 'employee_id' in d or 'participants' in d:
+            access.require_assignable(c,u,[d.get('employee_id')]+list(d.get('participants') or []))
         if 'status' in d and d['status'] not in {'جديدة','بدأت','قيد التنفيذ','بانتظار','تم','ملغاة'}:raise HTTPException(400,'حالة غير صحيحة')
         allowed=['employee_id','title','notes','priority','status','due_at']; fields=[]; vals=[]
         for k in allowed:
@@ -1852,6 +1890,7 @@ async def edit_task(tid:int, req:Request):
 def delete_task(tid:int, req:Request):
     u=need(req,'tasks.delete'); c=connect(); old=c.execute('SELECT * FROM tasks WHERE id=?',(tid,)).fetchone()
     if not old: c.close(); raise HTTPException(404,'المهمة غير موجودة')
+    if not access.can_manage_task(c,u,old): c.close(); raise HTTPException(403,'هذه المهمة خارج نطاق فريقك')
     if old['employee_id']:
         _notify_employee_id(c,int(old['employee_id']),f"❌ تم إلغاء / أرشفة المهمة\n\nالمهمة: {old['title']}",tid,'إلغاء المهمة')
     c.execute("UPDATE task_reminders SET is_active=0,updated_at=CURRENT_TIMESTAMP WHERE task_id=?",(tid,))
@@ -1865,6 +1904,7 @@ def delete_task(tid:int, req:Request):
 def restore_task(tid:int, req:Request):
     u=need(req,'tasks.edit'); c=connect(); old=c.execute('SELECT * FROM tasks WHERE id=?',(tid,)).fetchone()
     if not old: c.close(); raise HTTPException(404,'المهمة غير موجودة')
+    if not access.can_manage_task(c,u,old): c.close(); raise HTTPException(403,'هذه المهمة خارج نطاق فريقك')
     c.execute('UPDATE tasks SET archived_at=NULL,updated_at=CURRENT_TIMESTAMP WHERE id=?',(tid,))
     audit(c,req,u,'task_restore','task',tid,before=dict(old),after={'archived':False}); _touch_task_sync(c,tid,'server','restore'); c.close(); return {'ok':True}
 
@@ -1877,6 +1917,8 @@ async def participant_status(tid:int,eid:int,req:Request):
     c=connect()
     try:
         c.execute('BEGIN IMMEDIATE')
+        scope=access.employee_scope(c,u)
+        if scope is not None and eid not in scope: raise HTTPException(403,'هذا المشارك خارج نطاق فريقك')
         task=_task_accessible(c,u,tid)
         original=c.execute('SELECT status FROM task_participants WHERE task_id=? AND employee_id=?',(tid,eid)).fetchone()
         if not task or not original:raise HTTPException(404,'المشارك غير موجود')
@@ -1899,7 +1941,10 @@ async def participant_status(tid:int,eid:int,req:Request):
 
 @app.post('/api/tasks/{tid}/telegram')
 def resend_telegram(tid:int, req:Request):
-    u=need(req,'tasks.edit'); c=connect(); r=_notify_employee(c,tid,'إعادة إرسال المهمة'); audit(c,req,u,'telegram_resend','task',tid,after=r); c.close(); return r
+    u=need(req,'tasks.edit'); c=connect(); old=c.execute('SELECT * FROM tasks WHERE id=?',(tid,)).fetchone()
+    if not old: c.close(); raise HTTPException(404,'المهمة غير موجودة')
+    if not access.can_manage_task(c,u,old): c.close(); raise HTTPException(403,'هذه المهمة خارج نطاق فريقك')
+    r=_notify_employee(c,tid,'إعادة إرسال المهمة'); audit(c,req,u,'telegram_resend','task',tid,after=r); c.close(); return r
 
 @app.patch('/api/tasks/{tid}/status')
 async def change_status(tid:int, req:Request):
@@ -1911,6 +1956,7 @@ async def change_status(tid:int, req:Request):
         c.execute('BEGIN IMMEDIATE')
         task=_task_accessible(c,u,tid)
         if not task: raise HTTPException(404)
+        if u['role_code']!='employee': access.require_manage_task(c,u,task)
         if task['archived_at']:raise HTTPException(409,'المهمة مؤرشفة')
         if u['role_code']=='employee':
             if status not in {'بدأت','قيد التنفيذ','تم'}: raise HTTPException(403,'يمكنك بدء المهمة أو إنهاؤها فقط')
@@ -2003,10 +2049,11 @@ def quick_voice_task(req:Request):
 # ---------- recurring ----------
 @app.get('/api/recurring')
 def api_recurring(req:Request):
-    need(req,'recurring.view'); c=connect()
+    u=need(req,'recurring.view'); c=connect()
     try:
+        scope=access.employee_scope(c,u)
         return [dict(x) for x in c.execute('''SELECT r.*,COALESCE((SELECT workdays_only FROM bim_recurring_rules br WHERE br.recurring_id=r.id),0) workdays_only,COALESCE(e.name,'بدون موظف') employee_name
-          FROM recurring_tasks r LEFT JOIN employees e ON e.id=r.employee_id WHERE r.id NOT IN(SELECT record_id FROM record_lifecycle WHERE entity='recurring' AND deleted_at IS NOT NULL) ORDER BY r.id DESC''')]
+          FROM recurring_tasks r LEFT JOIN employees e ON e.id=r.employee_id WHERE r.id NOT IN(SELECT record_id FROM record_lifecycle WHERE entity='recurring' AND deleted_at IS NOT NULL) ORDER BY r.id DESC''') if scope is None or x['employee_id'] in scope]
     finally: c.close()
 
 @app.post('/api/recurring')
@@ -2014,6 +2061,8 @@ async def add_recurring(req:Request):
     u=need(req,'recurring.edit'); d=await req.json(); title=str(d.get('title','')).strip()
     d.update(validate_recurring(d))
     c=connect()
+    try: access.require_assignable(c,u,[d.get('employee_id')])
+    except HTTPException: c.close(); raise
     if not c.execute('SELECT 1 FROM employees WHERE id=? AND is_active=1',(d.get('employee_id'),)).fetchone():c.close();raise HTTPException(400,'اختر موظفاً فعالاً')
     c.execute('''INSERT INTO recurring_tasks(employee_id,title,notes,priority,recurrence_type,week_day,month_day,run_time,created_by)
       VALUES(?,?,?,?,?,?,?,?,?)''',(d.get('employee_id') or None,title,d.get('notes'),d.get('priority','عادي'),d['recurrence_type'],d.get('week_day'),d.get('month_day'),d.get('run_time','09:00'),u['user_id']))
@@ -2025,6 +2074,10 @@ async def add_recurring(req:Request):
 async def edit_recurring(rid:int, req:Request):
     u=need(req,'recurring.edit'); d=await req.json(); c=connect(); old=c.execute('SELECT * FROM recurring_tasks WHERE id=?',(rid,)).fetchone()
     if not old: c.close(); raise HTTPException(404)
+    # An unassigned rule (employee_id NULL) belongs to management, never to a supervisor's team.
+    current=old['employee_id'] if old['employee_id'] is not None else -1
+    try: access.require_assignable(c,u,[current]+([d['employee_id']] if 'employee_id' in d else []))
+    except HTTPException: c.close(); raise
     merged=dict(old);merged.update(d)
     try:validate_recurring(merged)
     except Exception:c.close();raise
@@ -2160,13 +2213,17 @@ def api_audit(req:Request, limit:int=300):
 
 @app.get('/api/users')
 def api_users(req:Request):
-    need(req,'users.manage'); c=connect(); rows=[dict(x) for x in c.execute('''SELECT u.id,u.username,u.full_name,u.employee_id,u.is_active,u.deleted_at,u.last_login_at,u.last_login_ip,(SELECT MAX(a.logout_at) FROM user_session_activity a WHERE a.user_id=u.id) last_logout_at,(SELECT MAX(a.last_seen_at) FROM user_session_activity a WHERE a.user_id=u.id) last_activity_at,r.code role_code,r.name_ar role_name,r.external_access_allowed FROM users u JOIN roles r ON r.id=u.role_id WHERE u.deleted_at IS NULL ORDER BY u.id''')]; c.close(); return rows
+    need(req,'users.manage'); c=connect(); rows=[dict(x) for x in c.execute('''SELECT u.id,u.username,u.full_name,u.employee_id,u.is_active,u.deleted_at,u.last_login_at,u.last_login_ip,(SELECT MAX(a.logout_at) FROM user_session_activity a WHERE a.user_id=u.id) last_logout_at,(SELECT MAX(a.last_seen_at) FROM user_session_activity a WHERE a.user_id=u.id) last_activity_at,r.code role_code,r.name_ar role_name,r.external_access_allowed,(SELECT COUNT(*) FROM supervisor_team st WHERE st.user_id=u.id) team_size FROM users u JOIN roles r ON r.id=u.role_id WHERE u.deleted_at IS NULL ORDER BY u.id''')]; c.close(); return rows
 
 @app.post('/api/users')
 async def add_user(req:Request):
     u=need(req,'users.manage'); d=await req.json(); username=str(d.get('username','')).strip(); password=str(d.get('password',''))
-    if not username or len(password)<6: raise HTTPException(400,'اسم المستخدم مطلوب وكلمة المرور 6 أحرف على الأقل')
-    c=connect(); role=c.execute('SELECT id FROM roles WHERE code=?',(d.get('role_code','employee'),)).fetchone()
+    role_code=d.get('role_code','employee')
+    if role_code not in access.VISIBLE_ROLES: raise HTTPException(400,'الدور غير صحيح')
+    access.require_role_change(perms(u['user_id']),role_code)
+    if not username: raise HTTPException(400,'اسم المستخدم مطلوب')
+    _check_password(password,role_code)
+    c=connect(); role=c.execute('SELECT id FROM roles WHERE code=?',(role_code,)).fetchone()
     if not role: c.close(); raise HTTPException(400,'الدور غير صحيح')
     try:
         c.execute('INSERT INTO users(username,full_name,password_hash,role_id,employee_id,is_active) VALUES(?,?,?,?,?,1)',(username,d.get('full_name') or username,hash_password(password),role['id'],d.get('employee_id') or None)); uid=c.execute('SELECT last_insert_rowid()').fetchone()[0]
@@ -2185,6 +2242,11 @@ async def edit_user(uid:int, req:Request):
     else: name=None
     oldrole=c.execute('SELECT code FROM roles WHERE id=?',(old['role_id'],)).fetchone()['code']
     targetrole=d.get('role_code',oldrole)
+    try:
+        if targetrole!=oldrole and targetrole not in access.VISIBLE_ROLES: raise HTTPException(400,'الدور غير صحيح')
+        access.require_role_change(perms(u['user_id']),oldrole,targetrole)
+        if d.get('password'): _check_password(str(d['password']),targetrole)
+    except HTTPException: c.close(); raise
     if oldrole=='admin' and (targetrole!='admin' or ('is_active' in d and not bool(d['is_active']))):
         remaining=c.execute("SELECT COUNT(*) FROM users u JOIN roles r ON r.id=u.role_id WHERE r.code='admin' AND u.is_active=1 AND u.deleted_at IS NULL AND u.id<>?",(uid,)).fetchone()[0]
         if not remaining: c.close(); raise HTTPException(409,'لا يمكن تعطيل أو تغيير صلاحية آخر مدير')
@@ -2200,9 +2262,12 @@ async def edit_user(uid:int, req:Request):
         sets.append('role_id=?'); vals.append(rr['id'])
     if d.get('password'): sets.append('password_hash=?'); vals.append(hash_password(str(d['password'])))
     if sets: vals.append(uid); c.execute('UPDATE users SET '+','.join(sets)+' WHERE id=?',vals)
-    if d.get('is_active','KEEP') is False or d.get('is_active','KEEP')==0 or d.get('password'):
+    if d.get('is_active','KEEP') is False or d.get('is_active','KEEP')==0 or d.get('password') or targetrole!=oldrole:
         c.execute('UPDATE login_sessions SET revoked_at=CURRENT_TIMESTAMP WHERE user_id=? AND revoked_at IS NULL',(uid,))
-    audit(c,req,u,'user_update','user',uid,before=dict(old),after={k:v for k,v in d.items() if k!='password'}); c.close(); return {'ok':True}
+    if targetrole!='supervisor': c.execute('DELETE FROM supervisor_team WHERE user_id=?',(uid,))
+    after={k:v for k,v in d.items() if k!='password'}
+    if d.get('password'): after['password_changed']=True
+    audit(c,req,u,'user_role_change' if targetrole!=oldrole else 'user_update','user',uid,before={k:v for k,v in dict(old).items() if k!='password_hash'},after=after); c.close(); return {'ok':True}
 
 @app.delete('/api/users/{uid}')
 def archive_user(uid:int, req:Request):
@@ -2211,6 +2276,8 @@ def archive_user(uid:int, req:Request):
     c=connect()
     old=c.execute('SELECT u.*,r.code role_code FROM users u JOIN roles r ON r.id=u.role_id WHERE u.id=? AND u.deleted_at IS NULL',(uid,)).fetchone()
     if not old: c.close();raise HTTPException(404,'المستخدم غير موجود')
+    try: access.require_role_change(perms(actor['user_id']),old['role_code'])
+    except HTTPException: c.close(); raise
     if old['role_code']=='admin':
         count=c.execute("SELECT COUNT(*) FROM users u JOIN roles r ON r.id=u.role_id WHERE r.code='admin' AND u.is_active=1 AND u.deleted_at IS NULL AND u.id<>?",(uid,)).fetchone()[0]
         if not count: c.close();raise HTTPException(409,'لا يمكن حذف آخر مدير')
@@ -2222,6 +2289,41 @@ def archive_user(uid:int, req:Request):
         c.execute('COMMIT')
     except: c.execute('ROLLBACK');c.close();raise
     c.close();return {'ok':True,'method':'archived'}
+
+def _check_password(password:str, role_code:str):
+    minimum=12 if role_code in access.MANAGERS else 8
+    if len(password)<minimum: raise HTTPException(400,f'كلمة المرور يجب ألا تقل عن {minimum} أحرف لهذا الدور')
+    if password.isdigit() or len(set(password))<4: raise HTTPException(400,'كلمة المرور سهلة التخمين؛ استخدم أحرفاً وأرقاماً مختلفة')
+
+@app.get('/api/users/{uid}/team')
+def get_supervisor_team(uid:int, req:Request):
+    need(req,'users.manage'); c=connect()
+    try:
+        u=c.execute('SELECT u.id,r.code role_code FROM users u JOIN roles r ON r.id=u.role_id WHERE u.id=? AND u.deleted_at IS NULL',(uid,)).fetchone()
+        if not u: raise HTTPException(404)
+        return {'user_id':uid,'role_code':u['role_code'],'employee_ids':[r[0] for r in c.execute('SELECT employee_id FROM supervisor_team WHERE user_id=? ORDER BY employee_id',(uid,))]}
+    finally: c.close()
+
+@app.put('/api/users/{uid}/team')
+async def set_supervisor_team(uid:int, req:Request):
+    actor=need(req,'users.manage'); d=await req.json(); raw=d.get('employee_ids')
+    if not isinstance(raw,list) or len(raw)>500: raise HTTPException(400,'قائمة الفريق غير صحيحة')
+    try: ids=sorted({int(x) for x in raw})
+    except (TypeError,ValueError): raise HTTPException(400,'قائمة الفريق غير صحيحة')
+    c=connect()
+    try:
+        c.execute('BEGIN IMMEDIATE')
+        u=c.execute('SELECT u.id,r.code role_code FROM users u JOIN roles r ON r.id=u.role_id WHERE u.id=? AND u.deleted_at IS NULL',(uid,)).fetchone()
+        if not u: raise HTTPException(404)
+        if u['role_code']!='supervisor': raise HTTPException(400,'الفريق يُحدد لحساب «المسؤول» فقط')
+        if ids and c.execute(f"SELECT COUNT(*) FROM employees WHERE id IN ({','.join('?' for _ in ids)})",ids).fetchone()[0]!=len(ids): raise HTTPException(400,'أحد الموظفين غير موجود')
+        before=[r[0] for r in c.execute('SELECT employee_id FROM supervisor_team WHERE user_id=? ORDER BY employee_id',(uid,))]
+        c.execute('DELETE FROM supervisor_team WHERE user_id=?',(uid,))
+        c.executemany('INSERT INTO supervisor_team(user_id,employee_id) VALUES(?,?)',[(uid,e) for e in ids])
+        audit(c,req,actor,'supervisor_team','user',uid,before={'employee_ids':before},after={'employee_ids':ids})
+        c.commit(); return {'ok':True,'employee_ids':ids}
+    except Exception: c.rollback(); raise
+    finally: c.close()
 
 @app.get('/api/settings')
 def api_settings(req:Request):
@@ -2353,12 +2455,14 @@ def sync_status(req:Request):
 
 @app.post('/api/sync/settings')
 async def sync_settings(req:Request):
-    need(req,'users.manage'); d=await req.json(); c=connect()
+    u=need(req,'security.manage'); d=await req.json(); c=connect()
     if 'webapp_url' in d:
         url=str(d.get('webapp_url') or '').strip()
         if url and not (url.startswith('https://script.google.com/') or url.startswith('https://script.googleusercontent.com/')):
             c.close(); raise HTTPException(400,'رابط Apps Script غير صحيح')
+        old=_setting(c,'sync.webapp_url','')
         _set_setting(c,'sync.webapp_url',url)
+        audit(c,req,u,'sync_settings','settings','sync.webapp_url',before={'webapp_url':old},after={'webapp_url':url})
     c.close(); return {'ok':True}
 
 @app.get('/api/sync/test-webapp')
@@ -2549,6 +2653,10 @@ async def sync_push_employee(req:Request):
     c=connect(); old=c.execute('SELECT * FROM employees WHERE lower(name)=lower(?)',(name,)).fetchone()
     vals=(d.get('department'),d.get('whatsapp'),d.get('telegram_chat_id'),int(bool(d.get('telegram_enabled',1))),int(bool(d.get('whatsapp_enabled',1))),int(bool(d.get('is_active',1))))
     if old:
+        # The sheet never re-points an existing Telegram link (login codes travel there) and never
+        # deactivates an employee tied to a manager account (that would lock management out).
+        manager=c.execute("SELECT 1 FROM users u JOIN roles r ON r.id=u.role_id WHERE u.employee_id=? AND r.code IN ('admin','deputy') AND u.deleted_at IS NULL",(old['id'],)).fetchone()
+        vals=vals[:2]+(old['telegram_chat_id'],)+vals[3:5]+((old['is_active'],) if manager else vals[5:])
         c.execute('UPDATE employees SET department=?,whatsapp=?,telegram_chat_id=?,telegram_enabled=?,whatsapp_enabled=?,is_active=?,updated_at=CURRENT_TIMESTAMP WHERE id=?',vals+(old['id'],)); eid=old['id']
     else:
         c.execute('INSERT INTO employees(name,department,whatsapp,telegram_chat_id,telegram_enabled,whatsapp_enabled,is_active) VALUES(?,?,?,?,?,?,?)',(name,)+vals); eid=c.execute('SELECT last_insert_rowid()').fetchone()[0]
@@ -2615,3 +2723,6 @@ delegation.register(app,_sys.modules[__name__])
 
 from . import command_center
 command_center.register(app,_sys.modules[__name__])
+
+from . import security_center
+security_center.register(app,_sys.modules[__name__])

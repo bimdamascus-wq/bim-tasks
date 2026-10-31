@@ -311,6 +311,9 @@ def loop():
             from .admin_notifications import process_admin_notifications
             try:process_daily_backup()
             except Exception as backup_error:print('Daily backup error:',backup_error)
+            from .security_center import process_offsite_backup
+            try:process_offsite_backup()
+            except Exception as offsite_error:print('Off-site backup error:',offsite_error)
             process_admin_notifications(); process_queue(); process_reminders(); process_recurring(); process_shift_automation(); process_group_reminders()
         except Exception as e: print('BIM task worker error:',e)
 

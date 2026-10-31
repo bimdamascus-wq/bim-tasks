@@ -268,4 +268,8 @@ def init_db():
     migrate_activity(c)
     from .iphone_accounts import migrate as migrate_iphone
     migrate_iphone(c)
+    from .access import migrate as migrate_access
+    migrate_access(c)
+    from .security_center import migrate as migrate_security
+    migrate_security(c)
     c.close()

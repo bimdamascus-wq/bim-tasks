@@ -389,20 +389,23 @@ def register(app,m):
     @app.get('/api/access-control')
     def access_list(req:Request):
         admin(req);c=connect()
-        try:return {'permissions':[dict(r) for r in c.execute('SELECT code,name_ar FROM permissions ORDER BY id')],'users':[dict(r) for r in c.execute("SELECT u.id,u.username,u.employee_id,r.code role_code FROM users u JOIN roles r ON r.id=u.role_id WHERE u.deleted_at IS NULL")],'overrides':[dict(r) for r in c.execute('SELECT * FROM universal_user_permissions')]}
+        from . import access
+        try:return {'ceilings':{k:sorted(access.ceiling(k)) for k in access.MATRIX},'defaults':{k:sorted(v) for k,v in access.MATRIX.items()},'permissions':[dict(r) for r in c.execute('SELECT code,name_ar FROM permissions ORDER BY id')],'users':[dict(r) for r in c.execute("SELECT u.id,u.username,u.employee_id,r.code role_code FROM users u JOIN roles r ON r.id=u.role_id WHERE u.deleted_at IS NULL")],'overrides':[dict(r) for r in c.execute('SELECT * FROM universal_user_permissions')]}
         finally:c.close()
 
     @app.put('/api/access-control/{uid}')
     async def access_update(uid:int,req:Request):
-        actor=admin(req);d=await req.json();c=connect()
+        actor=m.need(req,'security.manage');d=await req.json();c=connect()
+        from . import access
         try:
             c.execute('BEGIN IMMEDIATE');u=c.execute('SELECT u.*,r.code role_code FROM users u JOIN roles r ON r.id=u.role_id WHERE u.id=?',(uid,)).fetchone()
             known={r[0] for r in c.execute('SELECT code FROM permissions')}
             if not u:raise HTTPException(404)
             if not isinstance(d,dict) or set(d)-known or any(type(v) is not bool for v in d.values()):raise HTTPException(400)
+            # Individual switches stay inside the role's ceiling shown on /permissions.
+            beyond=sorted(k for k,v in d.items() if v and k not in access.ceiling(u['role_code']))
+            if beyond:raise HTTPException(400,'هذه الصلاحيات خارج حدود الدور: '+'، '.join(beyond)+' — غيّر الدور بدلاً من ذلك')
             if uid==actor['user_id'] and d.get('users.manage') is False:raise HTTPException(400,'لا يمكنك إلغاء وصولك إلى إدارة الصلاحيات')
-            if u['role_code']=='employee' and any(v and k!='tasks.view' for k,v in d.items()):raise HTTPException(400,'غيّر نوع الحساب إلى دور إداري مناسب قبل منحه صلاحيات تتجاوز أعماله الشخصية')
-            if u['role_code']=='viewer' and any(v and k.endswith(('.create','.edit','.delete','.manage')) for k,v in d.items()):raise HTTPException(400,'حساب المشاهدة لا يمنح صلاحيات تعديل')
             c.execute('DELETE FROM universal_user_permissions WHERE user_id=?',(uid,));c.executemany('INSERT INTO universal_user_permissions VALUES(?,?,?)',[(uid,k,int(v)) for k,v in d.items()]);change_log(c,req,actor,'user_permissions','user',uid,d);c.commit();return {'ok':True}
         except Exception:c.rollback();raise
         finally:c.close()

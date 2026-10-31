@@ -1,0 +1,53 @@
+{% extends "base.html" %}{% block content %}
+<main class="page-shell">
+<section class="page-title"><div><h1>الأمان والحماية</h1><p>فحص حي لنقاط الدخول، تأكيد دخول الإدارة، النسخ خارج السيرفر، وسجل العمليات الحساسة.</p></div>
+<div class="toolbar"><a class="btn btn-light" href="/permissions">جدول الصلاحيات</a><a class="btn btn-light" href="/account">حسابي</a></div></section>
+
+<section class="panel"><h2>فحص نقاط الدخول</h2><div id="checks">جاري الفحص…</div></section>
+
+<section class="panel"><h2>تأكيد الدخول لحسابات الإدارة</h2>
+<p><small>كل مدير أو نائب بيفعّله لحسابه من صفحة «حسابي». هون بتشوف الحالة، والمدير بيقدر يصفّره إذا حدا ضيّع موبايله.</small></p>
+<div id="mfa"></div></section>
+
+<section class="panel"><h2>النسخ الاحتياطي خارج السيرفر</h2>
+<div class="kpi-grid">
+  <div class="kpi"><span>آخر نسخة ناجحة</span><b id="bkLast">—</b></div>
+  <div class="kpi"><span>آخر محاولة</span><b id="bkAttempt" style="font-size:14px">—</b></div>
+  <div class="kpi"><span>المجلد</span><b id="bkFolder" style="font-size:13px;word-break:break-all">—</b></div>
+</div>
+<div id="bkError" class="errbox" hidden></div>
+<form id="bkForm" class="form-grid" onsubmit="saveBackup(event)" style="margin-top:12px">
+  <div class="field"><label>مجلد خارج السيرفر <small>(مجلد Google Drive أو OneDrive على الجهاز، أو مسار شبكة مثل <code>\\NAS\BIM</code>)</small></label><input id="bkDir" dir="ltr" placeholder="G:\My Drive\BIM_Backups"></div>
+  <div class="field"><label>الساعة اليومية (0-23)</label><input id="bkHour" type="number" min="0" max="23"></div>
+  <div class="field"><label>عدد النسخ المحفوظة</label><input id="bkKeep" type="number" min="3" max="365"></div>
+  <div class="toolbar"><button id="bkSave">حفظ الإعدادات</button><button type="button" class="btn-light" onclick="backupNow()">نسخة الآن</button></div>
+</form>
+<div class="notice" style="margin-top:10px">النسخة مشفّرة بكلمة سر من ملف <code>.env</code> (<code>BIM_BACKUP_PASSPHRASE</code>). <b>اكتبها على ورقة واحفظها برّا الشركة</b> — إذا احترق السيرفر، النسخة بدون كلمة السر ما بتنفتح.<br>
+الاسترجاع: من السيرفر شغّل <code>RESTORE_BACKUP.cmd</code> واختار النسخة. النظام القديم بيتنقل لمجلد جانبي وما بينحذف.</div>
+<div id="bkFiles" style="margin-top:10px"></div>
+</section>
+
+<section class="panel"><h2>سجل العمليات الحساسة</h2><div id="chain"></div><div style="overflow-x:auto"><table><thead><tr><th>الوقت</th><th>العملية</th><th>المستخدم</th><th>على</th><th>تفاصيل</th><th>البوابة / العنوان</th></tr></thead><tbody id="sens"></tbody></table></div></section>
+
+<section class="panel"><h2>آخر محاولات دخول مرفوضة</h2><div style="overflow-x:auto"><table><thead><tr><th>الوقت</th><th>الحساب المُدّعى</th><th>السبب</th><th>البوابة / العنوان</th></tr></thead><tbody id="denied"></tbody></table></div></section>
+</main>
+{% endblock %}{% block scripts %}
+<script>
+const $=id=>document.getElementById(id),esc=bimEsc;let CAN=false;
+async function call(url,method='GET',data){const r=await fetch(url,{method,credentials:'same-origin',headers:{'Content-Type':'application/json'},body:data?JSON.stringify(data):undefined});let x={};try{x=await r.json()}catch(_){}if(!r.ok)throw Error(x.detail||('تعذر التنفيذ '+r.status));return x}
+const gw=r=>`${r.gateway==='external'?'خارجي':'داخلي'} · <span dir="ltr">${esc(r.ip_address||'')}</span>`;
+async function load(){const d=await call('/api/security/overview');CAN=d.can_change;
+ $('checks').innerHTML='<table><tbody>'+d.checks.map(c=>`<tr><td style="width:32px;font-size:18px">${c.ok?'✅':'⚠️'}</td><td><b>${esc(c.title)}</b><br><small>${esc(c.detail)}</small></td></tr>`).join('')+'</tbody></table>';
+ $('mfa').innerHTML='<table><thead><tr><th>الحساب</th><th>الدور</th><th>Telegram</th><th>الحالة</th><th></th></tr></thead><tbody>'+d.mfa.map(u=>`<tr><td>${esc(u.username)}</td><td>${u.role_code==='admin'?'المدير':'نائب المدير'}</td><td>${u.telegram_linked?'مربوط':'غير مربوط'}</td><td>${u.enabled?'✅ مفعّل':'⚠️ غير مفعّل'}</td><td>${CAN&&u.enabled?`<button class="btn-sm btn-light" onclick="resetMfa(${u.id})">تصفير</button>`:''}</td></tr>`).join('')+'</tbody></table>';
+ const b=d.backup,l=b.last||{};$('bkLast').textContent=l.last_ok_at?bimDate(l.last_ok_at):'لا يوجد';$('bkAttempt').textContent=l.last_attempt_at?(l.ok?'✅ ':'❌ ')+bimDate(l.last_attempt_at):'—';$('bkFolder').textContent=b.folder||'غير محدد';
+ $('bkError').hidden=!(l.ok===false);$('bkError').textContent=l.error||'';$('bkDir').value=b.folder||'';$('bkHour').value=b.hour;$('bkKeep').value=b.keep;
+ for(const el of $('bkForm').querySelectorAll('input,#bkSave'))el.disabled=!CAN;
+ $('bkFiles').innerHTML=d.offsite_files.length?'<b>النسخ الموجودة بالمجلد:</b><br>'+d.offsite_files.slice(0,10).map(f=>`<small dir="ltr">${esc(f.name)} — ${(f.size/1048576).toFixed(1)} MB</small>`).join('<br>'):'';
+ const chain=d.checks.find(c=>c.key==='audit_chain');$('chain').innerHTML=`<div class="notice">${chain.ok?'🔒':'⚠️'} ${esc(chain.detail)} كل سجل مربوط بالسجل اللي قبله ببصمة؛ أي تعديل أو حذف لاحق بيبيّن هون.</div>`;
+ $('sens').innerHTML=d.sensitive.map(r=>`<tr><td>${bimDate(r.created_at+'Z')}</td><td>${esc(r.label)}</td><td>${esc(r.username_snapshot||'النظام')}</td><td>${esc((r.entity_type||'')+' '+(r.entity_id||''))}</td><td><small>${esc(r.detail||'')}</small></td><td><small>${gw(r)}</small></td></tr>`).join('')||'<tr><td colspan="6">لا يوجد</td></tr>';
+ $('denied').innerHTML=d.denied_logins.map(r=>`<tr><td>${bimDate(r.created_at)}</td><td>${esc(r.username||'')}</td><td>${esc(r.label)} (${r.http_status||''})</td><td><small>${gw(r)}</small></td></tr>`).join('')||'<tr><td colspan="4">لا يوجد</td></tr>'}
+async function saveBackup(ev){ev.preventDefault();try{await call('/api/security/backup-settings','PUT',{folder:$('bkDir').value.trim(),hour:+$('bkHour').value,keep:+$('bkKeep').value});bimToast('تم الحفظ');load()}catch(e){bimToast(e.message,'err')}}
+async function backupNow(){bimToast('جاري إنشاء النسخة والتحقق منها…','warn');try{const r=await call('/api/security/backup-now','POST');bimToast('تمت النسخة: '+r.file);load()}catch(e){bimToast(e.message,'err');load()}}
+async function resetMfa(id){if(!confirm('تصفير تأكيد الدخول لهالحساب؟ لازم يرجع يفعّله من «حسابي».'))return;try{await call('/api/security/mfa/'+id+'/reset','POST');bimToast('تم التصفير');load()}catch(e){bimToast(e.message,'err')}}
+load().catch(e=>bimToast(e.message,'err'));
+</script>{% endblock %}

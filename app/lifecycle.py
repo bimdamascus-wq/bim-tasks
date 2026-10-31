@@ -4,6 +4,7 @@ from fastapi import Request,HTTPException
 from fastapi.responses import HTMLResponse,JSONResponse
 from .db import connect
 from .template_items import open_tasks,cancel_open,sync_changes
+from . import access
 # Table identifiers are an internal allowlist, never user SQL.
 CATALOG={
  'templates':('universal_templates','name','قوالب العمل','users.manage','/api/templates'),
@@ -31,6 +32,10 @@ def change(req,entity,rid,action,data=None):
         is_deleted=deleted(c,entity,rid) or (entity=='users' and bool(r['deleted_at']))
         if is_deleted and action not in ('restore','delete'):raise HTTPException(409,'استعد السجل المحذوف أولاً')
         off=action in ('disable','delete','restore')
+        if entity=='users':
+            access.require_role_change(m.perms(actor['user_id']),c.execute('SELECT code FROM roles WHERE id=?',(r['role_id'],)).fetchone()[0])
+        if entity=='tasks' and not access.can_manage_task(c,actor,r):raise HTTPException(403,'هذه المهمة خارج نطاق فريقك')
+        if entity=='recurring':access.require_assignable(c,actor,[r['employee_id'] if r['employee_id'] is not None else -1])
         if entity=='users' and action in ('disable','delete'):
             if rid==actor['user_id']:raise HTTPException(409,'لا يمكنك تعطيل أو حذف حسابك الحالي')
             role=c.execute('SELECT code FROM roles WHERE id=?',(r['role_id'],)).fetchone()[0]

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ company.name }} | تأكيد الدخول</title>
+<link rel="stylesheet" href="/static/bim-system-v510.css?v=6.3.0">
+<link rel="stylesheet" href="/static/bim-mytask-rtl.css?v=6.3.0">
+<script defer src="/static/bim-mytask-rtl.js?v=6.3.0"></script>
+<link rel="stylesheet" href="/static/bim-brand-red.css?v=6.3.0">
+<link rel="stylesheet" href="/static/bim-plex.css?v=6.3.1">
+<link rel="stylesheet" href="/static/bim-theme-v63.css?v=6.3.1">
+</head>
+<body class="bim-login-page">
+<div class="login-shell">
+  <section class="login-visual">
+    <div>
+      <img src="{{ '/company-logo' if company.logo else '/static/bim-logo-trim.png' }}" alt="{{ company.name }}">
+      <h1>{{ company.name }}</h1>
+      <p>منصة {{ company.name }} لإدارة المهام والموظفين والمتابعة التشغيلية.</p>
+    </div>
+    <div style="font-size:12px;color:#7f8998">إدارة العمل والمهام</div>
+  </section>
+  <form class="login-panel" method="post" action="/login/verify" autocomplete="off">
+    <h2>تأكيد الدخول</h2>
+    <p>بعتنالك رمز من 6 أرقام على Telegram. اكتبه هون خلال 5 دقائق.</p>
+    {% if error %}<div class="errbox">{{ error }}</div>{% endif %}
+    <div class="field"><label>رمز التأكيد</label><input name="code" inputmode="numeric" pattern="[0-9 ]{6,8}" maxlength="8" autocomplete="one-time-code" required autofocus></div>
+    <button>تأكيد</button>
+    <div class="gate"><a href="/login">إلغاء والرجوع لتسجيل الدخول</a></div>
+  </form>
+</div>
+</body></html>

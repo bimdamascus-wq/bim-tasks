@@ -1,0 +1,40 @@
+{% extends "base.html" %}{% block content %}
+<main class="page-shell">
+<section class="page-title"><div><h1>حسابي والأمان</h1><p>كلمة المرور وتأكيد الدخول من خارج الشركة.</p></div></section>
+
+<section class="panel">
+  <h2>تغيير كلمة المرور</h2>
+  <form id="pwForm" class="form-grid" onsubmit="changePw(event)">
+    <div class="field"><label>كلمة المرور الحالية</label><input id="pwCur" type="password" autocomplete="current-password" required></div>
+    <div class="field"><label>كلمة المرور الجديدة <small id="pwHint"></small></label><input id="pwNew" type="password" autocomplete="new-password" required></div>
+    <div class="field"><label>تأكيد الجديدة</label><input id="pwNew2" type="password" autocomplete="new-password" required></div>
+    <div class="toolbar"><button>حفظ كلمة المرور</button></div>
+  </form>
+  <p><small>بعد التغيير بتنقفل كل جلساتك التانية على باقي الأجهزة.</small></p>
+</section>
+
+<section class="panel" id="mfaPanel" hidden>
+  <h2>تأكيد الدخول من خارج الشركة (Telegram)</h2>
+  <div class="notice" id="mfaState">جاري القراءة…</div>
+  <div class="toolbar" id="mfaActions" style="margin-top:10px"></div>
+  <div id="mfaCodeBox" hidden style="margin-top:10px">
+    <div class="field"><label>الرمز اللي وصلك على Telegram</label><input id="mfaCode" inputmode="numeric" maxlength="8" autocomplete="one-time-code"></div>
+    <div class="toolbar"><button onclick="confirmMfa()">تأكيد</button></div>
+  </div>
+  <p><small>لما يكون مفعّل: أي دخول لحسابك من برّا الشركة بيحتاج كلمة المرور + رمز بيوصلك على Telegram. من داخل الشركة ما بيتغيّر شي.
+  إذا ضاع موبايلك: من شبكة الشركة بتقدر توقفه بكلمة المرور، أو المدير بيصفّره من صفحة «الأمان والحماية».</small></p>
+</section>
+</main>
+{% endblock %}{% block scripts %}
+<script>
+const $=id=>document.getElementById(id);let ME=null,CH=null,ACTION=null;
+async function call(url,method='GET',data){const r=await fetch(url,{method,credentials:'same-origin',headers:{'Content-Type':'application/json'},body:data?JSON.stringify(data):undefined});let x={};try{x=await r.json()}catch(_){}if(!r.ok)throw Error(x.detail||('تعذر التنفيذ '+r.status));return x}
+async function load(){ME=await call('/api/me/security');$('pwHint').textContent=ME.mfa_available?'(12 حرف على الأقل)':'(8 أحرف على الأقل)';if(!ME.mfa_available)return;$('mfaPanel').hidden=false;
+ $('mfaState').innerHTML=ME.mfa_enabled?'✅ <b>مفعّل</b> — الدخول من برّا الشركة بيحتاج رمز Telegram.':(ME.telegram_linked?'⚠️ <b>غير مفعّل</b> — حسابك بيفتح من برّا الشركة بكلمة المرور وحدها.':'⚠️ <b>غير مفعّل</b>، وحسابك مش مربوط بموظف عنده Telegram. اربطه أولاً من «مركز Telegram».');
+ $('mfaActions').innerHTML=ME.mfa_enabled?'<button class="btn-light" onclick="startMfa(\'disable\')">إيقاف</button>':(ME.telegram_linked?'<button onclick="startMfa(\'enable\')">تفعيل — ابعتلي رمز</button>':'')}
+async function startMfa(action){try{let body={action};if(action==='disable'&&ME.gateway==='lan'){const p=prompt('من داخل الشركة: اكتب كلمة المرور لإيقاف التأكيد');if(!p)return;body.password=p}
+ const r=await call('/api/me/mfa/start','POST',body);if(r.done){bimToast('تم إيقاف تأكيد الدخول');return load()}CH=r.challenge;ACTION=action;$('mfaCodeBox').hidden=false;$('mfaCode').focus();bimToast('بعتنالك الرمز على Telegram')}catch(e){bimToast(e.message,'err')}}
+async function confirmMfa(){try{const r=await call('/api/me/mfa/confirm','POST',{challenge:CH,code:$('mfaCode').value});$('mfaCodeBox').hidden=true;$('mfaCode').value='';bimToast(r.enabled?'تم تفعيل تأكيد الدخول':'تم إيقاف تأكيد الدخول');load()}catch(e){bimToast(e.message,'err')}}
+async function changePw(ev){ev.preventDefault();try{if($('pwNew').value!==$('pwNew2').value)throw Error('التأكيد غير مطابق');await call('/api/me/password','POST',{current:$('pwCur').value,new:$('pwNew').value});$('pwForm').reset();bimToast('تم تغيير كلمة المرور')}catch(e){bimToast(e.message,'err')}}
+load().catch(e=>bimToast(e.message,'err'));
+</script>{% endblock %}

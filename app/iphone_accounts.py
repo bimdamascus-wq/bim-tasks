@@ -36,12 +36,18 @@ async def create(req,mode,supplied,m):
  key=(supplied or await m._iphone_value_to_text(d.get('secret'))).strip()
  c=connect();actor=None;legacy=False;tid=None
  try:
+  # Wrong shortcut keys count like failed logins, so a key cannot be guessed by brute force.
+  if c.execute("SELECT COUNT(*) FROM login_attempts WHERE username='[iphone]' AND ip_address=? AND success=0 AND attempted_at>datetime('now','-15 minutes')",(m.ip(req),)).fetchone()[0]>=10:
+   raise HTTPException(429,'محاولات خاطئة كثيرة؛ أعد المحاولة بعد 15 دقيقة')
   match=c.execute('SELECT * FROM iphone_account_keys WHERE key_hash=?',(hashlib.sha256(key.encode()).hexdigest(),)).fetchone() if key else None
   if match:
    actor,emp=eligible(c,m,match['user_id'])
    if emp['id']!=match['employee_id']:raise HTTPException(403,'تغير الموظف المرتبط بالحساب؛ أعد إصدار مفتاح الاختصار')
   elif key and m.IPHONE_SECRET and hmac.compare_digest(key,m.IPHONE_SECRET):legacy=True;emp=None
-  else:raise HTTPException(401,'مفتاح الاختصار غير صحيح أو ملغى')
+  else:
+   c.execute("INSERT INTO login_attempts(username,ip_address,success) VALUES('[iphone]',?,0)",(m.ip(req),))
+   record(c,{'user_id':None,'username':'[iphone]'},'login','مفتاح اختصار iPhone خاطئ',m.GATEWAY,m.ip(req),result='denied',status=401)
+   raise HTTPException(401,'مفتاح الاختصار غير صحيح أو ملغى')
   raw=await m._iphone_value_to_text(d.get('text') or d.get('task') or d.get('voiceText') or d.get('النص'))
   if not raw or len(raw)>4000:raise HTTPException(400,'أدخل نص المهمة بطول لا يتجاوز 4000 حرف')
   parsed,title,priority=m._parse_iphone_text(c,raw)
@@ -103,7 +109,7 @@ def register(app,m):
   finally:c.close()
  @app.put('/api/iphone/legacy-owner')
  async def owner(req:Request):
-  admin=m.need(req,'users.manage');d=await req.json();c=connect()
+  admin=m.need(req,'security.manage');d=await req.json();c=connect()
   try:
    try:uid=int(d.get('user_id',0))
    except (ValueError,TypeError):raise HTTPException(400,'اختر حساب المدير')

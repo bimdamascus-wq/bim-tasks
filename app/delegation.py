@@ -4,6 +4,7 @@ from datetime import datetime
 from urllib.parse import quote
 from fastapi import HTTPException, Request
 from .db import connect
+from . import access
 
 MANAGER_ROLES=('admin','deputy')
 LABELS={'manager':'📌 من المدير','self':'✍️ كتبها بنفسه','assigned':'👤 من {name}','system':'⚙️ تلقائية'}
@@ -91,17 +92,19 @@ def register(app, m):
         c=connect()
         t=m._task_accessible(c,u,tid)
         if not t:c.close();raise HTTPException(404)
+        if u['role_code']=='supervisor' and not access.can_manage_task(c,u,t):c.close();raise HTTPException(403,'هذه المهمة خارج نطاق فريقك')
         return u,c,t
 
     @app.get('/api/tasks/{tid}/delegate-options')
     def delegate_options(tid:int, req:Request):
         u,c,t=_can_delegate(req,tid)
         try:
+            scope=access.employee_scope(c,u) if u['role_code']=='supervisor' else None
             emps=[{'id':e['id'],'name':e['name'],'department':e['department'] or '',
                    'telegram':bool(e['telegram_enabled'] and e['telegram_chat_id']),
                    'whatsapp':whatsapp_number(e['whatsapp'])}
                   for e in c.execute('SELECT * FROM employees WHERE is_active=1 ORDER BY sort_order,name')
-                  if e['id']!=t['employee_id'] and m._norm_ar(e['name'])!=m._norm_ar('الادارة')]
+                  if e['id']!=t['employee_id'] and m._norm_ar(e['name'])!=m._norm_ar('الادارة') and (scope is None or e['id'] in scope)]
             sender=u['full_name'] or u['username']
             return {'employees':emps,'message':task_message(t,'',sender)}
         finally:c.close()
@@ -116,6 +119,7 @@ def register(app, m):
             note=str(d.get('note') or '').strip()[:1000]
             e=c.execute('SELECT * FROM employees WHERE id=? AND is_active=1',(int(d.get('employee_id') or 0),)).fetchone()
             if not e:raise HTTPException(400,'اختر الموظف')
+            if u['role_code']=='supervisor':access.require_assignable(c,u,[e['id']])
             sender=u['full_name'] or u['username']
             text=task_message(t,note,sender)
             result={'ok':True}
