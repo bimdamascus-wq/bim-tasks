@@ -7,7 +7,7 @@ from .delegation import decorate
 
 # Every page that can be shown or hidden from the menu. The home page and this settings page are always visible.
 PAGES=[
- ('العمل اليومي',[('/tasks','كل المهام'),('/tasks-table','المهام كجدول'),('/manage','إدارة المهام'),('/my-work','مهامي'),('/archive','الأرشيف')]),
+ ('العمل اليومي',[('/tasks','كل المهام'),('/tasks-table','المهام كجدول'),('/manage','إدارة المهام'),('/my-team','متابعة الفريق'),('/my-work','مهامي'),('/archive','الأرشيف')]),
  ('الفريق',[('/employees','الموظفون'),('/users','المستخدمون'),('/access-control','الصلاحيات والقنوات'),('/job-profiles','المسميات الوظيفية'),('/workload','عبء العمل'),('/handover','تسليم الأعمال'),('/shift-center','الشيفتات')]),
  ('الأتمتة',[('/recurring','المهام المتكررة'),('/template-library','قوالب العمل'),('/automation-center','مركز الأتمتة'),('/notification-center','مركز الإشعارات')]),
  ('Telegram والهاتف',[('/telegram-center','مركز Telegram'),('/telegram-groups','مجموعات Telegram'),('/telegram-health','صحة Telegram'),('/telegram-dashboard','تقارير Telegram'),('/iphone-setup','إعداد الهاتف'),('/integrations','الربط والتكامل')]),

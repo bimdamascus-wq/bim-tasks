@@ -1,0 +1,44 @@
+{% extends "base.html" %}{% block content %}
+<style>
+.team-cards{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.team-card{border:1px solid rgba(0,0,0,.12);border-radius:12px;padding:12px;background:var(--card,#fff)}
+.team-card.late{border-color:#c62828}
+.team-card h3{margin:0 0 6px;font-size:1rem}
+.team-card .meta{font-size:.85rem;opacity:.8;margin-bottom:8px;line-height:1.6}
+.team-card .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.team-card select{flex:1 1 120px;min-height:40px}
+.team-card button{min-height:40px}
+.team-filter button.on{outline:2px solid currentColor}
+</style>
+<main class="page-shell"><section class="page-title"><div><h1>👥 متابعة الفريق</h1><p>مهام فريقك المفتوحة والمتأخرة، مع تغيير الحالة أو تحويل المهمة لموظف آخر أو إرسال تذكير على Telegram.</p></div></section>
+<div class="kpi-grid"><div class="kpi"><span>مفتوحة</span><b id="teamOpen">0</b></div><div class="kpi"><span>متأخرة</span><b id="teamLate">0</b></div><div class="kpi"><span>لم تُفتح بعد</span><b id="teamUnseen">0</b></div></div>
+<section class="panel">
+<div class="toolbar team-filter" id="teamFilter"><button class="btn-sm on" data-f="all">الكل</button><button class="btn-sm btn-light" data-f="late">المتأخرة</button><button class="btn-sm btn-light" data-f="unseen">لم تُفتح</button></div>
+<div class="form-grid"><div class="field"><label>الموظف</label><select id="teamMember"><option value="">كل الفريق</option></select></div><div class="field"><label>بحث</label><input id="teamSearch" type="search" placeholder="عنوان المهمة"></div></div>
+</section>
+<section class="panel"><div class="team-cards" id="teamCards"></div><p class="notice" id="teamEmpty" style="display:none">لا توجد مهام مطابقة.</p></section>
+</main>
+{% endblock %}{% block scripts %}<script>
+const TEAM_STATUSES=['جديدة','بدأت','قيد التنفيذ','بانتظار','تم','ملغاة'];
+let teamTasks=[],teamPeople=[],teamF='all';
+const isLate=t=>t.due_at&&new Date(String(t.due_at).replace(' ','T'))<new Date();
+async function loadTeam(){try{const [ts,es]=await Promise.all([bimRequest('/api/tasks'),bimRequest('/api/task-options/employees')]);
+ teamTasks=ts.filter(t=>!['تم','ملغاة'].includes(t.status));teamPeople=es;
+ const cur=teamMember.value;teamMember.innerHTML='<option value="">كل الفريق</option>'+es.map(e=>`<option value="${e.id}">${bimEsc(e.name)}</option>`).join('');teamMember.value=cur;
+ teamOpen.textContent=bimArDigits(teamTasks.length);teamLate.textContent=bimArDigits(teamTasks.filter(isLate).length);teamUnseen.textContent=bimArDigits(teamTasks.filter(t=>!t.viewed_at).length);
+ renderTeam()}catch(e){bimToast(e.message,'err')}}
+function renderTeam(){const q=teamSearch.value.trim(),m=teamMember.value;
+ let a=teamTasks.filter(t=>(!m||String(t.employee_id)===m)&&(!q||String(t.title).includes(q))&&(teamF==='all'||(teamF==='late'&&isLate(t))||(teamF==='unseen'&&!t.viewed_at)));
+ a.sort((x,y)=>(isLate(y)-isLate(x))||String(x.due_at||'9').localeCompare(String(y.due_at||'9')));
+ teamEmpty.style.display=a.length?'none':'block';
+ teamCards.innerHTML=a.map(t=>`<div class="team-card ${isLate(t)?'late':''}" id="team-task-${t.id}"><h3><a href="/task/${t.id}">${bimEsc(t.title)}</a></h3>
+ <div class="meta">👤 ${bimEsc(t.employee_name)} · ${bimEsc(t.priority)}${t.due_at?' · ⏰ '+bimDate(t.due_at):''}${isLate(t)?' · <b>متأخرة</b>':''}${t.viewed_at?'':' · 👁️ لم تُفتح'}</div>
+ <div class="row"><select aria-label="الحالة" onchange="teamStatus(${t.id},this.value)">${TEAM_STATUSES.map(s=>`<option ${s===t.status?'selected':''}>${s}</option>`).join('')}</select>
+ ${t.is_group?'':`<select aria-label="تحويل إلى" onchange="teamAssign(${t.id},this.value)">${teamPeople.map(e=>`<option value="${e.id}" ${+e.id===+t.employee_id?'selected':''}>${bimEsc(e.name)}</option>`).join('')}</select>`}
+ <button class="btn-sm btn-light" onclick="teamRemind(${t.id},this)">🔔 تذكير</button></div></div>`).join('')}
+async function teamStatus(id,status){try{await bimRequest('/api/tasks/'+id+'/status',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});bimToast('تم تغيير الحالة');loadTeam()}catch(e){bimToast(e.message,'err');loadTeam()}}
+async function teamAssign(id,eid){const name=(teamPeople.find(e=>String(e.id)===String(eid))||{}).name||'';if(!confirm('تحويل المهمة إلى '+name+'؟'))return loadTeam();try{await bimRequest('/api/tasks/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({employee_id:+eid})});bimToast('تم تحويل المهمة');loadTeam()}catch(e){bimToast(e.message,'err');loadTeam()}}
+async function teamRemind(id,btn){btn.disabled=true;try{const r=await bimRequest('/api/tasks/'+id+'/telegram',{method:'POST'});bimToast(r.ok?(r.queued?'التذكير بالطابور وسيُرسل قريباً':'تم إرسال التذكير'):'تعذر الإرسال: '+(r.error||'الموظف غير مربوط بـ Telegram'),r.ok?'ok':'err')}catch(e){bimToast(e.message,'err')}finally{btn.disabled=false}}
+teamFilter.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;teamF=b.dataset.f;teamFilter.querySelectorAll('button').forEach(x=>{x.classList.toggle('on',x===b);x.classList.toggle('btn-light',x!==b)});renderTeam()});
+teamMember.onchange=renderTeam;teamSearch.oninput=renderTeam;loadTeam();
+</script>{% endblock %}

@@ -42,3 +42,18 @@ def test_team_performance(env):
     csv = boss.get('/api/team-performance.csv')
     assert csv.status_code == 200 and csv.text.startswith('﻿') and 'عضو فريق' in csv.text
     assert 'attachment' in csv.headers['content-disposition']
+
+
+def test_my_team_page_and_quick_actions(env):
+    ids = env['ids']
+    boss, samer, member = client(env, 'boss'), client(env, 'samer'), client(env, 'member')
+    assert samer.get('/my-team').status_code == 200 and 'teamCards' in samer.get('/my-team').text
+    assert member.get('/my-team', follow_redirects=False).status_code in (303, 403)
+    tid = task(boss, ids['عضو فريق'], title='متابعة')
+    # The page's three actions go through the existing APIs with the supervisor's scope.
+    assert samer.patch(f'/api/tasks/{tid}/status', json={'status': 'قيد التنفيذ'}).status_code == 200
+    assert samer.patch(f'/api/tasks/{tid}', json={'employee_id': ids['سامر']}).status_code == 200
+    assert samer.patch(f'/api/tasks/{tid}', json={'employee_id': ids['موظف آخر']}).status_code == 403
+    assert samer.post(f'/api/tasks/{tid}/telegram').status_code == 200
+    people = {e['id'] for e in samer.get('/api/task-options/employees').json()}
+    assert ids['موظف آخر'] not in people

@@ -174,7 +174,7 @@ PAGE_PERMS={
  '/':'dashboard.view','/operations-reports':'dashboard.view','/workload':'dashboard.view','/integrations':'dashboard.view',
  '/system-health':'dashboard.view','/backup':'dashboard.view','/sync':'dashboard.view',
  '/tasks':'tasks.view','/tasks-table':'tasks.view','/archive':'tasks.view','/my-work':'tasks.view',
- '/manage':'tasks.edit',
+ '/manage':'tasks.edit','/my-team':'tasks.edit',
  '/employees':'employees.view',
  '/recurring':'recurring.view',
  '/telegram-center':'employees.edit','/telegram-groups':'employees.edit','/telegram-health':'employees.edit',

@@ -226,6 +226,7 @@
      "/job-profiles": "str",
      "/logout": "str",
      "/manage": "str",
+     "/my-team": "str",
      "/my-work": "str",
      "/notification-center": "str",
      "/operations-reports": "str",
@@ -1490,6 +1491,42 @@
    "status": 200,
    "type": "application/manifest+json"
   },
+  "boss /my-team": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "teamCards",
+    "teamEmpty",
+    "teamFilter",
+    "teamLate",
+    "teamMember",
+    "teamOpen",
+    "teamSearch",
+    "teamUnseen"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | متابعة الفريق",
+   "type": "text/html"
+  },
   "boss /my-work": {
    "location": "/tasks",
    "status": 303,
@@ -2570,6 +2607,7 @@
      "/job-profiles": "str",
      "/logout": "str",
      "/manage": "str",
+     "/my-team": "str",
      "/my-work": "str",
      "/notification-center": "str",
      "/operations-reports": "str",
@@ -3833,6 +3871,42 @@
   "dep /manifest.webmanifest": {
    "status": 200,
    "type": "application/manifest+json"
+  },
+  "dep /my-team": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "activityNav",
+    "teamCards",
+    "teamEmpty",
+    "teamFilter",
+    "teamLate",
+    "teamMember",
+    "teamOpen",
+    "teamSearch",
+    "teamUnseen"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | متابعة الفريق",
+   "type": "text/html"
   },
   "dep /my-work": {
    "location": "/tasks",
@@ -5463,6 +5537,13 @@
    "status": 200,
    "type": "application/manifest+json"
   },
+  "member /my-team": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
   "member /my-work": {
    "assets": [
     "/static/bim-plex.css",
@@ -6603,6 +6684,41 @@
    "status": 200,
    "type": "application/manifest+json"
   },
+  "samer /my-team": {
+   "assets": [
+    "/static/bim-plex.css",
+    "/static/bim-system-v510.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v73-live.js",
+    "/static/bim-v81-center-ar.css",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-readable-font.css",
+    "/static/bim-premium-ui-20261022.css",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-mytask-rtl.css",
+    "/static/bim-mytask-rtl.js",
+    "/static/bim-activity.js",
+    "/static/bim-brand-red.css",
+    "/static/bim-excel-filter-v2.css",
+    "/static/bim-excel-filter-v2.js",
+    "/static/record-management.js",
+    "/static/bim-theme-v63.css"
+   ],
+   "ids": [
+    "teamCards",
+    "teamEmpty",
+    "teamFilter",
+    "teamLate",
+    "teamMember",
+    "teamOpen",
+    "teamSearch",
+    "teamUnseen"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | متابعة الفريق",
+   "type": "text/html"
+  },
   "samer /my-work": {
    "location": "/tasks",
    "status": 303,
@@ -7027,6 +7143,7 @@
   "GET /logout logout",
   "GET /manage manage_page",
   "GET /manifest.webmanifest manifest",
+  "GET /my-team my_team_page",
   "GET /my-work my_work",
   "GET /notification-center notification_center",
   "GET /openapi.json openapi",

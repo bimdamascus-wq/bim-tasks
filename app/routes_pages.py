@@ -127,3 +127,10 @@ def api_dashboard(req: Request):
     data['latest']=[dict(x) for x in c.execute('''SELECT t.id,t.task_code,t.title,t.status,t.priority,t.due_at,
       COALESCE(e.name,'بدون موظف') employee FROM tasks t LEFT JOIN employees e ON e.id=t.employee_id WHERE t.archived_at IS NULL ORDER BY t.id DESC LIMIT 12''')]
     c.close(); return data
+
+
+@app.get('/my-team', response_class=HTMLResponse)
+def my_team_page(req: Request):
+    # Supervisor's mobile page: the team's open/overdue tasks with quick actions. Uses the existing task APIs,
+    # so the same scope and permission checks apply (a supervisor only sees and changes their team).
+    need(req,'tasks.edit'); return templates.TemplateResponse(request=req,name='my_team.html',context=ctx(req,'متابعة الفريق'))
