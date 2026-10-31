@@ -99,6 +99,25 @@ def main():
         print('  none found')
     for r in rows:
         print(f'  {r[0]}: {r[1]} pairs')
+    if rows:
+        print('  details, last 24 hours (task id | kind | employee | how many | first .. last, UTC):')
+        for r in q(c, """SELECT n.task_id,n.kind,COALESCE(e.name,'-'),COUNT(*),MIN(n.sent_at),MAX(n.sent_at),
+              GROUP_CONCAT(DISTINCT n.status)
+            FROM notifications n LEFT JOIN employees e ON e.id=n.employee_id
+            WHERE n.sent_at>datetime('now','-1 day') AND n.task_id IS NOT NULL
+            GROUP BY n.task_id,n.kind,n.employee_id HAVING COUNT(*)>1 ORDER BY COUNT(*) DESC LIMIT 15"""):
+            print(f'    task {r[0]} | {r[1]} | {r[2]} | {r[3]} times | {r[4]} .. {r[5]} | {r[6]}')
+
+    print('\n[activity, last 24 hours] (what fills the database)')
+    for r in q(c, """SELECT event_type,source,COUNT(*),MIN(created_at),MAX(created_at) FROM task_events
+        WHERE created_at>datetime('now','-1 day') GROUP BY event_type,source ORDER BY COUNT(*) DESC LIMIT 12"""):
+        print(f'  task_events  {r[0]} / {r[1]}: {r[2]}  ({r[3]} .. {r[4]} UTC)')
+    for r in q(c, """SELECT action,COALESCE(username_snapshot,'-'),COUNT(*),MIN(created_at),MAX(created_at) FROM audit_logs
+        WHERE created_at>datetime('now','-1 day') GROUP BY action,username_snapshot ORDER BY COUNT(*) DESC LIMIT 12"""):
+        print(f'  audit_logs   {r[0]} by {r[1]}: {r[2]}  ({r[3]} .. {r[4]} UTC)')
+    for r in q(c, """SELECT action,source,COUNT(*) FROM sync_events
+        WHERE created_at>datetime('now','-1 day') GROUP BY action,source ORDER BY COUNT(*) DESC LIMIT 8"""):
+        print(f'  sync_events  {r[0]} / {r[1]}: {r[2]}')
     c.close()
     full_sync_report()
 

@@ -86,6 +86,13 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
     no internet/DNS then. Not a code fault; nothing changed.
   * The Apps Script ALREADY sends `X-BIM-Sync-Secret` (header seen 13:50 on /api/sync/tasks-page, `?secret=` not seen).
     No Apps Script change needed. Remove `?secret=` in package 2 once a later report still shows it "not seen yet".
+- Report 14:33: stuck sync gone; runs 13:57 OK (11 min), 14:12 FAILED ("read operation timed out" = 45 s urlopen),
+  14:27 running. NEW: 98 duplicate-notification pairs on 2026-10-31 (none at 13:50), and synced rows jumped
+  1865 -> 2977 in 30 min (task_events 130->353, audit_logs 462->616, sync_events 257->411, notifications 143->212,
+  task count unchanged 310). Cause unknown yet; report now breaks duplicates and activity down per task/kind/source.
+  Full sync uploads every table in full every 5 min in batches of 20 — it cannot keep up as log tables grow.
+  Proposal for package 2 (owner decision): hourly schedule and/or no log tables / incremental upload.
+  `main` NOT merged yet: wait until the duplicate burst is explained (could it be from package 1?).
 
 ## Open items (agreed with the owner, not started)
 1. (in `gateway_staging`) external process ran the workers too. 2. (in `gateway_staging`) staging copy.
