@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{{ company.name }} | {{ title }}</title>
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="stylesheet" href="/static/bim-ds.css?v=2">
-<script src="/static/bim-ui-v510.js?v=6.4.0"></script>
+<link rel="stylesheet" href="/static/bim-ds.css?v={{ asset_v }}">
+<script src="/static/bim-ui-v510.js?v={{ asset_v }}"></script>
 <script defer src="/static/bim-delegate.js?v=6.3.0"></script>
 {% block head %}{% endblock %}
 <script defer src="/static/bim-v81-center-ar.js?v=6.3.0"></script>
 <script defer src="/static/bim-arabic-date-labels-v1.js?v=6.3.0"></script>
 <script defer src="/static/bim-activity.js?v=6.3.0"></script>
 <script defer src="/static/bim-excel-filter-v2.js?v=6.3.0"></script>
-<script defer src="/static/bim-shell.js?v=2"></script>
+<script defer src="/static/bim-shell.js?v={{ asset_v }}"></script>
 </head>
 <body class="ds" data-bim-page="{{ title|default('') }}">
 {% if user %}

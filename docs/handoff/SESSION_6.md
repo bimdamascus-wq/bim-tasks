@@ -8,7 +8,7 @@
 ## Instructions for Claude
 Read `CLAUDE.md` first. Owner is not technical, Syrian Arabic, tired of long sessions: keep answers short, exact clicks.
 
-State: server runs 7195f1f (`new_look`) unless the owner installed `tiles_design` (the chosen design; see the deployment log). Ask for the status report (`C:\BIM_Tasks_Server\tools\check_status\CHECK_STATUS.cmd` or the desktop icon
+State: server runs 7195f1f (`new_look`) unless the owner installed `tiles_menu` (the chosen design + wider menu; see the deployment log). Ask for the status report (`C:\BIM_Tasks_Server\tools\check_status\CHECK_STATUS.cmd` or the desktop icon
 "تقرير حالة BIM"), confirm the commit on 8797/8798, then fast-forward `main` to `claude/new-session-j9yp8h`.
 
 Check in that report: sync runs short with `unchanged=` large; no new duplicate notifications; supervisor summary rows

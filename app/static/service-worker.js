@@ -1,8 +1,8 @@
-const CACHE='bim-tasks-ds-2';
-const STATIC=['/static/bim-ds.css?v=2','/static/bim-ui-v510.js?v=6.4.0','/static/bim-shell.js?v=2','/static/bim-damascus-logo.png','/static/bim-logo-original.jpg','/manifest.webmanifest'];
+const CACHE='bim-tasks-ds-3';
+const STATIC=['/static/bim-damascus-logo.png','/static/bim-logo-original.jpg','/manifest.webmanifest'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(STATIC).catch(()=>{})));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE)await caches.delete(k);await self.clients.claim()})())});
 self.addEventListener('message',e=>{if(e.data&&e.data.type==='CLEAR_PRIVATE')e.waitUntil(caches.delete(CACHE).then(()=>caches.open(CACHE)));});
 async function networkFirst(req){const c=await caches.open(CACHE);try{const r=await fetch(req);if(r&&r.ok){const u=new URL(req.url);if(req.method==='GET'&&u.origin===location.origin)c.put(req,r.clone()).catch(()=>{})}return r}catch(err){const hit=await c.match(req,{ignoreSearch:false});if(hit)return hit;if(req.mode==='navigate'){const root=await c.match('/');if(root)return root}throw err}}
 async function cacheFirst(req){const c=await caches.open(CACHE);const hit=await c.match(req);if(hit)return hit;const r=await fetch(req);if(r&&r.ok)c.put(req,r.clone()).catch(()=>{});return r}
-self.addEventListener('fetch',e=>{const req=e.request;if(req.method!=='GET')return;const u=new URL(req.url);if(u.origin!==location.origin)return;if(u.pathname.startsWith('/static/')||u.pathname==='/manifest.webmanifest'){e.respondWith(cacheFirst(req));return}if(req.mode==='navigate'||u.pathname.startsWith('/api/')){e.respondWith(networkFirst(req));return}});
+self.addEventListener('fetch',e=>{const req=e.request;if(req.method!=='GET')return;const u=new URL(req.url);if(u.origin!==location.origin)return;if(u.pathname.startsWith('/static/')&&/\.(css|js)$/.test(u.pathname)){e.respondWith(networkFirst(req));return}if(u.pathname.startsWith('/static/')||u.pathname==='/manifest.webmanifest'){e.respondWith(cacheFirst(req));return}if(req.mode==='navigate'||u.pathname.startsWith('/api/')){e.respondWith(networkFirst(req));return}});

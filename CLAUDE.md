@@ -172,6 +172,11 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   shown WITHOUT any frame (owner). Package `tiles_design` (base 7195f1f) supersedes `night_design` (never confirmed).
   Contrast check on 37 pages: clean.
 
+- 2026-11-01: owner confirmed the tiles design looks right after reopening the browser (stale cache was the cause).
+  Chose side menu option A (150px rail, icon above label) + separated /my-team cards. Asset URLs now carry
+  `?v={{ asset_v }}` (hash of bim-ds.css, bim-shell.js, bim-ui-v510.js; main.ASSET_V) and the service worker serves
+  /static css/js network-first (cache bim-tasks-ds-3). Package `tiles_menu` (base 7195f1f) given — NOT yet confirmed.
+
 ## Code layout (since package `code_split`)
 - `app/main.py`: settings, app object, middleware, shared helpers (auth/session, Telegram task texts, Sheet push).
   Route modules `app/routes_{auth,pages,telegram,shifts,reports,employees,tasks,recurring,users,backup,sync}.py`
