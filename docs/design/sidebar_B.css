@@ -1,0 +1,10 @@
+/* Sidebar option B: classic width (220px), icon beside the label, group titles shown */
+.ds-side{width:220px!important}
+.ds-brand{justify-content:center!important;padding:16px 14px!important}
+.ds-brand-text{display:none!important}
+body.ds .ds-brand-text b{color:#2B1D0E!important}body.ds .ds-brand-text small{color:#8A6E4F!important}
+body.ds .ds-nav-label{display:block!important;font-size:13px!important;color:#8A6E4F!important;padding:8px 10px 4px!important;text-align:start}
+body.ds .ds-nav-link{flex-direction:row!important;justify-content:flex-start!important;text-align:start!important;min-height:48px!important;padding:6px 10px!important;font-size:16px!important;gap:12px!important;border-radius:14px!important}
+body.ds .ds-nav-link .ds-i3d{width:32px!important;height:32px!important}
+.ds-user{flex-direction:row!important}
+body.ds .ds-user-text{display:flex!important}body.ds .ds-user-text b{color:#2B1D0E!important}
