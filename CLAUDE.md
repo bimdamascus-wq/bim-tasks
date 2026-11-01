@@ -160,6 +160,12 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   works whether or not `new_design` was installed) given — NOT yet confirmed. If he sends a picture of the 3D icons he made
   in another conversation, match `.ds-ico` in bim-ds.css to it.
 
+- 2026-11-01: owner saw 3 options as real screenshots (https://claude.ai/artifact/6BjN9L4ZrpbfoZ9snVDPDo) and chose
+  MODEL 2 "night". Package `night_design` (commit 1c96ea9, base 7195f1f; contains everything since: shell, bim-ds.css,
+  Fluent 3D icons in app/static/icons3d, night block at the end of bim-ds.css) given — NOT yet confirmed.
+  Supersedes `new_design`/`new_design2` (never confirmed). Contrast check script idea: walk each visible text node's
+  ancestors to the first opaque background and flag ratio < 3 (watch `color(srgb …)` values, they are 0–1).
+
 ## Code layout (since package `code_split`)
 - `app/main.py`: settings, app object, middleware, shared helpers (auth/session, Telegram task texts, Sheet push).
   Route modules `app/routes_{auth,pages,telegram,shifts,reports,employees,tasks,recurring,users,backup,sync}.py`
