@@ -553,109 +553,71 @@ body.ds .ds-date>input:not(:focus)::-webkit-datetime-edit{opacity:0}
 body.ds .ds-date>.ds-date-text{font-weight:600;color:#05080C}
 body.ds .ds-date>.ds-date-text.is-empty{color:#6B7280}
 
-
 /* =====================================================================================================
-   MODEL 2 "night" — chosen by the owner 2026-11-01 (preview https://claude.ai/artifact/6BjN9L4ZrpbfoZ9snVDPDo).
-   Dark navy page, top icon bar instead of the side menu, glass cards with glowing coloured borders.
-   Everything above stays as the base; this block overrides it.
+   MODEL "tiles" — chosen by the owner 2026-11-01 from his screenshot (the warm page with the slim icon rail on the
+   right and solid colour blocks). Overrides the base above.
    ===================================================================================================== */
-/* Theme B — "night": dark navy, top app bar with icon launcher instead of a side menu, glass cards with glowing borders. */
-body.ds{background:radial-gradient(1200px 600px at 80% -10%,#1E3A8A 0%,transparent 60%),radial-gradient(900px 500px at 0% 0%,#4C1D95 0%,transparent 55%),#0B1220!important;color:#EEF2FF!important}
-body.ds :is(p,li,dd,td,label,summary,.notice,.empty,.meta,small,h1,h2,h3,h4,.ds-top-title,.ds-today){color:#EEF2FF!important}
-body.ds .page-title p,body.ds .section-head p,body.ds .ds-home-head p{color:#C7D2FE!important}
-.ds-app{flex-direction:column!important}
-.ds-side{position:sticky!important;top:0;width:100%!important;height:auto!important;flex-direction:row!important;align-items:center;gap:14px;padding:8px 18px;background:rgba(10,16,32,.82)!important;backdrop-filter:blur(10px);border:0!important;border-bottom:1px solid rgba(148,163,184,.25)!important;z-index:900;transform:none!important;visibility:visible!important;box-shadow:none!important}
-.ds-brand{padding:0!important}
-.ds-brand-text b{color:#fff!important}.ds-brand-text small{color:#A5B4FC!important}
-.ds-nav{display:flex;flex:1;overflow-x:auto;overflow-y:hidden;padding:4px 0!important;gap:4px}
-.ds-nav-group{display:flex;margin:0!important;gap:4px;padding-inline-start:8px;border-inline-start:1px solid rgba(148,163,184,.25)}
-.ds-nav-group:first-child{border:0;padding:0}
-.ds-nav-label{display:none}
-body.ds .ds-nav-link{flex-direction:column;gap:4px!important;min-width:82px;min-height:72px!important;padding:8px 6px!important;justify-content:center;text-align:center;font-size:12.5px!important;font-weight:700!important;color:#CBD5E1!important;border-radius:14px!important;white-space:nowrap}
-body.ds .ds-nav-link .ds-i3d{width:34px;height:34px}
-body.ds .ds-nav-link:hover{background:rgba(99,102,241,.18)!important;color:#fff!important}
-body.ds .ds-nav-link.is-active{background:linear-gradient(160deg,rgba(99,102,241,.45),rgba(56,189,248,.25))!important;color:#fff!important;box-shadow:0 0 0 1px rgba(165,180,252,.6),0 8px 20px -10px #6366F1}
+@font-face{font-family:Cairo;font-weight:200 900;font-display:swap;src:url(/static/fonts/BIMArabic.woff2) format("woff2")}
+/* Theme C — "tiles": warm light canvas, slim icon rail with big 3D icons, SOLID colour blocks with white text. */
+body.ds{background:#FBF7F2!important;font-family:"Cairo",BIMSans,Tahoma,sans-serif!important}
+.ds-side{width:104px!important;background:#FFFFFF!important;border:0!important;box-shadow:0 0 0 1px #EFE6DA,6px 0 24px -18px rgba(120,80,30,.4)!important}
+.ds-brand{justify-content:center;padding:14px 0!important}
+.ds-brand-text,.ds-nav-label,.ds-user-text{display:none!important}
+.ds-nav{padding:0 8px!important}
+.ds-nav-group{margin-top:6px!important;padding-top:6px;border-top:1px dashed #EADFCF}
+.ds-nav-group:first-child{border:0}
+body.ds .ds-nav-link{flex-direction:column;gap:2px!important;min-height:76px!important;padding:8px 2px!important;justify-content:center;text-align:center;font-size:11.5px!important;font-weight:700!important;color:#4A3B2A!important;border-radius:18px!important;line-height:1.25}
+body.ds .ds-nav-link .ds-i3d{width:40px;height:40px}
+body.ds .ds-nav-link:hover{background:#FFF1E2!important}
+body.ds .ds-nav-link.is-active{background:#FFE4C7!important;color:#7A3E00!important}
 body.ds .ds-nav-link.is-active::before{display:none}
-.ds-user{border:0!important;padding:0!important}
-.ds-user-text{display:none!important}
-.ds-top{background:transparent!important;border:0!important;position:static!important}
-.ds-menu{display:none!important}
-body.ds .ds-search{background:rgba(15,23,42,.7)!important;border:1px solid rgba(148,163,184,.35)!important}
-body.ds .ds-search input{color:#fff!important}
-body.ds .ds-state{background:rgba(16,185,129,.15)!important;color:#6EE7B7!important;border-color:rgba(110,231,183,.4)!important}
-body.ds :is(.panel,details.bim-section,.detail-card,.ds-card,.employee-card,.team-card,.ds-quick){background:rgba(15,23,42,.62)!important;backdrop-filter:blur(6px);border:1px solid color-mix(in srgb,var(--b,#6366F1) 70%,transparent)!important;box-shadow:0 0 0 1px rgba(255,255,255,.03),0 10px 30px -14px color-mix(in srgb,var(--b,#6366F1) 80%,transparent)!important;border-radius:20px!important}
-body.ds .kpi{background:linear-gradient(160deg,color-mix(in srgb,var(--b) 45%,#0B1220),#0F172A)!important;border:1px solid color-mix(in srgb,var(--a) 80%,transparent)!important;box-shadow:0 12px 30px -16px var(--b)!important;border-radius:20px!important}
-body.ds .kpi span,body.ds .kpi small,body.ds .kpi label{color:#E0E7FF!important}
-body.ds .kpi b,body.ds .kpi strong,body.ds .kpi .num{color:#fff!important;text-shadow:0 0 18px color-mix(in srgb,var(--a) 80%,transparent)}
-body.ds .panel h2,body.ds .ds-card-head h2,body.ds details.bim-section>summary,body.ds .section-head h2{color:color-mix(in srgb,var(--a) 85%,#fff)!important}
-body.ds input:not([type=checkbox]):not([type=radio]),body.ds select,body.ds textarea{background:rgba(2,6,23,.6)!important;color:#F1F5F9!important;border:1px solid rgba(148,163,184,.4)!important}
-body.ds .ds-date>.ds-date-text{color:#F1F5F9!important}
-body.ds .scroll-box{background:rgba(2,6,23,.4)!important;border:1px solid rgba(148,163,184,.3)!important}
-body.ds th{background:rgba(99,102,241,.25)!important;color:#E0E7FF!important;border-color:rgba(148,163,184,.25)!important}
-body.ds td{border-color:rgba(148,163,184,.18)!important}
-body.ds tbody tr:nth-child(even) td{background:rgba(148,163,184,.06)!important}
-body.ds tbody tr:hover td{background:rgba(99,102,241,.14)!important}
-body.ds .btn-light,body.ds button.btn-light{background:rgba(15,23,42,.6)!important;color:#E2E8F0!important;border:1px solid rgba(148,163,184,.4)!important}
-body.ds button:not(.btn-light):not(.btn-danger):not(.ds-menu):not(.ck):not(.tm):not(.mem):not(.bim-filter-toggle):not(.xbtn){background:linear-gradient(160deg,#6366F1,#4338CA)!important;border-color:#4F46E5!important}
-body.ds .seg{background:rgba(15,23,42,.6)!important}body.ds .seg button{color:#CBD5E1!important}body.ds .seg button.on{background:#6366F1!important;color:#fff!important}
-body.ds .ds-home .row,body.ds .employee-task-row,body.ds .ds-home .tm,body.ds .ds-home .ev{border-color:rgba(148,163,184,.18)!important;color:#EEF2FF!important}
-body.ds .ds-home .row .t span,body.ds .ds-home .who,body.ds .ds-home .tm b,body.ds .employee-task-title{color:#F8FAFC!important}
-body.ds .employee-card-head{background:transparent!important;border-color:rgba(148,163,184,.2)!important}
-body.ds .ds-tag{filter:saturate(1.2)}
-body.ds a{color:#93C5FD}
-body.ds .ds-home .mem{background:rgba(15,23,42,.6)!important;color:#E2E8F0!important;border-color:rgba(148,163,184,.35)!important}
+.ds-user{flex-direction:column;border-color:#EFE6DA!important}
+.ds-top{background:#FBF7F2!important;border:0!important}
+body.ds .ds-search{background:#fff!important;border:2px solid #EADFCF!important;border-radius:999px!important}
+body.ds h1{font-size:36px!important;font-weight:800!important;color:#2B1D0E!important}
+body.ds :is(p,li,td,label,summary,small){color:#2B1D0E}
+/* solid colour blocks */
+body.ds .kpi{background:linear-gradient(150deg,var(--a),var(--b))!important;border:0!important;border-radius:26px!important;box-shadow:0 14px 26px -16px var(--b)!important;color:#fff!important;padding:22px 24px!important}
+body.ds .kpi span,body.ds .kpi small,body.ds .kpi label,body.ds .kpi b,body.ds .kpi strong,body.ds .kpi .num{color:#fff!important}
+body.ds .kpi b,body.ds .kpi .num{font-size:44px!important;font-weight:800!important}
+body.ds :is(.panel,details.bim-section,.detail-card,.ds-card,.employee-card,.team-card){background:#fff!important;border:0!important;border-radius:26px!important;box-shadow:0 10px 30px -20px rgba(120,80,30,.45)!important;overflow:hidden;padding-top:0!important}
+body.ds .ds-card-head,body.ds .panel>.section-head,body.ds .employee-card-head{margin:0 -20px 14px!important;padding:14px 20px!important;background:linear-gradient(150deg,var(--a),var(--b))!important;border:0!important}
+body.ds .panel>.section-head{margin:0 -22px 16px!important;padding:14px 22px!important}
+body.ds .ds-card-head h2,body.ds .ds-card-head small,body.ds .panel>.section-head h2,body.ds .panel>.section-head p{color:#fff!important}
+body.ds .ds-count{background:rgba(255,255,255,.25)!important;color:#fff!important;border:0!important}
+body.ds .employee-card-head{margin:0!important}
+body.ds .employee-card-head :is(button,b,h2,h3){background:rgba(255,255,255,.22)!important;box-shadow:none!important}
+body.ds .employee-count{background:rgba(255,255,255,.25)!important;color:#fff!important;border:0!important}
+body.ds .panel,body.ds details.bim-section{padding-top:22px!important}
+body.ds details.bim-section>summary{color:var(--b)!important}
+body.ds .scroll-box{border:0!important;border-radius:18px!important;box-shadow:0 0 0 2px #F1E7DA}
+body.ds th{background:#2B1D0E!important;color:#FFE9CF!important;border-color:#4A3626!important}
+body.ds td{border-color:#F1E7DA!important}
+body.ds tbody tr:nth-child(even) td{background:#FFF8EF!important}
+body.ds tbody tr:hover td{background:#FFEFD9!important}
+body.ds input:not([type=checkbox]):not([type=radio]),body.ds select,body.ds textarea{border-radius:14px!important;border:2px solid #EADFCF!important;background:#FFFDF9!important}
+body.ds button:not(.btn-light):not(.btn-danger):not(.ds-menu):not(.ck):not(.tm):not(.mem):not(.bim-filter-toggle):not(.xbtn){background:#2B1D0E!important;border-color:#2B1D0E!important;border-radius:999px!important;box-shadow:none!important}
+body.ds .btn-light,body.ds button.btn-light{border-radius:999px!important;border:2px solid #EADFCF!important;background:#fff!important;color:#2B1D0E!important}
+body.ds .page-title .toolbar>button:not(.btn-light):not(.btn-danger):last-child,body.ds .ds-quick .go{background:#F97316!important;border-color:#F97316!important}
+body.ds .ds-quick{border-radius:999px!important;border:2px solid #EADFCF!important}
+body.ds .seg{background:#F3E8DA!important;border-radius:999px!important}body.ds .seg button.on{background:#2B1D0E!important;color:#fff!important;border-radius:999px!important}
+body.ds .ds-tag{border-radius:10px!important;padding:3px 12px!important}
 body.ds .ds-search input,body.ds .ds-quick input{border:0!important;background:transparent!important;box-shadow:none!important;outline:0!important}
-body.ds .seg button:not(.on){background:transparent!important}
-body.ds .ds-home .tm{background:transparent!important}
-body.ds .manage-table select.employee-select,body.ds .manage-table input.task-input{color:#F1F5F9!important;-webkit-text-fill-color:#F1F5F9}
-/* model 2: every surface that used to be light becomes dark so light text stays readable */
-body.ds :is(.modal-card,.bim-excel-menu,.bim-deleg-card,fieldset,.bundle-panel,.comment,.attachment,.pv-group){background:#111A2E!important;color:#EEF2FF!important;border-color:rgba(148,163,184,.35)!important}
-body.ds :is(.notice,.bim-sync-line,.v6-note){background:rgba(59,130,246,.16)!important;border-color:rgba(147,197,253,.45)!important;color:#DBEAFE!important}
-body.ds :is(.error,.errbox){background:rgba(239,68,68,.16)!important;border-color:rgba(252,165,165,.5)!important;color:#FECACA!important}
-body.ds .ds-home .filter{background:rgba(59,130,246,.2)!important;border-color:rgba(147,197,253,.45)!important;color:#DBEAFE!important}
-body.ds code{background:rgba(148,163,184,.15)!important;border-color:rgba(148,163,184,.3)!important;color:#E2E8F0!important}
-body.ds .modal-head{border-color:rgba(148,163,184,.25)!important}
-body.ds .bim-excel-values{border-color:rgba(148,163,184,.3)!important}
-body.ds :is(.bim-pill,.chip,.status-pill,.prio-pill,.pill,.badge,.ds-count){background:rgba(148,163,184,.18)!important;color:#E2E8F0!important;border-color:rgba(148,163,184,.35)!important}
-body.ds .bim-origin{background:rgba(148,163,184,.18)!important;color:#E2E8F0!important;border-color:rgba(148,163,184,.35)!important}
-body.ds .ds-tag{background:rgba(148,163,184,.2)!important;color:#F1F5F9!important}
-body.ds .ds-tag[data-v="جديدة"]{background:rgba(59,130,246,.28)!important;color:#BFDBFE!important}
-body.ds .ds-tag[data-v="بدأت"]{background:rgba(139,92,246,.28)!important;color:#DDD6FE!important}
-body.ds .ds-tag:is([data-v="قيد التنفيذ"],[data-v="بانتظار"]){background:rgba(245,158,11,.25)!important;color:#FDE68A!important}
-body.ds .ds-tag:is([data-v="تم"],[data-v="نشط"],[data-v="مربوط"]){background:rgba(16,185,129,.25)!important;color:#A7F3D0!important}
-body.ds .ds-tag:is([data-v="عاجلة"],[data-v="عالية"]){background:rgba(239,68,68,.25)!important;color:#FECACA!important}
-body.ds select[data-v]{color:#F1F5F9!important}
-body.ds .ds-home .due.r,body.ds .name-red,body.ds .red{color:#FCA5A5!important}
-body.ds .green{color:#6EE7B7!important}body.ds .blue{color:#93C5FD!important}
-body.ds .ds-badge{background:#EF4444!important;color:#fff!important}
-body.ds .ds-home .ck{background:transparent!important;border-color:#94A3B8!important}
-body.ds .ds-home .bar{background:rgba(148,163,184,.25)!important}body.ds .ds-home .bar i{background:#818CF8!important}
-body.ds .muted,body.ds .muted-mini,body.ds small{color:#C7D2FE!important}
-body.ds option{background:#0F172A;color:#F1F5F9}
-body.ds .ds-avatar{color:#fff!important}
-body.ds .team-card .row button,body.ds .team-filter button:not(.on){background:rgba(15,23,42,.6)!important;color:#E2E8F0!important;border-color:rgba(148,163,184,.4)!important}
-body.ds .bim-toast-stack>div,body.ds .toast{background:#1E293B!important;color:#fff!important}
-body.ds button.bim-filter-toggle{background:rgba(15,23,42,.6)!important;color:#C7D2FE!important;border-color:rgba(148,163,184,.35)!important}
-body.ds button.bim-filter-toggle.is-filtered{background:#6366F1!important;color:#fff!important}
-body.ds :is(.bim-section,.v6-panel,.v6-metric,.pv-row,.detail-row){background:rgba(15,23,42,.62)!important;border-color:rgba(148,163,184,.35)!important;color:#EEF2FF!important}
-body.ds .bim-section .bim-section{background:transparent!important}
-body.ds .ds-quick .kbd{color:#C7D2FE!important;border-color:rgba(148,163,184,.4)!important}
-body.ds .ds-home .mem .n{color:#C7D2FE!important}
-body.ds .ds-skip{background:#0F172A!important;color:#fff!important}
-/* inline light boxes written in some templates */
-body.ds [style*="background:#fff4e0"]{background:rgba(245,158,11,.18)!important;color:#FDE68A!important}
-body.ds [style*="background:#f7f8fa"],body.ds [style*="background:#f0f1f3"]{background:rgba(148,163,184,.14)!important;color:#E2E8F0!important}
-/* model 2: login */
-body.ds.ds-login{background:radial-gradient(1000px 500px at 80% -10%,#1E3A8A 0%,transparent 60%),radial-gradient(800px 500px at 0% 0%,#4C1D95 0%,transparent 55%),#0B1220!important}
-body.ds .ds-login-card{background:rgba(15,23,42,.75)!important;border:1px solid rgba(165,180,252,.45);box-shadow:0 30px 80px -30px #6366F1!important}
-body.ds .ds-login-side{background:linear-gradient(160deg,rgba(99,102,241,.35),rgba(56,189,248,.12))!important}
-body.ds .ds-login-form button{background:linear-gradient(160deg,#6366F1,#4338CA)!important;border-color:#4F46E5!important;box-shadow:0 10px 24px -12px #6366F1!important}
-body.ds .ds-login-gate,body.ds .ds-login-gate a{color:#C7D2FE!important}
-/* model 2 on phones: logo + account on the first row, the icon bar as a full-width scrolling row under it */
-@media (max-width:1000px){
-  .ds-side{flex-wrap:wrap!important;row-gap:4px!important;padding:8px 10px!important}
-  .ds-nav{order:3;flex-basis:100%}
-  .ds-brand{flex:1}
-  body.ds .ds-nav-link{min-width:74px;min-height:66px!important}
-}
+body.ds .seg button:not(.on){background:transparent!important;color:#4A3B2A!important}
+body.ds .ds-home .mem:not(.on),body.ds .ds-home .tm{background:transparent!important;color:#2B1D0E!important;border-radius:14px!important}
+/* tiles: fixes found after the preview */
+body.ds #seg button:not(.on){background:transparent!important;color:#4A3B2A!important;box-shadow:none!important}
+body.ds #seg button.on{background:#2B1D0E!important;color:#fff!important}
+body.ds .team-filter button:not(.on){background:#fff!important;color:#2B1D0E!important;border:2px solid #EADFCF!important}
 body.ds label.ds-search input#dsSearch,body.ds form.ds-quick input#q{border:0!important;background:transparent!important;box-shadow:none!important}
+/* BIM logo without any frame (owner) */
+body.ds .ds-brand-logo,body.ds .ds-login-side .ds-brand-logo{background:none!important;border:0!important;box-shadow:none!important;border-radius:0!important;width:auto!important;height:auto!important;overflow:visible!important}
+body.ds .ds-brand-logo img{max-width:72px!important;max-height:72px!important}
+body.ds .ds-login-side .ds-brand-logo img{max-width:120px!important;max-height:120px!important}
+/* login in the tiles look */
+body.ds.ds-login{background:#FBF7F2!important}
+body.ds .ds-login-card{box-shadow:0 30px 60px -30px rgba(120,80,30,.45)!important;border-radius:28px!important}
+body.ds .ds-login-side{background:linear-gradient(150deg,#FF9A3D,#F05A28)!important}
+body.ds .ds-login-form button{background:#2B1D0E!important;border-color:#2B1D0E!important;border-radius:999px!important}
+body.ds .activity-tabs button:not(.on):not(.active):not([aria-selected="true"]):not(.btn-light):not(.btn-danger):not(.ds-menu):not(.ck):not(.tm):not(.mem):not(.bim-filter-toggle):not(.xbtn){background:#fff!important;color:#2B1D0E!important;border:2px solid #EADFCF!important}
+body.ds .activity-tabs button[aria-selected="true"]{color:#fff!important}

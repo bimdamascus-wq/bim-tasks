@@ -166,6 +166,12 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   Supersedes `new_design`/`new_design2` (never confirmed). Contrast check script idea: walk each visible text node's
   ancestors to the first opaque background and flag ratio < 3 (watch `color(srgb …)` values, they are 0–1).
 
+- 2026-11-01: CORRECTION — the owner's screenshot showed the TILES model (warm page, slim icon rail on the right, solid
+  colour blocks); he called it "2" because the preview tabs read right-to-left. Night block removed; tiles block (from
+  docs/design/model3_tiles.css + fixes) appended to bim-ds.css; Cairo served locally from fonts/BIMArabic.woff2; BIM logo
+  shown WITHOUT any frame (owner). Package `tiles_design` (base 7195f1f) supersedes `night_design` (never confirmed).
+  Contrast check on 37 pages: clean.
+
 ## Code layout (since package `code_split`)
 - `app/main.py`: settings, app object, middleware, shared helpers (auth/session, Telegram task texts, Sheet push).
   Route modules `app/routes_{auth,pages,telegram,shifts,reports,employees,tasks,recurring,users,backup,sync}.py`
