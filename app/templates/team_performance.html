@@ -9,12 +9,12 @@
 {% endblock %}{% block scripts %}<script>
 const perfQ=()=>'date_from='+encodeURIComponent(perfFrom.value)+'&date_to='+encodeURIComponent(perfTo.value);
 const perfH=v=>v===null||v===undefined?'—':bimArDigits(v);
-function perfRow(name,extra,r){return `<tr><td>${bimEsc(name)}</td><td>${extra}</td><td>${bimArDigits(r.created)}</td><td>${bimArDigits(r.completed)}</td><td>${bimArDigits(r.completed_late)}</td><td>${bimArDigits(r.overdue_now)}</td><td>${perfH(r.avg_hours)}</td></tr>`}
+function perfRow(name,extra,r,eid){return `<tr><td>${eid?bimEmpLink(eid,name):bimEsc(name)}</td><td>${extra}</td><td>${bimArDigits(r.created)}</td><td>${bimArDigits(r.completed)}</td><td>${bimArDigits(r.completed_late)}</td><td>${bimArDigits(r.overdue_now)}</td><td>${perfH(r.avg_hours)}</td></tr>`}
 async function loadPerf(){try{const d=await bimRequest('/api/team-performance?'+perfQ());perfFrom.value=d.from;perfTo.value=d.to;
  perfCreated.textContent=bimArDigits(d.total.created);perfCompleted.textContent=bimArDigits(d.total.completed);perfLate.textContent=bimArDigits(d.total.completed_late);perfOverdue.textContent=bimArDigits(d.total.overdue_now);perfAvg.textContent=perfH(d.total.avg_hours);
  perfTeamsPanel.style.display=d.teams.length?'':'none';
  perfTeams.innerHTML=d.teams.map(t=>perfRow(t.supervisor,bimArDigits(t.members),t)).join('');
- perfRows.innerHTML=d.employees.map(r=>perfRow(r.name,bimEsc(r.department||'—'),r)).join('')||'<tr><td colspan="7">لا يوجد موظفون</td></tr>'}catch(e){bimToast(e.message,'err')}}
+ perfRows.innerHTML=d.employees.map(r=>perfRow(r.name,bimEsc(r.department||'—'),r,r.employee_id)).join('')||'<tr><td colspan="7">لا يوجد موظفون</td></tr>'}catch(e){bimToast(e.message,'err')}}
 function exportPerf(){location.href='/api/team-performance.csv?'+perfQ()}
 loadPerf();
 </script>{% endblock %}

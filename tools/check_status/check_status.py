@@ -87,9 +87,10 @@ def main():
         print(f'      error: {clean_error(r[6])}')
 
     print('\n[google sheet -> server: how the sheet sends its secret] (only time and path are stored)')
-    seen = dict(q(c, "SELECT key,value FROM settings WHERE key IN ('sync.auth_last_header','sync.auth_last_query')"))
+    seen = dict(q(c, "SELECT key,value FROM settings WHERE key IN ('sync.auth_last_header','sync.auth_last_query','sync.auth_last_query_refused')"))
     print('  header (new, safe):', seen.get('sync.auth_last_header') or 'not seen yet')
-    print('  ?secret= in the link (old):', seen.get('sync.auth_last_query') or 'not seen yet')
+    print('  ?secret= in the link (old, accepted until big_update):', seen.get('sync.auth_last_query') or 'not seen')
+    print('  ?secret= REFUSED since big_update (a Sheet function still uses the old way!):', seen.get('sync.auth_last_query_refused') or 'none - good')
 
     print('\n[possible duplicate messages, last 3 days] (same task + same kind + same employee more than once in 2 minutes)')
     rows = q(c, """SELECT date(a.sent_at),COUNT(*) FROM notifications a JOIN notifications b

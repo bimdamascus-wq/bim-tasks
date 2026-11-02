@@ -7,12 +7,12 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="/static/bim-ds.css?v={{ asset_v }}">
 <script src="/static/bim-ui-v510.js?v={{ asset_v }}"></script>
-<script defer src="/static/bim-delegate.js?v=6.3.0"></script>
+<script defer src="/static/bim-delegate.js?v={{ asset_v }}"></script>
 {% block head %}{% endblock %}
-<script defer src="/static/bim-v81-center-ar.js?v=6.3.0"></script>
-<script defer src="/static/bim-arabic-date-labels-v1.js?v=6.3.0"></script>
-<script defer src="/static/bim-activity.js?v=6.3.0"></script>
-<script defer src="/static/bim-excel-filter-v2.js?v=6.3.0"></script>
+<script defer src="/static/bim-v81-center-ar.js?v={{ asset_v }}"></script>
+<script defer src="/static/bim-arabic-date-labels-v1.js?v={{ asset_v }}"></script>
+<script defer src="/static/bim-activity.js?v={{ asset_v }}"></script>
+<script defer src="/static/bim-excel-filter-v2.js?v={{ asset_v }}"></script>
 <script defer src="/static/bim-shell.js?v={{ asset_v }}"></script>
 </head>
 <body class="ds" data-bim-page="{{ title|default('') }}">
@@ -50,9 +50,20 @@
       {% set pg = ds_page(request.url.path) %}<div class="ds-top-title"><img class="ds-i3d ds-i3d-lg" src="/static/icons3d/{{ pg.img }}.png" alt="" aria-hidden="true"><span>{{ ds_titles.get(request.url.path, title) }}</span></div>
       <label class="ds-search"><img class="ds-i3d ds-i3d-sm" src="/static/icons3d/search.png" alt="" aria-hidden="true"><input id="dsSearch" type="search" placeholder="ابحث عن مهمة أو موظف" aria-label="بحث في المهام"></label>
       <span class="ds-today" id="dsToday"></span>
+      {% if user['role_code'] in ('admin','deputy','supervisor') %}
+      <div class="ds-bell" id="dsBell">
+        <button type="button" class="ds-bell-btn" id="dsBellBtn" aria-haspopup="true" aria-expanded="false" aria-controls="dsBellPanel" aria-label="التنبيهات"><img class="ds-i3d ds-i3d-sm" src="/static/icons3d/bell.png" alt="" aria-hidden="true"><span class="ds-bell-count" id="dsBellCount" hidden>0</span></button>
+        <div class="ds-bell-panel" id="dsBellPanel" role="dialog" aria-label="التنبيهات" hidden>
+          <div class="ds-bell-head"><b>التنبيهات</b><button type="button" class="btn-light btn-sm" id="dsBellAll">تعليم الكل كمقروء</button></div>
+          <div class="ds-bell-list" id="dsBellList"><p class="ds-bell-empty">لا توجد تنبيهات</p></div>
+        </div>
+      </div>
+      {% endif %}
       <span class="ds-state" id="dsState"><i></i><span>جاري التحقق</span></span>
     </header>
     <div class="ds-main" id="dsMain">
+      {% set dtabs = ds_tabs(request, permissions, task_view) %}
+      {% if dtabs %}<div class="ds-tabs-wrap"><nav class="ds-tabs" aria-label="أقسام الصفحة">{% for t in dtabs %}<a href="{{ t.href }}" data-tab="{{ t.key }}" class="ds-tab{% if t.active %} is-active{% endif %}"{% if t.active %} aria-current="page"{% endif %}>{{ t.label }}</a>{% endfor %}</nav></div>{% endif %}
 {% endif %}
 {% block content %}{% endblock %}
 {% if user %}
@@ -61,7 +72,7 @@
 </div>
 {% endif %}
 <script>window.companyBrand={{ company|tojson }};</script>
-<script src="/static/record-management.js?v=6.3.0"></script>
+<script src="/static/record-management.js?v={{ asset_v }}"></script>
 {% block scripts %}{% endblock %}
 </body>
 </html>

@@ -380,12 +380,12 @@ def test_sync_auth_records_header_or_query(env):
     m._SYNC_AUTH_SEEN.clear()
     cl = client(env)
     assert cl.get('/api/sync/pull', headers={'X-BIM-Sync-Secret': 's' * 32}).status_code == 200
-    assert cl.get('/api/sync/pull?secret=' + 's' * 32).status_code == 200   # still accepted until the Sheet is changed
+    assert cl.get('/api/sync/pull?secret=' + 's' * 32).status_code == 401   # old way removed in big_update
     assert cl.get('/api/sync/pull', headers={'X-BIM-Sync-Secret': 'wrong'}).status_code == 401
     c = m.connect()
     got = dict(c.execute("SELECT key,value FROM settings WHERE key LIKE 'sync.auth_last_%'").fetchall())
     c.close()
-    assert '/api/sync/pull' in got['sync.auth_last_header'] and '/api/sync/pull' in got['sync.auth_last_query']
+    assert '/api/sync/pull' in got['sync.auth_last_header'] and '/api/sync/pull' in got['sync.auth_last_query_refused']
     assert 's' * 32 not in ''.join(got.values())
 
 

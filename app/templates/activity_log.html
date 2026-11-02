@@ -6,4 +6,4 @@
 <div class="activity-summary"><strong id="activityCount" role="status"></strong><div class="toolbar"><button class="btn-light" id="activityPrev">السابق</button><button class="btn-light" id="activityNext">التالي</button></div></div>
 <section class="panel"><div class="scroll-box"><table><thead id="activityHead"></thead><tbody id="activityRows"></tbody></table></div></section>
 <section class="panel" id="changeDetails" hidden><div class="toolbar"><h2>تفاصيل التغيير</h2><button class="btn-light" id="closeChange">إغلاق</button></div><p>تُعرض الحقول التشغيلية المعروفة فقط. تُستبعد كلمات المرور والرموز ومحتويات الملفات والحقول الحساسة.</p><div class="form-grid"><div><h3>قبل</h3><pre id="changeBefore"></pre></div><div><h3>بعد</h3><pre id="changeAfter"></pre></div></div></section>
-</main>{% endblock %}{% block scripts %}<script src="/static/bim-activity-labels.js?v=6.3.0"></script><script src="/static/bim-activity-view.js?v=6.3.0"></script>{% endblock %}
+</main>{% endblock %}{% block scripts %}<script src="/static/bim-activity-labels.js?v={{ asset_v }}"></script><script src="/static/bim-activity-view.js?v={{ asset_v }}"></script>{% endblock %}

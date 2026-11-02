@@ -272,4 +272,6 @@ def init_db():
     migrate_access(c)
     from .security_center import migrate as migrate_security
     migrate_security(c)
+    from .inbox import migrate as migrate_inbox
+    migrate_inbox(c)
     c.close()

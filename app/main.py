@@ -29,12 +29,12 @@ def _asset_version():
     # service worker never keep an old design after an install. Owner saw a stale design on 2026-11-01.
     import hashlib
     h = hashlib.sha1()
-    for f in ('bim-ds.css', 'bim-shell.js', 'bim-ui-v510.js'):
-        try: h.update((ROOT / 'app' / 'static' / f).read_bytes())
+    for f in sorted((ROOT / 'app' / 'static').glob('*.[cj]s')):
+        try: h.update(f.read_bytes())
         except OSError: pass
     return h.hexdigest()[:10]
 ASSET_V = _asset_version()
-templates.env.globals.update(asset_v=ASSET_V, ds_nav=_shell_nav.nav, ds_icon=_shell_nav.icon, ds_titles=_shell_nav.TITLES, ds_page=_shell_nav.page)
+templates.env.globals.update(asset_v=ASSET_V, ds_nav=_shell_nav.nav, ds_icon=_shell_nav.icon, ds_titles=_shell_nav.TITLES, ds_page=_shell_nav.page, ds_tabs=_shell_nav.tabs)
 # Set by the run script of each process: 'lan' (8797, runs the workers), 'external' (8798, behind the tunnel),
 # 'test' (staging copy on 8799, no workers). Only 'lan' starts reminders, the Telegram queue and backups.
 GATEWAY = os.environ.get('BIM_GATEWAY', 'lan').strip().lower()
@@ -435,8 +435,8 @@ def _sync_secret():
 
 _SYNC_AUTH_SEEN={}
 def _note_sync_auth(via:str, path:str):
-    """Remember (at most once a minute) whether the Sheet authenticates with the header or with ?secret=.
-    CHECK_STATUS shows it, so we know when the old ?secret= way is no longer used and can be removed."""
+    """Remember (at most once a minute) when the Sheet authenticated with the header ('header'), or tried the old
+    ?secret= link that is no longer accepted ('query_refused', big_update). CHECK_STATUS shows both."""
     t=time.time()
     if t-_SYNC_AUTH_SEEN.get(via,0)<60: return
     _SYNC_AUTH_SEEN[via]=t
@@ -447,11 +447,13 @@ def _note_sync_auth(via:str, path:str):
     except Exception: pass
 
 def _sync_auth(req:Request):
+    # Header only (big_update): ?secret= in the link was never seen in any status report since 2026-10-31 and leaks
+    # the secret into proxy/tunnel logs. A request that still tries it is refused and recorded for the status report.
     header=req.headers.get('x-bim-sync-secret','')
-    secret=header or req.query_params.get('secret','')
-    if not _sync_secret() or not hmac.compare_digest(secret,_sync_secret()):
+    if not header and req.query_params.get('secret'): _note_sync_auth('query_refused',req.url.path)
+    if not _sync_secret() or not header or not hmac.compare_digest(header,_sync_secret()):
         raise HTTPException(401,'Sync secret غير صحيح')
-    _note_sync_auth('header' if header else 'query',req.url.path)
+    _note_sync_auth('header',req.url.path)
 
 def _task_sync_payload(c, tid:int):
     r=c.execute("""SELECT t.id,t.task_code,t.employee_id,COALESCE(e.name,'') employee_name,t.title,t.notes,
@@ -652,3 +654,9 @@ command_center.register(app,_sys.modules[__name__])
 
 from . import security_center
 security_center.register(app,_sys.modules[__name__])
+
+from . import inbox
+inbox.register(app,_sys.modules[__name__])
+
+from . import employee_profile
+employee_profile.register(app,_sys.modules[__name__])

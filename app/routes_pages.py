@@ -25,8 +25,20 @@ def dashboard(req: Request):
     nav=[(g,items) for g,items in nav if items]
     if 'users.manage' in perms(admin['user_id']):nav.append(('الإعدادات',[('/page-visibility','الصفحات الظاهرة')]))
     return templates.TemplateResponse(request=req,name='command_center.html',context={**ctx(req,'الرئيسية'),'cc_nav':nav})
+# "المهام": one page, four views (big_update). Each view keeps the permission of the page it replaces.
+TASK_VIEWS = {'cards': ('tasks.html', 'tasks.view', 'كل المهام'), 'table': ('tasks_table.html', 'tasks.view', 'المهام كجدول'),
+              'quick': ('manage.html', 'tasks.edit', 'إدارة المهام'), 'board': ('tasks_board.html', 'tasks.view', 'لوحة المهام')}
+
 @app.get('/tasks', response_class=HTMLResponse)
-def tasks_page(req: Request): need(req,'tasks.view'); return templates.TemplateResponse(request=req,name='tasks.html',context=ctx(req,'كل المهام'))
+def tasks_page(req: Request, view: str = 'cards'):
+    tpl, code, title = TASK_VIEWS.get(view) or TASK_VIEWS['cards']
+    need(req, code)
+    return templates.TemplateResponse(request=req, name=tpl, context={**ctx(req, title), 'task_view': view if view in TASK_VIEWS else 'cards'})
+
+def _to_view(req: Request, view: str):
+    # Old addresses keep working: same query string, the browser keeps any #fragment (e.g. /manage#12).
+    q = req.url.query
+    return RedirectResponse('/tasks?view=' + view + ('&' + q if q else ''), status_code=303)
 @app.get('/my-work', response_class=HTMLResponse)
 def my_work(req: Request):
     u = need(req, 'tasks.view')
@@ -36,10 +48,10 @@ def my_work(req: Request):
         raise HTTPException(403, 'الحساب غير مربوط بموظف')
     return templates.TemplateResponse(request=req, name='my_work.html', context=ctx(req, 'مهامي'))
 
-@app.get('/tasks-table', response_class=HTMLResponse)
-def tasks_table_page(req: Request): need(req,'tasks.view'); return templates.TemplateResponse(request=req,name='tasks_table.html',context=ctx(req,'المهام كجدول'))
-@app.get('/manage', response_class=HTMLResponse)
-def manage_page(req: Request): need(req,'tasks.edit'); return templates.TemplateResponse(request=req,name='manage.html',context=ctx(req,'إدارة المهام'))
+@app.get('/tasks-table')
+def tasks_table_page(req: Request): need(req,'tasks.view'); return _to_view(req, 'table')
+@app.get('/manage')
+def manage_page(req: Request): need(req,'tasks.edit'); return _to_view(req, 'quick')
 @app.get('/employees', response_class=HTMLResponse)
 def employees_page(req: Request): need(req,'employees.view'); return templates.TemplateResponse(request=req,name='employees.html',context=ctx(req,'الموظفون'))
 @app.get('/recurring', response_class=HTMLResponse)

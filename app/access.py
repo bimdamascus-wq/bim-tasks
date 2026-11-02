@@ -198,4 +198,5 @@ PUBLIC_PREFIXES=('/static/',)
 def page_permission(path):
     if path in PAGE_PERMS:return PAGE_PERMS[path]
     if path.startswith('/task/'):return 'tasks.view'
+    if path.startswith('/employee/'):return 'tasks.view'  # employee profile; the route narrows it to managers/own team
     return None

@@ -63,7 +63,7 @@ function row(t,kind){
     <button class="ck ${kind==='done'?'d':urgent?'u':''}" ${kind==='done'?'disabled':''} data-done="${t.id}" title="${kind==='done'?'منجزة':'تحديد كمنجزة'}" aria-label="تحديد كمنجزة"></button>
     <a class="t" href="/task/${t.id}"><span>${esc(t.title)}</span>${dl}<small class="mw">${esc(t.employee_name)} · ${esc(t.origin_label)}</small></a>
     <span class="chip c-${esc(t.origin)}">${esc(t.origin_label)}</span>
-    <span class="who">${av(t.employee_name)}<b>${esc(t.employee_name)}</b></span>
+    <span class="who">${av(t.employee_name)}<b>${t.employee_id?`<a class="emp-link" href="/employee/${t.employee_id}">${esc(t.employee_name)}</a>`:esc(t.employee_name)}</b></span>
     <span class="due ${kind==='late'?'r':''}">${dueText(t,kind)}</span></div>`;
 }
 function list(el,rows,kind,empty){$(el).innerHTML=rows.length?rows.map(t=>row(t,kind)).join(''):`<div class="empty">${empty}</div>`}
@@ -80,7 +80,7 @@ function render(){
   $('filter').innerHTML=member?`<span class="filter">${av(member.name)} مهام ${esc(member.name)} فقط <button type="button" id="clr" aria-label="إلغاء الفلتر">×</button></span>`:'';
   if(member)$('clr').onclick=()=>{emp=null;load()};
   $('sTeam').innerHTML=data.team.map(m=>`<button class="mem ${m.id===emp?'on':''}" data-emp="${m.id}">${av(m.name,22)}<span>${esc(m.name)}</span><span class="n num ${m.late?'r':''}">${ar(m.late||m.open)}</span></button>`).join('');
-  $('team').innerHTML=data.team.map(m=>`<button class="tm" data-emp="${m.id}">${av(m.name)}<div><b>${esc(m.name)}</b><small>${ar(m.open)} مفتوحة${m.late?' · '+ar(m.late)+' متأخرة':''}</small></div><div class="load"><div class="bar"><i style="width:${m.load}%"></i></div><small>${m.load>=75?'مرتفع':m.load>=40?'متوسط':'خفيف'}</small></div></button>`).join('')||'<div class="empty">اربط حسابات المسؤولين بأسمائهم ليظهروا هنا</div>';
+  $('team').innerHTML=data.team.map(m=>`<div class="tm-row"><a class="tm-profile" href="/employee/${m.id}" title="ملف ${esc(m.name)}" aria-label="ملف ${esc(m.name)}">ملف</a><button class="tm" data-emp="${m.id}">${av(m.name)}<div><b>${esc(m.name)}</b><small>${ar(m.open)} مفتوحة${m.late?' · '+ar(m.late)+' متأخرة':''}</small></div><div class="load"><div class="bar"><i style="width:${m.load}%"></i></div><small>${m.load>=75?'مرتفع':m.load>=40?'متوسط':'خفيف'}</small></div></button></div>`).join('')||'<div class="empty">اربط حسابات المسؤولين بأسمائهم ليظهروا هنا</div>';
   $('feed').innerHTML=data.feed.map(e=>`<a class="ev" href="/task/${e.task_id}">${av(e.name||'إ',26)}<div>${esc(e.text)}<time>${ago(e.at)}</time></div></a>`).join('')||'<div class="empty">لا يوجد نشاط بعد</div>';
   document.querySelectorAll('[data-emp]').forEach(b=>b.onclick=()=>{emp=+b.dataset.emp===emp?null:+b.dataset.emp;load()});
   document.querySelectorAll('[data-done]').forEach(b=>b.onclick=()=>done(+b.dataset.done,b));

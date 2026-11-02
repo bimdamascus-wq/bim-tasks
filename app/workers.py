@@ -320,6 +320,8 @@ def loop():
             try:process_offsite_backup()
             except Exception as offsite_error:print('Off-site backup error:',offsite_error)
             process_admin_notifications(); process_queue(); process_reminders(); process_recurring(); process_shift_automation(); process_group_reminders()
+            from .inbox import scan as inbox_scan
+            inbox_scan(force=True)  # notification bell (never raises)
             from .supervisor_summary import process as process_supervisor_summary
             try:process_supervisor_summary()
             except Exception as summary_error:print('Supervisor summary error:',summary_error)

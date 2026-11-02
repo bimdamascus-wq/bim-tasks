@@ -7,7 +7,7 @@ from starlette.concurrency import run_in_threadpool
 from .db import connect
 log=logging.getLogger('bim.activity')
 PAGES={'/':'الرئيسية','/tasks':'المهام','/tasks-table':'جدول المهام','/manage':'إدارة المهام','/my-team':'متابعة الفريق','/employees':'الموظفون','/users':'المستخدمون','/my-work':'مهامي','/audit':'سجل التغييرات','/activity-log':'السجل الشامل','/operations-reports':'التقارير التشغيلية','/team-performance':'أداء الفريق','/recurring':'المهام المتكررة','/company':'إعداد الشركة','/template-library':'قوالب العمل','/access-control':'الصلاحيات والقنوات','/handover':'تسليم الأعمال','/job-profiles':'المسميات الوظيفية','/notification-center':'مركز الإشعارات','/workload':'عبء العمل','/record-management':'إدارة السجلات','/telegram-center':'مركز تلغرام','/telegram-groups':'مجموعات تلغرام','/telegram-health':'صحة تلغرام','/telegram-dashboard':'تقارير تلغرام','/shift-center':'الشيفتات','/automation-center':'الأتمتة','/integrations':'التكاملات','/system-health':'صحة النظام','/archive':'الأرشيف','/sync':'المزامنة','/backup':'النسخ الاحتياطي','/iphone-setup':'إعداد الهاتف','/security':'الأمان والحماية','/permissions':'جدول الصلاحيات','/account':'حسابي','/logout':'تسجيل الخروج'}
-RESOURCES={'tasks':'المهام','users':'المستخدمون','employees':'الموظفون','templates':'قوالب العمل','recurring':'المهام المتكررة','company':'الشركة','handover':'تسليم الأعمال','record-management':'السجلات','lifecycle':'السجلات','telegram':'تلغرام','telegram-groups':'مجموعات تلغرام','shift-settings':'إعدادات الدوام','shift-messages':'رسائل الدوام','shift-exceptions':'استثناءات الدوام','group-reminders':'تذكيرات المجموعات','bim-job-profiles':'المسميات الوظيفية','bim-employee-profile':'ملف الموظف','backup':'النسخ الاحتياطي','sync':'المزامنة','attachments':'المرفقات','notification-settings':'الإشعارات','security':'الأمان','me':'حسابي'}
+RESOURCES={'tasks':'المهام','inbox':'التنبيهات','users':'المستخدمون','employees':'الموظفون','templates':'قوالب العمل','recurring':'المهام المتكررة','company':'الشركة','handover':'تسليم الأعمال','record-management':'السجلات','lifecycle':'السجلات','telegram':'تلغرام','telegram-groups':'مجموعات تلغرام','shift-settings':'إعدادات الدوام','shift-messages':'رسائل الدوام','shift-exceptions':'استثناءات الدوام','group-reminders':'تذكيرات المجموعات','bim-job-profiles':'المسميات الوظيفية','bim-employee-profile':'ملف الموظف','backup':'النسخ الاحتياطي','sync':'المزامنة','attachments':'المرفقات','notification-settings':'الإشعارات','security':'الأمان','me':'حسابي'}
 def migrate(c):
  c.executescript('''CREATE TABLE IF NOT EXISTS user_activity(
  id INTEGER PRIMARY KEY AUTOINCREMENT,user_id INTEGER,username TEXT,kind TEXT NOT NULL,
@@ -22,7 +22,7 @@ def migrate(c):
  ''')
 def page_path(value):
  p=urlsplit(str(value or '')).path
- return p if p in PAGES or re.fullmatch(r'/task/\d+',p) else ''
+ return p if p in PAGES or re.fullmatch(r'/(task|employee)/\d+',p) else ''
 def record(c,u,kind,label,gateway,ip='',page='',target='',result='observed',status=None):
  c.execute('INSERT INTO user_activity(user_id,username,kind,label,page,target,result,http_status,gateway,ip_address) VALUES(?,?,?,?,?,?,?,?,?,?)',
  (u['user_id'] if u else None,u['username'] if u else '',kind,label[:160],page[:160],target[:180],result,status,gateway,ip[:100]))
@@ -66,7 +66,7 @@ def register(app,m):
   return response
  def store(req,u,path,status,ctype,disposition=''):
   page=page_path(path);kind=None
-  if req.method=='GET' and page:kind='page';label='فتح صفحة: '+PAGES.get(page,'تفاصيل المهمة')
+  if req.method=='GET' and page:kind='page';label='فتح صفحة: '+PAGES.get(page,'ملف الموظف' if page.startswith('/employee/') else 'تفاصيل المهمة')
   elif req.method not in ('GET','HEAD','OPTIONS') and path.startswith('/api'):
    kind='request';resource=path.split('/')[2];label={'POST':'تنفيذ / إضافة','PUT':'حفظ','PATCH':'تعديل','DELETE':'حذف'}.get(req.method,'تنفيذ')+' — '+RESOURCES.get(resource,'إجراء بالنظام')
   elif req.method=='GET' and ('attachment' in disposition.lower() or path.endswith(('.csv','.xlsx','.pdf')) or path.startswith('/api/attachments/')):kind='download';label='طلب تنزيل / تصدير'

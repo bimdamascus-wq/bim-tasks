@@ -11,7 +11,7 @@ function init(){
     const act=side.querySelector('.is-active');if(act&&act.scrollIntoView)act.scrollIntoView({block:'nearest'});
   }
   const q=$('dsSearch');
-  if(q)q.addEventListener('keydown',e=>{if(e.key==='Enter'&&q.value.trim())location.href='/tasks-table?q='+encodeURIComponent(q.value.trim())});
+  if(q)q.addEventListener('keydown',e=>{if(e.key==='Enter'&&q.value.trim())location.href='/tasks?view=table&q='+encodeURIComponent(q.value.trim())});
   const t=$('dsToday');
   if(t)t.textContent=new Intl.DateTimeFormat('ar-SY',{weekday:'long',day:'numeric',month:'long'}).format(new Date());
   const st=$('dsState');
@@ -27,6 +27,36 @@ function init(){
     st.className='ds-state is-off';st.lastElementChild.textContent='غير متصل';
   }
   health();setInterval(health,15000);
+  bell();
+}
+/* /tasks#table, #quick, #board, #cards open that view of "المهام" (old links and bookmarks). */
+if(location.pathname==='/tasks'&&/^#(cards|table|quick|board)$/.test(location.hash)&&!new URLSearchParams(location.search).get('view')){
+  location.replace('/tasks?view='+location.hash.slice(1));
+}
+/* Employee name -> employee profile (pages build their rows in JS). */
+window.bimEmpLink=(id,name)=>id?`<a class="emp-link" href="/employee/${encodeURIComponent(id)}">${window.bimEsc?bimEsc(name):name}</a>`:(window.bimEsc?bimEsc(name||''):(name||''));
+/* Notification bell (managers and supervisors): unread count, list, mark as read, click opens the task. */
+function bell(){
+  const box=$('dsBell');if(!box)return;
+  const btn=$('dsBellBtn'),panel=$('dsBellPanel'),list=$('dsBellList'),count=$('dsBellCount'),all=$('dsBellAll');
+  const ICON={late:'⏰',comment:'💬',attachment:'📎',done:'✅',new:'🆕'};
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const ar=v=>String(v??'').replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[+d]);
+  const when=v=>{const d=new Date(String(v).replace(' ','T')+'Z');if(isNaN(d))return '';const m=Math.round((Date.now()-d)/60000);
+    if(m<1)return 'الآن';if(m<60)return 'منذ '+ar(m)+' د';if(m<1440)return 'منذ '+ar(Math.round(m/60))+' س';
+    return new Intl.DateTimeFormat('ar-SY',{day:'numeric',month:'long',hour:'numeric',minute:'2-digit'}).format(d)};
+  let items=[];
+  async function load(){try{const r=await fetch('/api/inbox',{cache:'no-store'});if(!r.ok)return;const d=await r.json();items=d.items||[];
+    count.hidden=!d.unread;count.textContent=d.unread>99?'٩٩+':ar(d.unread);btn.setAttribute('aria-label','التنبيهات'+(d.unread?': '+ar(d.unread)+' غير مقروءة':''));draw()}catch(e){}}
+  function draw(){list.innerHTML=items.length?items.map(i=>`<a class="ds-bell-item${i.read_at?'':' is-unread'}" href="${i.task_id?'/task/'+i.task_id:'#'}" data-id="${i.id}"><span class="ic" aria-hidden="true">${ICON[i.kind]||'🔔'}</span><span class="tx">${esc(i.text)}<small>${when(i.created_at)}</small></span></a>`).join(''):'<p class="ds-bell-empty">لا توجد تنبيهات</p>'}
+  const post=u=>fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'}).catch(()=>{});
+  const open=v=>{panel.hidden=!v;btn.setAttribute('aria-expanded',String(v));if(v)load()};
+  btn.addEventListener('click',e=>{e.stopPropagation();open(panel.hidden)});
+  document.addEventListener('click',e=>{if(!panel.hidden&&!box.contains(e.target))open(false)});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden){open(false);btn.focus()}});
+  list.addEventListener('click',async e=>{const a=e.target.closest('.ds-bell-item');if(!a)return;e.preventDefault();await post('/api/inbox/'+a.dataset.id+'/read');if(a.getAttribute('href')!=='#')location.href=a.getAttribute('href');else load()});
+  all.addEventListener('click',async()=>{await post('/api/inbox/read-all');load()});
+  load();setInterval(()=>{if(!document.hidden)load()},60000);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 
@@ -62,8 +92,26 @@ function arDates(root){
   }
 }
 function refreshDate(inp){const w=inp.parentNode;if(!w||!w.classList||!w.classList.contains('ds-date'))return;const t=dateText(inp);const el=w.lastElementChild;el.textContent=t||(inp.type==='date'?'بدون تاريخ':'بدون موعد');el.classList.toggle('is-empty',!t);w.classList.add('has-text')}
+/* Standing rule (owner 2026-11-02): every table column is as wide as its longest cell, no wider. Short columns never
+   wrap; only a long-text column (task title, notes, message...) may wrap, up to a sensible width (bim-ds.css). */
+const LONG=/المهمة|المهام|العنوان|ملاحظ|الرسالة|النص|الوصف|التفاصيل|السبب|التعليق|الخطأ|الإجراء الذي|البيان|المحتوى|التعليمات/;
+function fitTables(root){
+  for(const t of root.querySelectorAll('table')){
+    if(t.closest('.ds-side,.bim-excel-menu'))continue;
+    const p=t.parentElement;
+    if(p&&!t.closest('.scroll-box,.ds-tscroll,.table-wrap')&&getComputedStyle(p).overflowX==='visible'){const w=document.createElement('div');w.className='ds-tscroll';p.insertBefore(w,t);w.append(t)}
+    const heads=[...(t.tHead?.rows[0]?.cells||[])];const body=t.tBodies[0];if(!body)continue;
+    const n=Math.max(heads.length,...[...body.rows].slice(0,60).map(r=>r.cells.length),0);
+    for(let i=0;i<n;i++){
+      const h=heads[i];let long=h&&LONG.test(h.textContent||'');
+      if(!long){let max=0;for(const r of [...body.rows].slice(0,80)){const c=r.cells[i];if(c&&c.colSpan===1&&!c.querySelector('input,select,textarea,button')){max=Math.max(max,(c.textContent||'').trim().length)}}long=max>48}
+      if(h)h.classList.toggle('ds-col-wrap',!!long);
+      for(const r of body.rows){const c=r.cells[i];if(c&&c.colSpan===1)c.classList.toggle('ds-col-wrap',!!long)}
+    }
+  }
+}
 let pending=null;
-function enhance(){pending=null;try{tagCells(document);arDates(document)}catch(e){}}
+function enhance(){pending=null;try{tagCells(document);arDates(document);fitTables(document)}catch(e){}}
 function schedule(){if(!pending)pending=setTimeout(enhance,150)}
 function startEnhance(){enhance();new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true});setInterval(()=>{for(const i of document.querySelectorAll('input[data-ds-date]'))refreshDate(i)},2000)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startEnhance);else startEnhance();

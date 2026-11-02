@@ -10,23 +10,37 @@ from .db import connect
 # (group, [(path, label, icon)])
 GROUPS = [
     ('الرئيسية', [('/', 'لوحة المدير', 'home'), ('/my-work', 'مهامي', 'check'), ('/my-team', 'متابعة الفريق', 'team')]),
-    ('المهام', [('/tasks', 'كل المهام', 'list'), ('/tasks-table', 'المهام كجدول', 'table'), ('/manage', 'إدارة المهام', 'edit'),
-                ('/recurring', 'المهام المتكررة', 'repeat'), ('/archive', 'الأرشيف', 'archive')]),
+    ('المهام', [('/tasks', 'المهام', 'list'), ('/recurring', 'المهام المتكررة', 'repeat'), ('/archive', 'الأرشيف', 'archive')]),
     ('الفريق', [('/employees', 'الموظفون', 'team'), ('/users', 'المستخدمون', 'user'), ('/access-control', 'الصلاحيات والقنوات', 'key'),
                 ('/job-profiles', 'المسميات الوظيفية', 'badge'), ('/workload', 'عبء العمل', 'gauge'), ('/handover', 'تسليم الأعمال', 'swap'),
                 ('/shift-center', 'الشيفتات', 'clock')]),
-    ('التقارير والسجلات', [('/team-performance', 'أداء الفريق', 'chart'), ('/operations-reports', 'التقارير التشغيلية', 'chart'),
-                           ('/activity-log', 'السجل الشامل', 'history'), ('/audit', 'سجل التغييرات', 'history'),
+    ('التقارير والسجلات', [('/team-performance', 'التقارير', 'chart'), ('/activity-log', 'السجلات', 'history'),
                            ('/record-management', 'إدارة السجلات والحذف', 'archive')]),
     ('الأتمتة والربط', [('/template-library', 'قوالب العمل', 'layers'), ('/automation-center', 'مركز الأتمتة', 'bolt'),
                         ('/notification-center', 'مركز الإشعارات', 'bell'), ('/telegram-center', 'Telegram', 'send'),
-                        ('/telegram-groups', 'مجموعات Telegram', 'send'), ('/telegram-health', 'صحة Telegram', 'pulse'),
-                        ('/telegram-dashboard', 'تقارير Telegram', 'chart'), ('/iphone-setup', 'إعداد الهاتف', 'phone'),
-                        ('/integrations', 'الربط والتكامل', 'link')]),
+                        ('/iphone-setup', 'إعداد الهاتف', 'phone'), ('/integrations', 'الربط والتكامل', 'link')]),
     ('النظام', [('/security', 'الأمان والحماية', 'shield'), ('/permissions', 'جدول الصلاحيات', 'key'), ('/company', 'إعداد الشركة', 'building'),
                 ('/page-visibility', 'الصفحات الظاهرة', 'eye'), ('/system-health', 'صحة النظام', 'pulse'), ('/sync', 'مزامنة Google Sheet', 'sync'),
                 ('/backup', 'النسخ الاحتياطي', 'shield')]),
 ]
+
+# Pages merged into one menu entry (big_update, owner 2026-11-02): the entry opens the first tab this account may
+# open and the tab bar on top of the page (base.html, tabs()) switches between them. Every old address still works:
+# /tasks-table and /manage redirect to their view of /tasks, the other tabs keep their own address.
+# (tab key, label, address, permission or None = the address' own page permission)
+TABS = {
+    'tasks': [('cards', 'بطاقات', '/tasks?view=cards', 'tasks.view'), ('table', 'جدول', '/tasks?view=table', 'tasks.view'),
+              ('quick', 'تعديل سريع', '/tasks?view=quick', 'tasks.edit'), ('board', 'لوحة', '/tasks?view=board', 'tasks.view')],
+    'telegram': [('/telegram-center', 'المركز وربط الموظفين', '/telegram-center', None), ('/telegram-groups', 'المجموعات', '/telegram-groups', None),
+                 ('/telegram-health', 'الصحة والطابور', '/telegram-health', None), ('/telegram-dashboard', 'التقارير', '/telegram-dashboard', None)],
+    'logs': [('/activity-log', 'السجل الشامل', '/activity-log', None), ('/audit', 'سجل التغييرات', '/audit', None)],
+    'reports': [('/team-performance', 'أداء الفريق', '/team-performance', None), ('/operations-reports', 'التقارير التشغيلية', '/operations-reports', None)],
+}
+# menu entry -> its tab group
+MERGED = {'/tasks': 'tasks', '/telegram-center': 'telegram', '/activity-log': 'logs', '/team-performance': 'reports'}
+TAB_OF = {path: g for g, items in TABS.items() if g != 'tasks' for path, _, _, _ in items}
+TAB_OF.update({'/tasks': 'tasks'})
+MENU_OF = {path: menu for menu, g in MERGED.items() for path in ([t[2] for t in TABS[g]] if g != 'tasks' else ['/tasks'])}
 
 ICONS = {
     'home': 'M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z',
@@ -94,7 +108,11 @@ ICON3D = {
 TITLES = {p: l for _, items in GROUPS for p, l, _ in items}
 PAGE_ICON = {p: ic for _, items in GROUPS for p, _, ic in items}
 PAGE_ICON['/account'] = 'account'
-TITLES.update({'/account': 'حسابي'})
+TITLES.update({'/account': 'حسابي', '/telegram-center': 'Telegram', '/telegram-groups': 'Telegram', '/telegram-health': 'Telegram',
+               '/telegram-dashboard': 'Telegram', '/activity-log': 'السجلات', '/audit': 'السجلات',
+               '/team-performance': 'التقارير', '/operations-reports': 'التقارير'})
+for _p in ('/telegram-groups', '/telegram-health', '/telegram-dashboard'): PAGE_ICON[_p] = 'send'
+PAGE_ICON.update({'/audit': 'history', '/operations-reports': 'chart'})
 
 
 def _hidden():
@@ -128,11 +146,20 @@ def nav(user, permissions, path='/'):
                 continue
             if p == '/my-work' and role != 'employee':  # the page sends everyone else to /tasks
                 continue
-            need = access.page_permission(p)
-            if need and need not in perms:
-                continue
-            active = path == p or (p != '/' and path.startswith(p + '/'))
-            item = {'path': p, 'label': label, 'icon': ICONS[icon], 'active': active, 'color': COLORS.get(p, 'blue'), 'img': ICON3D.get(p, 'clipboard')}
+            group_key = MERGED.get(p)
+            if group_key:
+                allowed = [t for t in tabs_for(group_key, perms)]
+                if not allowed:
+                    continue
+                href = allowed[0][2] if group_key != 'tasks' else '/tasks'
+                active = MENU_OF.get(path) == p
+            else:
+                need = access.page_permission(p)
+                if need and need not in perms:
+                    continue
+                href = p
+                active = path == p or (p != '/' and path.startswith(p + '/'))
+            item = {'path': href, 'label': label, 'icon': ICONS[icon], 'active': active, 'color': COLORS.get(p, 'blue'), 'img': ICON3D.get(p, 'clipboard')}
             (more if p in hidden and p not in ('/', '/my-work', '/my-team') else links).append(item)
         if links:
             out.append((group, links))
@@ -141,11 +168,35 @@ def nav(user, permissions, path='/'):
     return out
 
 
+def tabs_for(group_key, perms):
+    perms = set(perms or ())
+    out = []
+    for key, label, href, code in TABS[group_key]:
+        code = code or access.page_permission(href)
+        if not code or code in perms:
+            out.append((key, label, href))
+    return out
+
+
+def tabs(request, permissions, task_view=None):
+    """Tab bar of a merged page: [{'label','href','active'}], or [] when the page is not part of a merged group or
+    the account may open only one of its tabs."""
+    path = request.url.path
+    group_key = TAB_OF.get(path)
+    if not group_key:
+        return []
+    items = tabs_for(group_key, permissions)
+    if len(items) < 2:
+        return []
+    cur = (task_view or 'cards') if group_key == 'tasks' else path
+    return [{'key': k, 'label': l, 'href': h, 'active': k == cur} for k, l, h in items]
+
+
 def icon(name):
     return ICONS.get(name, '')
 
 
 def page(path):
     """3D icon of the page shown in the top bar: {'icon', 'color'}."""
-    key = path if path in PAGE_ICON else ('/tasks' if path.startswith('/task/') else '')
+    key = path if path in PAGE_ICON else ('/tasks' if path.startswith('/task/') else ('/employees' if path.startswith('/employee/') else ''))
     return {'icon': ICONS.get(PAGE_ICON.get(key, 'list'), ''), 'color': COLORS.get(key, 'blue'), 'img': ICON3D.get(key, 'clipboard')}

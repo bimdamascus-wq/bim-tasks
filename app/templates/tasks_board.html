@@ -1,0 +1,29 @@
+{% extends "base.html" %}{% block content %}<main class="page-shell"><section class="page-title"><div><h1>لوحة المهام</h1><p>اسحب البطاقة إلى عمود آخر لتغيير حالتها. على الهاتف: اختر الحالة من القائمة تحت كل مهمة.</p></div><div class="toolbar"><input id="bq" type="search" placeholder="بحث داخل المهام" aria-label="بحث داخل المهام"><select id="bemp" aria-label="الموظف"><option value="">كل الموظفين</option></select></div></section>
+<div id="boardState" class="notice">جاري تحميل المهام...</div>
+<div class="kb" id="board" aria-label="لوحة المهام حسب الحالة"></div>
+<p class="muted-mini kb-note">عمود «تم» يعرض ما أُنجز خلال آخر ٧ أيام. المهام الملغاة لا تظهر في اللوحة.</p>
+</main>{% endblock %}
+{% block scripts %}<script>
+const COLS=[['جديدة','new'],['بدأت','start'],['قيد التنفيذ','prog'],['بانتظار','wait'],['تم','done']];
+let BT=[];const SHORT=new Intl.DateTimeFormat('ar-SY',{weekday:'short',day:'numeric',month:'long',hour:'numeric',minute:'2-digit'});const sd=v=>{const d=new Date(String(v).replace(' ','T'));return isNaN(d)?bimArDigits(v):SHORT.format(d)};const lateB=t=>t.due_at&&!['تم','ملغاة'].includes(t.status)&&new Date(String(t.due_at).replace(' ','T'))<new Date();
+async function loadBoard(){try{const [ts,es]=await Promise.all([bimRequest('/api/tasks'),bimRequest('/api/task-options/employees').catch(()=>[])]);BT=ts;
+  const cur=bemp.value;bemp.innerHTML='<option value="">كل الموظفين</option>'+es.map(e=>`<option value="${e.id}">${bimEsc(e.name)}</option>`).join('');bemp.value=cur;
+  boardState.style.display='none';drawBoard()}catch(e){boardState.className='notice error';boardState.textContent='تعذر تحميل المهام: '+e.message}}
+function drawBoard(){const q=bq.value.trim(),m=bemp.value,since=Date.now()-7*864e5;
+  const a=BT.filter(t=>t.status!=='ملغاة'&&(!m||String(t.employee_id)===m)&&(!q||(`${t.employee_name||''} ${t.title||''}`).includes(q))&&(t.status!=='تم'||!t.completed_at||new Date(String(t.completed_at).replace(' ','T')+'Z')>=since));
+  board.innerHTML=COLS.map(([s,k])=>{const items=a.filter(t=>t.status===s).sort((x,y)=>(lateB(y)-lateB(x))||String(x.due_at||'9').localeCompare(String(y.due_at||'9')));
+   return `<section class="kb-col kb-${k}" data-status="${s}"><header><b>${s}</b><span>${bimArDigits(items.length)}</span></header><div class="kb-list">${items.map(card).join('')||'<p class="kb-empty">لا توجد مهام</p>'}</div></section>`}).join('')}
+function card(t){return `<article class="kb-card ${lateB(t)?'late':''}" draggable="true" data-id="${t.id}"><a class="kb-title" href="/task/${t.id}">${bimEsc(t.title)}</a>
+ <div class="kb-meta">${t.employee_id?`<a class="emp-link" href="/employee/${t.employee_id}">${bimEsc(t.employee_name)}</a>`:bimEsc(t.employee_name)} · <span>${bimEsc(t.priority)}</span>${t.due_at?' · ⏰ '+sd(t.due_at):''}${lateB(t)?' · <b>متأخرة</b>':''}</div>
+ <select class="kb-move" aria-label="تغيير حالة: ${bimEsc(t.title)}" data-id="${t.id}">${COLS.map(([s])=>`<option ${s===t.status?'selected':''}>${s}</option>`).join('')}</select></article>`}
+async function move(id,status){const t=BT.find(x=>x.id===id);if(!t||t.status===status)return;const old=t.status;t.status=status;drawBoard();
+  try{await bimRequest('/api/tasks/'+id+'/status',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});bimToast('صارت «'+status+'»')}
+  catch(e){t.status=old;drawBoard();bimToast(e.message,'err')}loadBoard()}
+let dragId=null;
+board.addEventListener('dragstart',e=>{const c=e.target.closest('.kb-card');if(!c)return;dragId=+c.dataset.id;c.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',c.dataset.id)});
+board.addEventListener('dragend',e=>{e.target.closest('.kb-card')?.classList.remove('dragging');board.querySelectorAll('.kb-over').forEach(x=>x.classList.remove('kb-over'))});
+board.addEventListener('dragover',e=>{const col=e.target.closest('.kb-col');if(!col||dragId==null)return;e.preventDefault();board.querySelectorAll('.kb-over').forEach(x=>x!==col&&x.classList.remove('kb-over'));col.classList.add('kb-over')});
+board.addEventListener('drop',e=>{const col=e.target.closest('.kb-col');if(!col||dragId==null)return;e.preventDefault();const id=dragId;dragId=null;col.classList.remove('kb-over');move(id,col.dataset.status)});
+board.addEventListener('change',e=>{const s=e.target.closest('.kb-move');if(s)move(+s.dataset.id,s.value)});
+bq.addEventListener('input',drawBoard);bemp.addEventListener('change',drawBoard);loadBoard();
+</script>{% endblock %}

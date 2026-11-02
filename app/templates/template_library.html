@@ -1,4 +1,4 @@
 {% extends "base.html" %}
 {% block head %}<style>.bundle-panel,fieldset{padding:18px;margin:14px 0;border:1px solid #ddd;border-radius:10px}.bundle-panel label,.bundle-grid label{display:block;margin:10px 0}.bundle-panel input:not([type=checkbox]),.bundle-panel textarea,.bundle-panel select{display:block;width:100%;box-sizing:border-box}.bundle-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}button{margin:4px}</style>{% endblock %}
 {% block content %}<main style="max-width:1180px;margin:auto;padding:24px"><h1>{{ title }}</h1><p id="uMessage" role="status"></p><div id="universalApp" data-page="template_library"></div></main>{% endblock %}
-{% block scripts %}<script src="/static/template-bundles.js?v=6.3.0"></script>{% endblock %}
+{% block scripts %}<script src="/static/template-bundles.js?v={{ asset_v }}"></script>{% endblock %}

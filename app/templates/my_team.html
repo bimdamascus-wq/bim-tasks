@@ -32,7 +32,7 @@ function renderTeam(){const q=teamSearch.value.trim(),m=teamMember.value;
  a.sort((x,y)=>(isLate(y)-isLate(x))||String(x.due_at||'9').localeCompare(String(y.due_at||'9')));
  teamEmpty.style.display=a.length?'none':'block';
  teamCards.innerHTML=a.map(t=>`<div class="team-card ${isLate(t)?'late':''}" id="team-task-${t.id}"><h3><a href="/task/${t.id}">${bimEsc(t.title)}</a></h3>
- <div class="meta">👤 ${bimEsc(t.employee_name)} · ${bimEsc(t.priority)}${t.due_at?' · ⏰ '+bimDate(t.due_at):''}${isLate(t)?' · <b>متأخرة</b>':''}${t.viewed_at?'':' · 👁️ لم تُفتح'}</div>
+ <div class="meta">👤 ${t.employee_id?bimEmpLink(t.employee_id,t.employee_name):bimEsc(t.employee_name)} · ${bimEsc(t.priority)}${t.due_at?' · ⏰ '+bimDate(t.due_at):''}${isLate(t)?' · <b>متأخرة</b>':''}${t.viewed_at?'':' · 👁️ لم تُفتح'}</div>
  <div class="row"><select aria-label="الحالة" onchange="teamStatus(${t.id},this.value)">${TEAM_STATUSES.map(s=>`<option ${s===t.status?'selected':''}>${s}</option>`).join('')}</select>
  ${t.is_group?'':`<select aria-label="تحويل إلى" onchange="teamAssign(${t.id},this.value)">${teamPeople.map(e=>`<option value="${e.id}" ${+e.id===+t.employee_id?'selected':''}>${bimEsc(e.name)}</option>`).join('')}</select>`}
  <button class="btn-sm btn-light" onclick="teamRemind(${t.id},this)">🔔 تذكير</button></div></div>`).join('')}

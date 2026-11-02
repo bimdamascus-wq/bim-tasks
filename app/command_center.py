@@ -7,16 +7,18 @@ from .delegation import decorate
 
 # Every page that can be shown or hidden from the menu. The home page and this settings page are always visible.
 PAGES=[
- ('العمل اليومي',[('/tasks','كل المهام'),('/tasks-table','المهام كجدول'),('/manage','إدارة المهام'),('/my-team','متابعة الفريق'),('/my-work','مهامي'),('/archive','الأرشيف')]),
+ ('العمل اليومي',[('/tasks','المهام (بطاقات، جدول، تعديل سريع، لوحة)'),('/my-team','متابعة الفريق'),('/my-work','مهامي'),('/archive','الأرشيف')]),
  ('الفريق',[('/employees','الموظفون'),('/users','المستخدمون'),('/access-control','الصلاحيات والقنوات'),('/job-profiles','المسميات الوظيفية'),('/workload','عبء العمل'),('/handover','تسليم الأعمال'),('/shift-center','الشيفتات')]),
  ('الأتمتة',[('/recurring','المهام المتكررة'),('/template-library','قوالب العمل'),('/automation-center','مركز الأتمتة'),('/notification-center','مركز الإشعارات')]),
- ('Telegram والهاتف',[('/telegram-center','مركز Telegram'),('/telegram-groups','مجموعات Telegram'),('/telegram-health','صحة Telegram'),('/telegram-dashboard','تقارير Telegram'),('/iphone-setup','إعداد الهاتف'),('/integrations','الربط والتكامل')]),
- ('التقارير والسجلات',[('/team-performance','أداء الفريق'),('/operations-reports','التقارير التشغيلية'),('/activity-log','سجل النشاط'),('/audit','سجل التغييرات'),('/record-management','إدارة السجلات')]),
+ ('Telegram والهاتف',[('/telegram-center','Telegram (المركز، المجموعات، الصحة، التقارير)'),('/iphone-setup','إعداد الهاتف'),('/integrations','الربط والتكامل')]),
+ ('التقارير والسجلات',[('/team-performance','التقارير (أداء الفريق، التشغيلية)'),('/activity-log','السجلات (الشامل، التغييرات)'),('/record-management','إدارة السجلات')]),
  ('النظام',[('/security','الأمان والحماية'),('/permissions','جدول الصلاحيات'),('/company','إعداد الشركة'),('/system-health','صحة النظام'),('/sync','مزامنة Google Sheet'),('/backup','النسخ الاحتياطي')]),
 ]
 ALL_PATHS={p for _,items in PAGES for p,_ in items}
-DEFAULT_HIDDEN=['/job-profiles','/template-library','/workload','/handover','/automation-center','/operations-reports',
-                '/telegram-dashboard','/audit','/integrations','/record-management','/company']
+# Merged pages (big_update): '/telegram-center', '/activity-log' and '/team-performance' stand for their whole tab group;
+# the old tab paths in a saved setting are simply ignored (filtered by ALL_PATHS).
+DEFAULT_HIDDEN=['/job-profiles','/template-library','/workload','/handover','/automation-center',
+                '/integrations','/record-management','/company']
 SETTING='ui.hidden_pages'
 
 def hidden_pages(c):

@@ -68,7 +68,7 @@ async function load(){
   try{
     rows=await bimRequest('/api/employees?all=1');
     $('body').innerHTML=rows.map(e=>`<tr>
-      <td class="name-red">${bimEsc(e.name)}</td>
+      <td class="name-red">${bimEmpLink(e.id,e.name)}</td>
       <td>${bimEsc(e.department||'—')}</td>
       <td>${bimArDigits(e.open_tasks||0)}</td>
       <td>${e.telegram_chat_id?'✅ مربوط':'غير مربوط'}${e.telegram_chat_id?`<small style="display:block">${bimEsc(e.telegram_chat_id)}</small>`:''}</td>
