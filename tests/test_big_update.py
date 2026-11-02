@@ -59,6 +59,19 @@ def test_employee_profile_scope(env):
     assert boss.get('/employee/99999').status_code == 404
 
 
+def _drop(env, *tids):
+    # The test database is shared by every test file: remove what this file created so counts elsewhere stay right.
+    c = env['m'].connect()
+    try:
+        for t in tids:
+            for table in ('inbox_items', 'task_comments', 'task_attachments', 'task_events', 'task_reminders', 'task_participants', 'notifications', 'bim_completion_entries'):
+                try: c.execute(f'DELETE FROM {table} WHERE task_id=?', (t,))
+                except Exception: pass
+            c.execute('DELETE FROM tasks WHERE id=?', (t,))
+    finally:
+        c.close()
+
+
 def _inbox(env, cl):
     env['m'].inbox.scan(force=True)
     return cl.get('/api/inbox').json()
@@ -70,6 +83,13 @@ def test_bell_items_and_scope(env):
     m.inbox.scan(force=True)  # sets the starting point
     mine = task(boss, ids['عضو فريق'], title='مهمة الجرس')
     theirs = task(boss, ids['موظف آخر'], title='مهمة خارج الفريق')
+    try:
+        _bell_checks(env, boss, samer, member, mine, theirs)
+    finally:
+        _drop(env, mine, theirs)
+
+
+def _bell_checks(env, boss, samer, member, mine, theirs):
     assert member.post(f'/api/tasks/{mine}/comments', json={'body': 'وصلت'}).status_code == 200
     assert boss.post(f'/api/tasks/{theirs}/comments', json={'body': 'ملاحظة المدير'}).status_code == 200
     assert member.patch(f'/api/tasks/{mine}/status', json={'status': 'تم'}).status_code == 200
@@ -97,9 +117,12 @@ def test_bell_late_once_per_due(env):
     boss = client(env, 'boss')
     m.inbox.scan(force=True)
     tid = task(boss, ids['عضو فريق'], title='ستتأخر')
-    c = m.connect()
-    c.execute("UPDATE tasks SET due_at=strftime('%Y-%m-%dT%H:%M',datetime('now','localtime','-1 hours')) WHERE id=?", (tid,))
-    c.close()
-    late = lambda: [i for i in _inbox(env, boss)['items'] if i['task_id'] == tid and i['kind'] == 'late']
-    assert len(late()) == 1
-    assert len(late()) == 1
+    try:
+        c = m.connect()
+        c.execute("UPDATE tasks SET due_at=strftime('%Y-%m-%dT%H:%M',datetime('now','localtime','-1 hours')) WHERE id=?", (tid,))
+        c.close()
+        late = lambda: [i for i in _inbox(env, boss)['items'] if i['task_id'] == tid and i['kind'] == 'late']
+        assert len(late()) == 1
+        assert len(late()) == 1
+    finally:
+        _drop(env, tid)
