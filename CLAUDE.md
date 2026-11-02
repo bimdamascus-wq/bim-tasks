@@ -226,3 +226,12 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   C) split main.py with no behaviour change; D) new pages one or two at a time, old pages kept until the new ones are accepted;
   supervisor mobile page early because it is new, not a replacement.
 
+
+## Session 7 (2026-11-02)
+- Report 18:48: server = 9c2cf82 (`tiles_menu`) on 8797/8798; 8799 test copy not running (copy dated 2026-10-31 —
+  refresh it with TEST_COPY_CREATE.cmd before INSTALL_TO_TEST). `main` fast-forwarded to 9c2cf82. `?secret=` never seen.
+  Unknown python processes on ports 8080 and 8070 (started 11/01 17:27 and 11/02 09:39) — not ours, ask the owner.
+- `big_update` coded on branch `claude/modest-faraday-syi9e5` (commit 50acce9), NOT built/shipped: preview for approval
+  https://claude.ai/artifact/SRC7ewHzffx1xuE6H4apDg — wait for "تمام", then cmp/contrast, then build with BASE 9c2cf82.
+  Deviations told to the owner: menu 36 -> 29 (only the requested merges); late bell once per task+due (not daily);
+  Telegram/logs/reports tabs keep their old addresses (only /tasks-table and /manage redirect).
