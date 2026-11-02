@@ -177,6 +177,11 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   `?v={{ asset_v }}` (hash of bim-ds.css, bim-shell.js, bim-ui-v510.js; main.ASSET_V) and the service worker serves
   /static css/js network-first (cache bim-tasks-ds-3). Package `tiles_menu` (base 7195f1f) given — NOT yet confirmed.
 
+- 2026-11-02: owner confirmed the automatic 02:00 off-site backup ARRIVED on Telegram (closed). Supervisor 18:00 summary
+  not checked by him yet. `tiles_menu` install not confirmed yet. Owner asked for ONE big update in a NEW conversation:
+  see docs/handoff/SESSION_7.md (filter icon, employee profile, merge task/Telegram/log/report pages into tabbed pages,
+  notification bell, Kanban view, cleanup). Browser check scripts kept in docs/dev/.
+
 ## Code layout (since package `code_split`)
 - `app/main.py`: settings, app object, middleware, shared helpers (auth/session, Telegram task texts, Sheet push).
   Route modules `app/routes_{auth,pages,telegram,shifts,reports,employees,tasks,recurring,users,backup,sync}.py`
@@ -203,7 +208,7 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 - Redesign mock-ups for approval: https://claude.ai/artifact/CnuJyxwEvGNBDeiTQdDCwY (3 options: 1 calm light + side menu,
   2 dark monitoring room, 3 big cards + top menu; each a manager dashboard + a phone screen; sample data). Waiting for
   the owner's choice. Next: drop `?secret=` (if still unseen) — see `docs/handoff/SESSION_5.md`.
-- Still ask: did the automatic 02:00 off-site backup (first run 2026-11-01) arrive on Telegram?
+- 02:00 off-site backup: arrived (owner, 2026-11-02).
 
 ## Roadmap agreed with the owner (2026-10-31) — session-by-session plan in `docs/handoff/SESSION_<n>.md` — phases 1–2 were done in another conversation, not in this repo
 - Owner decision: all functional work first, redesign LAST (session 4). Session 3 = supervisor daily Telegram summary,
