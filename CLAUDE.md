@@ -183,6 +183,8 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   notification bell, Kanban view, cleanup). Browser check scripts kept in docs/dev/.
 
 ## Code layout (since package `code_split`)
+- big_update: merged pages/tab bar in `shell_nav.TABS`/`MERGED` (+ `base.html`), task views in `routes_pages.TASK_VIEWS`,
+  bell in `app/inbox.py` (table `inbox_items`), profile in `app/employee_profile.py`. Table columns fit content: keep it.
 - `app/main.py`: settings, app object, middleware, shared helpers (auth/session, Telegram task texts, Sheet push).
   Route modules `app/routes_{auth,pages,telegram,shifts,reports,employees,tasks,recurring,users,backup,sync}.py`
   import helpers `from .main import ...` and read run-time-changeable settings as `_main.X` (GATEWAY, RELEASE,
@@ -231,7 +233,9 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 - Report 18:48: server = 9c2cf82 (`tiles_menu`) on 8797/8798; 8799 test copy not running (copy dated 2026-10-31 —
   refresh it with TEST_COPY_CREATE.cmd before INSTALL_TO_TEST). `main` fast-forwarded to 9c2cf82. `?secret=` never seen.
   Unknown python processes on ports 8080 and 8070 (started 11/01 17:27 and 11/02 09:39) — not ours, ask the owner.
-- `big_update` coded on branch `claude/modest-faraday-syi9e5` (commit 50acce9), NOT built/shipped: preview for approval
-  https://claude.ai/artifact/SRC7ewHzffx1xuE6H4apDg — wait for "تمام", then cmp/contrast, then build with BASE 9c2cf82.
+- `big_update`: owner approved the preview (https://claude.ai/artifact/SRC7ewHzffx1xuE6H4apDg). cmp (boss/samer/emp1)
+  and contrast clean. Package built: commit 4cde1b7, BASE 9c2cf82, branch `claude/modest-faraday-syi9e5`, no --check
+  (new APIs answer 401 like missing routes; the commit check is the proof). NOT confirmed installed, NOT merged.
+  Details and next steps: `docs/handoff/SESSION_8.md`.
   Deviations told to the owner: menu 36 -> 29 (only the requested merges); late bell once per task+due (not daily);
   Telegram/logs/reports tabs keep their old addresses (only /tasks-table and /manage redirect).
