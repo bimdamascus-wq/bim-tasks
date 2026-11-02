@@ -55,7 +55,14 @@ samer and emp1 (nothing missing) and `docs/dev/contrast.js` (clean) before build
 5. **Kanban board** view inside "المهام": columns جديدة / بدأت / قيد التنفيذ / بانتظار / تم; drag a card to change
    status using the existing `PATCH /api/tasks/{id}/status` (same rules and notifications); on phones a status menu
    instead of dragging.
-6. **Cleanup:** drop `?secret=` from `_sync_auth` and the query branch of `_note_sync_auth` (app/main.py) if the
+6. **Table columns fit their content — a STANDING RULE for every table in the system (owner, 2026-11-02).** Each
+   column is as wide as its longest cell, no wider (example he gave: the "الموعد" column on /tasks-table is far too
+   wide). Today `table{width:100%}` spreads the spare width over all columns. Do: tables `width:auto` (or `max-content`)
+   inside their `.scroll-box`, short columns (dates, status, priority, numbers, buttons) `white-space:nowrap`, only the
+   long text column (task title, notes, message) may wrap with a sensible max-width. Check every page with a table
+   (tasks views, manage, archive, recurring, employees, users, telegram pages, logs, reports, shift center, security,
+   sync, backup, my-team, team performance) at 1714px and on a phone.
+7. **Cleanup:** drop `?secret=` from `_sync_auth` and the query branch of `_note_sync_auth` (app/main.py) if the
    report still says "not seen yet"; update `test_sync_auth_records_header_or_query` (query → 401). Delete the unused
    `app/templates/dashboard.html` (no route renders it — verify again).
 

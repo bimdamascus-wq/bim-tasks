@@ -203,6 +203,8 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 - `supervisor_tools` installed and merged. Ask: did supervisors get the 18:00 summary? any complaints?
 - Owner (2026-10-31): small updates ship SEPARATELY from the redesign. `sync_hash` waiting for install + report.
 - Design: all look changes go in `app/static/bim-ds.css`; the menu is `app/shell_nav.py` (add new pages there).
+- STANDING RULE (owner 2026-11-02): every table column is as wide as its longest cell, never wider (no width:100%
+  spreading spare space); only the long text column may wrap. Applies to all current and future tables.
 - `new_look` confirmed and merged. Remaining, all optional: drop `?secret=` (still unseen; harmless),
   remove the old stacked CSS layers once nothing needs them, rebuild pages only if the owner asks.
 - Redesign mock-ups for approval: https://claude.ai/artifact/CnuJyxwEvGNBDeiTQdDCwY (3 options: 1 calm light + side menu,
