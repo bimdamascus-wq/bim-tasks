@@ -10284,6 +10284,7 @@
   "POST /api/employees add_employee",
   "POST /api/employees/{eid}/telegram-link employee_telegram_link",
   "POST /api/employees/{eid}/telegram-unlink employee_telegram_unlink",
+  "POST /api/followup/digest-now followup_digest_now",
   "POST /api/group-reminders add_group_reminder",
   "POST /api/handover handover",
   "POST /api/handover/preview handover_preview",

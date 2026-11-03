@@ -64,7 +64,7 @@ def process_queue(limit=25):
                 from .main import _telegram_task_text, _telegram_task_keyboard
                 message_text=_telegram_task_text(t,'تحديث مهمة')
                 markup=_telegram_task_keyboard(int(row['source_id']),t['status'])
-            if row['source_type'] in ('followup_card','followup_edit','followup_file'):
+            if row['source_type'] in ('followup_card','followup_show','followup_edit','followup_file'):
                 from .followup import outbox_send
                 result=outbox_send(c,row)
                 if not result.get('ok') and result.get('final'):
@@ -82,6 +82,9 @@ def process_queue(limit=25):
                                   (int(row['source_id']),str(row['chat_id']),int(result['message_id'])))
                     except (ValueError,TypeError):
                         pass
+                if row['source_type']=='followup' and row['source_id'] and result.get('message_id'):
+                    from .followup import remember_ref  # a reply to this message in the group = comment on that task
+                    remember_ref(c,row['chat_id'],result['message_id'],row['source_id'])
                 c.execute("""UPDATE telegram_outbox SET status='sent',last_error=NULL,
                              sent_at=CURRENT_TIMESTAMP,updated_at=CURRENT_TIMESTAMP WHERE id=?""",(row['id'],))
                 # If this queue item came from a group reminder, close that dispatch record too.

@@ -48,6 +48,16 @@ def migrate(c):
       message_id INTEGER NOT NULL,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY(task_id, chat_id, message_id))''')
+    c.execute('''CREATE TABLE IF NOT EXISTS followup_refs(
+      chat_id TEXT NOT NULL,
+      message_id INTEGER NOT NULL,
+      task_id INTEGER NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+      PRIMARY KEY(chat_id, message_id))''')
+
+
+def remember_ref(c, chat, message_id, task_id):
+    if chat and message_id and task_id:
+        c.execute('INSERT OR REPLACE INTO followup_refs(chat_id,message_id,task_id) VALUES(?,?,?)', (str(chat), int(message_id), int(task_id)))
 
 
 def settings(c):
@@ -318,9 +328,8 @@ def process(c=None, now=None):
             done = c.execute('SELECT value FROM settings WHERE key=?', ('followup.digest_day',)).fetchone()
             if not done or done[0] != day:
                 _put(c, 'followup.digest_day', day)  # once a day, even when the list is empty
-                text = digest(c, cfg, now)
-                for i in range(0, len(text), MAX_TEXT):
-                    out.append((f"fu:digest:{day}:{i}", text[i:i + MAX_TEXT], None, 'followup', None))
+                for i, (text, kb) in enumerate(digest(c, cfg, now)):
+                    out.append((f"fu:digest:{day}:{i}", text, kb, 'followup', None))
 
         for key, text, kb, stype, sid in out:
             enqueue(chat, text, stype, sid, dedupe_key=key, reply_markup=kb)
@@ -338,6 +347,9 @@ def process(c=None, now=None):
 
 
 def digest(c, cfg, now=None):
+    """Morning list: a header, then one message per employee with one button per task. Pressing a task posts its card
+    (with «ذكّر» and the link) so the group can follow, remind or reply to it (owner 2026-11-03: one long message was
+    not usable)."""
     from .main import ar_when, _is_late
     rows = c.execute("""SELECT t.*, COALESCE(e.name,'') ename FROM tasks t LEFT JOIN employees e ON e.id=t.employee_id
         WHERE t.archived_at IS NULL AND t.status NOT IN ('تم','ملغاة') ORDER BY e.sort_order, e.name,
@@ -347,17 +359,25 @@ def digest(c, cfg, now=None):
     for t in rows:
         if not _watched(c, cfg, t): continue
         by.setdefault(t['ename'] or _who(c, t), []).append(t)
-    if not by: return ''
+    if not by: return []
     ar = lambda n: str(n).translate(str.maketrans('0123456789', '٠١٢٣٤٥٦٧٨٩'))
-    lines = [f"📋 المهام المفتوحة — {ar_when((now or datetime.now()).date().isoformat())}", '']
+    total = sum(len(ts) for ts in by.values())
+    out = [(f"📋 المهام المفتوحة — {ar_when((now or datetime.now()).date().isoformat())}\n"
+            f"{ar(total)} مهمة عند {ar(len(by))} موظف.\n\nتحت كل موظف لحاله: اضغط على أي مهمة لتظهر بطاقتها هنا "
+            f"(فيها «🔔 ذكّر الموظف»، وللتعليق اعمل «رد / Reply» على البطاقة واكتب تعليقك).", None)]
     for name, ts in by.items():
         late = sum(1 for t in ts if t['due_at'] and _is_late(t))
-        lines.append(f"👤 {name} — {ar(len(ts))} مفتوحة" + (f"، ⚠️ {ar(late)} متأخرة" if late else ''))
-        for i, t in enumerate(ts, 1):
-            due = f" · ⏰ {ar_when(t['due_at'])}" if t['due_at'] else ''
-            lines.append(f"   {ar(i)}. {t['title']} · {t['status']}{due}" + (' ⚠️' if t['due_at'] and _is_late(t) else ''))
-        lines.append('')
-    return '\n'.join(lines).strip()
+        for part in range(0, len(ts), 40):
+            chunk = ts[part:part + 40]
+            lines = [f"👤 {name} — {ar(len(ts))} مفتوحة" + (f"، ⚠️ {ar(late)} متأخرة" if late else '') + (' (تابع)' if part else ''), '']
+            kb = []
+            for i, t in enumerate(chunk, part + 1):
+                bad = t['due_at'] and _is_late(t)
+                due = f" · ⏰ {ar_when(t['due_at'])}" if t['due_at'] else ''
+                lines.append(f"{ar(i)}. {t['title'][:120]} · {t['status']}{due}" + (' ⚠️' if bad else ''))
+                kb.append([{'text': f"{'⚠️ ' if bad else ''}{i}. {t['title'][:45]}", 'callback_data': f"fu:open:{t['id']}"}])
+            out.append(('\n'.join(lines)[:MAX_TEXT], {'inline_keyboard': kb}))
+    return out
 
 
 def outbox_send(c, row):
@@ -374,10 +394,11 @@ def outbox_send(c, row):
     card = render_card(c, sid, new=(st == 'followup_card'))
     if not card: return {'ok': False, 'error': 'المهمة محذوفة', 'final': True}
     text, kb = card
-    if st == 'followup_card':
+    if st in ('followup_card', 'followup_show'):
         r = q.low_level_send(row['chat_id'], text, reply_markup=kb)
         if r.get('ok') and r.get('message_id'):
             c.execute('INSERT OR IGNORE INTO followup_messages(task_id,chat_id,message_id) VALUES(?,?,?)', (sid, str(row['chat_id']), int(r['message_id'])))
+            remember_ref(c, row['chat_id'], r['message_id'], sid)
         return r
     meta = json.loads(row['reply_markup_json'] or '{}')
     r = q.edit_message(row['chat_id'], int(meta['message_id']), text, reply_markup=kb)
@@ -388,22 +409,84 @@ def outbox_send(c, row):
     return r
 
 
+def _may_act(c, telegram_user_id):
+    """Owner 2026-11-03: everyone in the group sees everything; only the people chosen in the settings (if any) may
+    remind or comment. Matched by Telegram user id = the employee's private chat id."""
+    allowed = {int(x) for x in settings(c).get('remind_ids') or []}
+    if not allowed: return True
+    return bool(c.execute(f"SELECT 1 FROM employees WHERE telegram_chat_id=? AND id IN ({','.join('?' * len(allowed))})",
+                          (str(telegram_user_id or ''), *allowed)).fetchone())
+
+
+def post_card(c, chat, tid):
+    """Post the current card of a task in the group now (button in the morning list). Queued if Telegram fails."""
+    from . import telegram_queue as q
+    card = render_card(c, tid)
+    if not card: return {'ok': False}
+    r = q.low_level_send(chat, card[0], reply_markup=card[1])
+    if r.get('ok') and r.get('message_id'):
+        c.execute('INSERT OR IGNORE INTO followup_messages(task_id,chat_id,message_id) VALUES(?,?,?)', (tid, chat, int(r['message_id'])))
+        remember_ref(c, chat, r['message_id'], tid)
+    elif not r.get('ok'):
+        q.enqueue(chat, 'بطاقة مهمة', 'followup_show', tid, dedupe_key=f'fu:show:{tid}:{int(time.time())}')
+    return r
+
+
+def handle_group_message(c, msg):
+    """A reply in the follow-up group to a bot message about a task = a comment on that task: saved on the task and
+    sent to the employee. Returns True when the message was for us."""
+    chat = str((msg.get('chat') or {}).get('id') or '')
+    if not chat or chat != _group_chat(c, settings(c)): return False
+    ref = msg.get('reply_to_message') or {}
+    text = str(msg.get('text') or msg.get('caption') or '').strip()
+    if not ref or not text: return False
+    row = c.execute('SELECT task_id FROM followup_refs WHERE chat_id=? AND message_id=?', (chat, int(ref.get('message_id') or 0))).fetchone()
+    if not row: return False
+    from . import main as m
+    from .telegram_queue import enqueue
+    f = msg.get('from') or {}
+    who = ' '.join(x for x in (f.get('first_name'), f.get('last_name')) if x) or 'المتابعة'
+    if not _may_act(c, f.get('id')):
+        enqueue(chat, f"⛔ {who}: التعليق مسموح فقط للأشخاص المحددين في إعدادات مجموعة المتابعة.", 'followup', None,
+                dedupe_key=f"fu:deny:{chat}:{msg.get('message_id')}")
+        return True
+    t = c.execute('SELECT * FROM tasks WHERE id=?', (row[0],)).fetchone()
+    if not t: return True
+    body = text[:4000]
+    c.execute('INSERT INTO task_comments(task_id,user_id,username_snapshot,body) VALUES(?,NULL,?,?)', (t['id'], f'{who} (مجموعة المتابعة)', body))
+    c.execute("INSERT INTO task_events(task_id,employee_id,event_type,note,source) VALUES(?,?,'comment',?,'telegram_group')", (t['id'], t['employee_id'], f'{who}: {body}'))
+    sent = False
+    if t['is_group']:
+        for p in c.execute('SELECT employee_id FROM task_participants WHERE task_id=?', (t['id'],)).fetchall():
+            sent = bool(m._notify_employee_id(c, p[0], f"📝 تعليق من المتابعة\n\nالمهمة: {t['title']}\nمن: {who}\n\n{body}", t['id'], 'تعليق من المتابعة').get('ok')) or sent
+    else:
+        sent = bool(m._notify_admin_comment(c, t['id'], who, body).get('ok'))
+    to = _who(c, t)
+    enqueue(chat, f"✅ تم حفظ تعليق {who} على «{t['title']}»" + (f" وإرساله إلى {to}" if sent else f" (لم يصل إلى {to} على Telegram، سيراه في النظام)"),
+            'followup', t['id'], dedupe_key=f"fu:commented:{chat}:{msg.get('message_id')}")
+    from .security_center import append_audit
+    append_audit(c, {'user_id': None, 'username_snapshot': f'telegram:{who}', 'action': 'followup_comment', 'entity_type': 'task',
+                     'entity_id': str(t['id']), 'before_json': None, 'after_json': json.dumps({'by_telegram': who, 'telegram_user_id': f.get('id'), 'body': body}, ensure_ascii=False),
+                     'reason': None, 'gateway': 'telegram', 'ip_address': None})
+    return True
+
+
 def handle_callback(c, cb):
     """'fu:remind:ID' pressed in the follow-up group. Being in that group is the permission (the owner controls who
     is in it). Returns True when handled (the caller must not look the presser up as an employee)."""
     from . import main as m
     from .telegram_service import answer_callback
     data = str(cb.get('data') or '')
-    mo = re.match(r'^fu:remind:(\d+)$', data)
+    mo = re.match(r'^fu:(remind|open):(\d+)$', data)
     if not mo: return False
-    cbid = cb.get('id'); tid = int(mo.group(1))
+    cbid = cb.get('id'); tid = int(mo.group(2))
     chat = str(((cb.get('message') or {}).get('chat') or {}).get('id') or '')
     if not chat or chat != _group_chat(c, settings(c)):
         answer_callback(cbid, 'هذا الزر يعمل من مجموعة المتابعة فقط', True); return True
-    allowed = {int(x) for x in settings(c).get('remind_ids') or []}
-    presser = str((cb.get('from') or {}).get('id') or '')
-    if allowed and not c.execute(f"SELECT 1 FROM employees WHERE telegram_chat_id=? AND id IN ({','.join('?' * len(allowed))})", (presser, *allowed)).fetchone():
-        # Owner 2026-11-03: everyone in the group sees everything; only the people chosen in the settings may remind.
+    if mo.group(1) == 'open':  # morning list: show this task's card (anyone in the group may look)
+        answer_callback(cbid, 'تفضل، البطاقة في الأسفل' if post_card(c, chat, tid).get('ok') else 'ستصل البطاقة بعد قليل')
+        return True
+    if not _may_act(c, (cb.get('from') or {}).get('id')):
         answer_callback(cbid, 'التذكير مسموح فقط للأشخاص المحددين في إعدادات مجموعة المتابعة', True); return True
     t = c.execute('SELECT * FROM tasks WHERE id=?', (tid,)).fetchone()
     if not t or not _open(t):
@@ -443,6 +526,21 @@ def register(app, m):
             groups = [dict(r) for r in c.execute("SELECT id,name,(chat_id IS NOT NULL AND chat_id<>'') linked FROM telegram_groups WHERE is_active=1 ORDER BY name")]
             employees = [dict(r) for r in c.execute("SELECT id,name,(telegram_chat_id IS NOT NULL AND telegram_chat_id<>'') telegram FROM employees WHERE is_active=1 ORDER BY sort_order,name")]
             return {'settings': cfg, 'groups': groups, 'employees': employees, 'active': bool(_group_chat(c, cfg))}
+        finally: c.close()
+
+    @app.post('/api/followup/digest-now')
+    def followup_digest_now(req: Request):
+        u = m.need(req, 'employees.edit'); c = connect()
+        try:
+            chat = _group_chat(c, settings(c))
+            if not chat: raise HTTPException(400, 'مجموعة المتابعة غير مفعّلة')
+            from .telegram_queue import enqueue
+            parts = digest(c, settings(c))
+            stamp = int(time.time())
+            for i, (text, kb) in enumerate(parts):
+                enqueue(chat, text, 'followup', None, dedupe_key=f'fu:digestnow:{stamp}:{i}', reply_markup=kb)
+            m.audit(c, req, u, 'followup_digest_now', 'settings', None, after={'messages': len(parts)})
+            return {'ok': True, 'messages': len(parts)}
         finally: c.close()
 
     @app.put('/api/followup')

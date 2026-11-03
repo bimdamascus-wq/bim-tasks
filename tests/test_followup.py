@@ -137,7 +137,7 @@ def test_followup_scope_list(env):
     from app import followup
     c = m.connect()
     cfg = followup.settings(c)
-    text = followup.digest(c, cfg, datetime.now())
+    text = '\n'.join(t for t, kb in followup.digest(c, cfg, datetime.now()))
     c.close()
     assert 'موظف آخر' in text and 'عضو فريق' not in text
     boss.put('/api/followup', json={'enabled': False})
@@ -183,4 +183,48 @@ def test_followup_only_chosen_people_may_remind(env):
     assert 'المحددين' in log['answer'][-1]
     assert press(333, 2).status_code == 200             # سامر (chat 333) is chosen
     assert log['answer'][-1] == 'تم إرسال التذكير'
+    boss.put('/api/followup', json={'enabled': False, 'remind_ids': []})
+
+
+def test_followup_morning_list_buttons_and_reply_comment(env):
+    m, ids = env['m'], env['ids']
+    log, gid = _setup(env)
+    boss = client(env, 'boss')
+    assert boss.put('/api/followup', json={'enabled': True, 'group_id': gid, 'employee_ids': [ids['موظف آخر']], 'digest': False,
+                                           'remind_ids': []}).status_code == 200
+    _run(env)
+    tid = task(boss, ids['موظف آخر'], title='فحص المولدة')
+    from app import followup
+    c = m.connect()
+    parts = followup.digest(c, followup.settings(c), datetime.now())
+    c.close()
+    assert len(parts) >= 2 and parts[0][1] is None                 # header, then one message per employee
+    assert f'fu:open:{tid}' in _buttons(parts[1][1])
+    assert boss.post('/api/followup/digest-now').json()['messages'] == len(parts)
+    hook = env['TestClient'](m.app, base_url='https://testserver')
+    log['send'].clear()
+    assert hook.post('/api/telegram/webhook', headers=HOOK, json={'update_id': 950001, 'callback_query': {
+        'id': 'o1', 'data': f'fu:open:{tid}', 'from': {'id': 12345}, 'message': {'chat': {'id': int(GROUP)}, 'message_id': 1}}}).status_code == 200
+    card = [s for s in _group(log) if 'فحص المولدة' in s[1]][-1]
+    assert f'fu:remind:{tid}' in _buttons(card[2])
+    # Reply to that card in the group = comment on the task, sent to the employee (chat 555).
+    log['send'].clear()
+    assert hook.post('/api/telegram/webhook', headers=HOOK, json={'update_id': 950002, 'message': {
+        'message_id': 77, 'chat': {'id': int(GROUP), 'type': 'supergroup'}, 'from': {'id': 12345, 'first_name': 'ريم'},
+        'text': 'شو صار بالمولدة؟', 'reply_to_message': {'message_id': card[3]}}}).status_code == 200
+    assert [s for s in log['send'] if s[0] == '555' and 'شو صار بالمولدة؟' in s[1]]
+    c = m.connect()
+    assert c.execute("SELECT 1 FROM task_comments WHERE task_id=? AND body='شو صار بالمولدة؟'", (tid,)).fetchone()
+    c.close()
+    _run(env)
+    assert any('تم حفظ تعليق ريم' in s[1] for s in _group(log))
+    assert sum('شو صار بالمولدة؟' in s[1] for s in _group(log)) == 0   # not echoed back as a new comment
+    # Only the chosen people may comment.
+    boss.put('/api/followup', json={'remind_ids': [ids['سامر']]})
+    hook.post('/api/telegram/webhook', headers=HOOK, json={'update_id': 950003, 'message': {
+        'message_id': 78, 'chat': {'id': int(GROUP), 'type': 'supergroup'}, 'from': {'id': 12345, 'first_name': 'ريم'},
+        'text': 'تعليق ممنوع', 'reply_to_message': {'message_id': card[3]}}})
+    c = m.connect()
+    assert not c.execute("SELECT 1 FROM task_comments WHERE body='تعليق ممنوع'").fetchone()
+    c.close()
     boss.put('/api/followup', json={'enabled': False, 'remind_ids': []})

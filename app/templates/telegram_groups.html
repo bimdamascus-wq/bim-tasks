@@ -18,13 +18,13 @@
    <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="fuScope" value="all" onchange="fuScope()"> كل الموظفين</label>
    <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="fuScope" value="some" onchange="fuScope()"> موظفين محددين</label>
    <div id="fuEmployees" style="max-height:200px;overflow:auto;border:1px solid #d8dde4;border-radius:8px;padding:10px;display:flex;flex-wrap:wrap;gap:4px 18px"></div></div>
- <div class="field" style="grid-column:1/-1"><label>من يستطيع الضغط على «🔔 ذكّر الموظف»</label>
+ <div class="field" style="grid-column:1/-1"><label>من يستطيع التذكير والتعليق من المجموعة</label>
    <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="fuRemind" value="all" onchange="fuRemind()"> كل أعضاء المجموعة</label>
    <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="fuRemind" value="some" onchange="fuRemind()"> أشخاص محددين فقط</label>
    <div id="fuReminders" style="max-height:200px;overflow:auto;border:1px solid #d8dde4;border-radius:8px;padding:10px;display:flex;flex-wrap:wrap;gap:4px 18px"></div>
-   <small>البقية يرون كل شيء ولا يستطيعون التذكير. يجب أن يكون الشخص مربوطاً بـ Telegram في النظام.</small></div>
+   <small>البقية يرون كل شيء ولا يستطيعون التذكير أو التعليق. للتعليق: «رد / Reply» على بطاقة المهمة في المجموعة. يجب أن يكون الشخص مربوطاً بـ Telegram في النظام.</small></div>
 </div>
-<div class="toolbar" style="justify-content:flex-end;margin-top:10px"><span id="fuState" style="margin-inline-end:auto"></span><button onclick="saveFollowup()">حفظ</button></div>
+<div class="toolbar" style="justify-content:flex-end;margin-top:10px"><span id="fuState" style="margin-inline-end:auto"></span><button class="btn-light" onclick="digestNow()">📋 أرسل قائمة المهام الآن</button><button onclick="saveFollowup()">حفظ</button></div>
 </section>
 
 <div class="kpi-grid">
@@ -213,6 +213,7 @@ async function saveFollowup(){
   if(document.querySelector('input[name=fuScope]:checked')?.value==='some'&&!p.employee_ids.length){bimToast('اختر موظفاً واحداً على الأقل','err');return}
   try{await bimRequest('/api/followup',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});bimToast('تم الحفظ');loadFollowup()}catch(e){bimToast(e.message,'err')}
 }
+async function digestNow(){try{const r=await bimRequest('/api/followup/digest-now',{method:'POST'});bimToast('تم إرسال '+r.messages+' رسائل إلى المجموعة')}catch(e){bimToast(e.message,'err')}}
 load();loadFollowup();
 </script>
 {% endblock %}
