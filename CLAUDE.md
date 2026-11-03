@@ -284,4 +284,9 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   reassign/archive/restore/late. «ذكّر الموظف» only on the card and the late message (event messages: link only).
   New task_events: `restored` (restore_task). `edited` notes now carry `_old` values.
 - Preview for the owner: dist/followup_group_preview.png (capture script idea in SESSION_9 "capture"; dist/ is gitignored).
-- NOT built yet: waiting for the owner's «تمام» on both pictures (telegram_new_look.png and followup_group_preview.png).
+- Owner: «عجبتني الصورة» (= تمام). 8080 (نواقص الموردين) works again. 18:00 supervisor summary: he does not know yet.
+  He asked to choose in the settings who may act: added `remind_ids` (only those employees, matched by Telegram user id
+  = employees.telegram_chat_id, may press «ذكّر»; empty = everyone in the group). Group MEMBERSHIP itself is managed in
+  Telegram (bots cannot list or add members).
+- Package `followup_group` built: commit bcc6ed2, BASE 6a5955a, branch `claude/zealous-lamport-x69beu`, 10 files
+  (6d1a6a0 port-only installer + 28a345f Telegram texts + follow-up group). NOT confirmed installed, NOT merged.
