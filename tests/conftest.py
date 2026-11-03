@@ -64,3 +64,9 @@ def task(cl, emp_id, **kw):
     r = cl.post('/api/tasks', json={'title': kw.pop('title', 'مهمة'), 'employee_id': emp_id, **kw})
     assert r.status_code == 200, r.text
     return r.json()['id']
+
+
+def pytest_collection_modifyitems(items):
+    # The route snapshot pins answers of a fresh database (e.g. an empty sensitive-operations log); every other test
+    # file shares that database and adds rows. Run the snapshot first so the order of test files never matters.
+    items.sort(key=lambda i: 0 if 'test_routes_snapshot' in i.nodeid else 1)
