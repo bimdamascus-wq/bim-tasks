@@ -263,3 +263,9 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   (schtasks /Run "\BIM Damascus\Server"), to use only if that system is still used.
   Other systems on this server (leave alone): Athar_Yawmi, BIM Damascus Shops, BIM Rent LAN HTTPS 8093, BIM ShamCash;
   python also listens on 8787/8788/8843/8092. Never stop python processes by name or by app.main alone.
+- 2026-11-03: owner asked how task messages look on Telegram. Captured the real texts (run the app on demo data with
+  low_level_send/edit_message/answer_callback patched; script idea in this session) and showed them:
+  https://claude.ai/artifact/Ho4Xz3TBwSZ7u2Z1Y2XKCy. Issues found, NOT fixed yet (owner to decide): raw ISO dates
+  ("2026-11-05T14:00") in `_telegram_task_text`, edit notice and my-tasks list; double header ("مهمة من المدير" prefix from
+  delegation.telegram_prefix + "📌 مهمة جديدة"); technical "وقت الإرسال/التحديث" line; typo "كت مهمة" in routes_tasks.py
+  reassign notice; "▶️ بدأت" button still shown after start; after "تم" the same message is edited twice.
