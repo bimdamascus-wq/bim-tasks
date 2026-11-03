@@ -250,3 +250,8 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   (seconds per run). Off-site 02:00 backup OK. Owner tested: 4 employees created, 3 record deletes, 5 archives,
   12 reassignments. Port 8080 process gone; port 8070 python (cmd.exe parent) restarted 07:51:10 right after the install
   — not ours, still ask what it is. Test copy data still from 2026-10-31 (code updated there, data not refreshed).
+- 2026-11-03: the port-8070 process is a copy of THIS app (check_status lists only `uvicorn` + `app.main:app`), run by the
+  global Python313 under a cmd.exe, restarted 9 s after the install. Owner does not know it. Given `BIM_Check_Ports.zip`
+  (tools/check_ports, read-only): parent chain, release-health of the extra port, scheduled tasks/startup/services,
+  folders with app\main.py and which .env keys are set. Risk to check: with a bot token and no BIM_GATEWAY it runs the
+  workers (duplicate Telegram reminders). Do NOT stop it before the report shows what it is.
