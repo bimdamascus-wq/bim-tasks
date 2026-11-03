@@ -245,3 +245,8 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   delete), archive button on /task/{id} (tasks.delete, warns about the Telegram cancel message). install.ps1 now stops
   if app\release.json on the system is not the package's base, so it cannot go on before big_update.
   tests/conftest.py runs the route snapshot first (shared DB). Install order for the owner: big_update, then delete_archive.
+- Report 07:51 (2026-11-03): `big_update` installed 06:46 and `delete_archive` 07:51; 8797 lan+workers, 8798 external,
+  8799 test all on 6a5955a. `main` fast-forwarded to the branch. `?secret=` refused: none (header seen 07:51). Sync OK
+  (seconds per run). Off-site 02:00 backup OK. Owner tested: 4 employees created, 3 record deletes, 5 archives,
+  12 reassignments. Port 8080 process gone; port 8070 python (cmd.exe parent) restarted 07:51:10 right after the install
+  — not ours, still ask what it is. Test copy data still from 2026-10-31 (code updated there, data not refreshed).

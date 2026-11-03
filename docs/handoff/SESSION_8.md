@@ -4,7 +4,6 @@
 > اتبع الملف المرفق.
 
 بأول رسالة قول:
-- نزّلت التحديث الشامل (`BIM_Update_big_update.zip`) ولا لأ؟ وبعده التحديث الصغير (`BIM_Update_delete_archive.zip`)؟
 - شغّل "تقرير حالة BIM" (من سطح المكتب، أو `C:\BIM_Tasks_Server\tools\check_status\CHECK_STATUS.cmd`، كبسة يمين ← Run as administrator) والصق التقرير.
 - شو هنن البرنامجين يلي شغّالين عالبورتين 8080 و8070؟
 - وصل المسؤولين الملخص اليومي الساعة 6 المسا؟
@@ -16,6 +15,11 @@
 
 The owner is not technical, speaks Syrian Arabic, is tired of long sessions: short answers, exact clicks, no jargon.
 Read `CLAUDE.md` first (deployment log, code layout, design notes). Browser check scripts: `docs/dev/`.
+
+### UPDATE 2026-11-03 07:51 — both packages INSTALLED and confirmed by report
+- 8797/8798/8799 on 6a5955a (`big_update` + `delete_archive`); `main` fast-forwarded. Nothing pending to install.
+- Still ask: what runs on port 8070; did supervisors get the 18:00 summary; any problem with the new pages/bell.
+- Bell: first scan started from the install time; check it fills (comments, done, late) during the working day.
 
 ### State at handoff (2026-11-02, evening)
 - Server: 9c2cf82 (`tiles_menu`) confirmed by report 18:48. `main` = 9c2cf82.
