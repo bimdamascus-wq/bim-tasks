@@ -269,3 +269,7 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   ("2026-11-05T14:00") in `_telegram_task_text`, edit notice and my-tasks list; double header ("مهمة من المدير" prefix from
   delegation.telegram_prefix + "📌 مهمة جديدة"); technical "وقت الإرسال/التحديث" line; typo "كت مهمة" in routes_tasks.py
   reassign notice; "▶️ بدأت" button still shown after start; after "تم" the same message is edited twice.
+- 2026-11-03: owner saw the new Telegram look (dist/telegram_new_look.png, commit 28a345f, not shipped, no "تمام" yet).
+  New request: a FOLLOW-UP GROUP on Telegram that sees everything the manager/employee sees (esp. "تم", so nobody
+  reminds a finished task), members can remind but not change status. Started in `app/followup.py` (WIP, not wired).
+  Owner ended the session here — everything to do next is in `docs/handoff/SESSION_9.md`.
