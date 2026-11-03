@@ -255,3 +255,11 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   (tools/check_ports, read-only): parent chain, release-health of the extra port, scheduled tasks/startup/services,
   folders with app\main.py and which .env keys are set. Risk to check: with a bot token and no BIM_GATEWAY it runs the
   workers (duplicate Telegram reminders). Do NOT stop it before the report shows what it is.
+- CORRECTION 2026-11-03 (check_ports report 07:56): 8070 is NOT ours — `C:\BIM_Hall_Shortages` ("hall-shortages" 1.2.0,
+  task `\BIM Damascus\HallShortages`, loop in run_server.ps1, no .env/db). 8080 was `C:\نواقص الموردين` (task
+  `\BIM Damascus\Server`, now Ready = stopped). Both are uvicorn `app.main:app`, so OUR installer's Stop-Bim stopped them on
+  every install; 8070 restarted itself, 8080 stayed down after big_update. Fixed on the branch (match --port 8797|8798 /
+  8799 only; check_status lists only our ports) — ships with the next package. Owner given RESTART_8080.cmd
+  (schtasks /Run "\BIM Damascus\Server"), to use only if that system is still used.
+  Other systems on this server (leave alone): Athar_Yawmi, BIM Damascus Shops, BIM Rent LAN HTTPS 8093, BIM ShamCash;
+  python also listens on 8787/8788/8843/8092. Never stop python processes by name or by app.main alone.
