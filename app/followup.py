@@ -28,7 +28,7 @@ from .db import connect
 SETTING = 'followup.settings'
 CURSOR = 'followup.cursor'
 KINDS = ('new', 'status', 'notes', 'files', 'edits', 'reminders', 'late', 'digest')
-DEFAULTS = {'enabled': False, 'group_id': None, 'employee_ids': [], 'digest_time': '09:00', **{k: True for k in KINDS}}
+DEFAULTS = {'enabled': False, 'group_id': None, 'employee_ids': [], 'remind_ids': [], 'digest_time': '09:00', **{k: True for k in KINDS}}
 REMIND_GAP = 15 * 60  # seconds between two reminders for the same task from the group
 FAR_BEHIND = 5000     # cursor this far behind (e.g. turned on after months off): skip, do not flood the group
 MAX_TEXT = 3500
@@ -400,6 +400,11 @@ def handle_callback(c, cb):
     chat = str(((cb.get('message') or {}).get('chat') or {}).get('id') or '')
     if not chat or chat != _group_chat(c, settings(c)):
         answer_callback(cbid, 'هذا الزر يعمل من مجموعة المتابعة فقط', True); return True
+    allowed = {int(x) for x in settings(c).get('remind_ids') or []}
+    presser = str((cb.get('from') or {}).get('id') or '')
+    if allowed and not c.execute(f"SELECT 1 FROM employees WHERE telegram_chat_id=? AND id IN ({','.join('?' * len(allowed))})", (presser, *allowed)).fetchone():
+        # Owner 2026-11-03: everyone in the group sees everything; only the people chosen in the settings may remind.
+        answer_callback(cbid, 'التذكير مسموح فقط للأشخاص المحددين في إعدادات مجموعة المتابعة', True); return True
     t = c.execute('SELECT * FROM tasks WHERE id=?', (tid,)).fetchone()
     if not t or not _open(t):
         answer_callback(cbid, 'المهمة منتهية أو مؤرشفة، لا حاجة للتذكير', True); return True
@@ -436,7 +441,7 @@ def register(app, m):
         try:
             cfg = settings(c)
             groups = [dict(r) for r in c.execute("SELECT id,name,(chat_id IS NOT NULL AND chat_id<>'') linked FROM telegram_groups WHERE is_active=1 ORDER BY name")]
-            employees = [dict(r) for r in c.execute('SELECT id,name FROM employees WHERE is_active=1 ORDER BY sort_order,name')]
+            employees = [dict(r) for r in c.execute("SELECT id,name,(telegram_chat_id IS NOT NULL AND telegram_chat_id<>'') telegram FROM employees WHERE is_active=1 ORDER BY sort_order,name")]
             return {'settings': cfg, 'groups': groups, 'employees': employees, 'active': bool(_group_chat(c, cfg))}
         finally: c.close()
 
@@ -457,6 +462,8 @@ def register(app, m):
                 cfg['digest_time'] = d['digest_time']
             if 'employee_ids' in d:
                 cfg['employee_ids'] = [int(x) for x in d['employee_ids'] or []]
+            if 'remind_ids' in d:
+                cfg['remind_ids'] = [int(x) for x in d['remind_ids'] or []]
             if cfg['enabled'] and not _group_chat(c, cfg):
                 raise HTTPException(400, 'اختر مجموعة مربوطة بـ Telegram أولاً')
             was = _group_chat(c, settings(c))

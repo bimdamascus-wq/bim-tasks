@@ -663,6 +663,7 @@
      "late": "bool",
      "new": "bool",
      "notes": "bool",
+     "remind_ids": "list",
      "reminders": "bool",
      "status": "bool"
     }
@@ -3488,6 +3489,7 @@
     "fuGroup",
     "fuKinds",
     "fuPanel",
+    "fuReminders",
     "fuState",
     "gActive",
     "gDepartment",
@@ -4476,6 +4478,7 @@
      "late": "bool",
      "new": "bool",
      "notes": "bool",
+     "remind_ids": "list",
      "reminders": "bool",
      "status": "bool"
     }
@@ -7301,6 +7304,7 @@
     "fuGroup",
     "fuKinds",
     "fuPanel",
+    "fuReminders",
     "fuState",
     "gActive",
     "gDepartment",

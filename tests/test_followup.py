@@ -162,3 +162,25 @@ def test_followup_problem_note_and_system_reminder(env):
     assert texts.count('القطعة مو موجودة') == 1          # the Telegram comment row is not posted a second time
     assert 'النظام ذكّر موظف آخر' in texts and 'تذكير تلقائي' in texts
     boss.put('/api/followup', json={'enabled': False})
+
+
+def test_followup_only_chosen_people_may_remind(env):
+    m, ids = env['m'], env['ids']
+    log, gid = _setup(env)
+    boss = client(env, 'boss')
+    assert boss.put('/api/followup', json={'enabled': True, 'group_id': gid, 'employee_ids': [], 'digest': False,
+                                           'remind_ids': [ids['سامر']]}).status_code == 200
+    tid = task(boss, ids['موظف آخر'], title='طلب عرض سعر')
+    _run(env)
+    hook = env['TestClient'](m.app, base_url='https://testserver')
+
+    def press(user, n):
+        return hook.post('/api/telegram/webhook', headers=HOOK, json={'update_id': 900000 + n, 'callback_query': {
+            'id': f'q{n}', 'data': f'fu:remind:{tid}', 'from': {'id': user, 'first_name': 'x'},
+            'message': {'chat': {'id': int(GROUP)}, 'message_id': 1}}})
+
+    assert press(9999, 1).status_code == 200            # in the group but not chosen: refused
+    assert 'المحددين' in log['answer'][-1]
+    assert press(333, 2).status_code == 200             # سامر (chat 333) is chosen
+    assert log['answer'][-1] == 'تم إرسال التذكير'
+    boss.put('/api/followup', json={'enabled': False, 'remind_ids': []})

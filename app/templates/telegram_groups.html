@@ -18,6 +18,11 @@
    <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="fuScope" value="all" onchange="fuScope()"> كل الموظفين</label>
    <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="fuScope" value="some" onchange="fuScope()"> موظفين محددين</label>
    <div id="fuEmployees" style="max-height:200px;overflow:auto;border:1px solid #d8dde4;border-radius:8px;padding:10px;display:flex;flex-wrap:wrap;gap:4px 18px"></div></div>
+ <div class="field" style="grid-column:1/-1"><label>من يستطيع الضغط على «🔔 ذكّر الموظف»</label>
+   <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="fuRemind" value="all" onchange="fuRemind()"> كل أعضاء المجموعة</label>
+   <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="fuRemind" value="some" onchange="fuRemind()"> أشخاص محددين فقط</label>
+   <div id="fuReminders" style="max-height:200px;overflow:auto;border:1px solid #d8dde4;border-radius:8px;padding:10px;display:flex;flex-wrap:wrap;gap:4px 18px"></div>
+   <small>البقية يرون كل شيء ولا يستطيعون التذكير. يجب أن يكون الشخص مربوطاً بـ Telegram في النظام.</small></div>
 </div>
 <div class="toolbar" style="justify-content:flex-end;margin-top:10px"><span id="fuState" style="margin-inline-end:auto"></span><button onclick="saveFollowup()">حفظ</button></div>
 </section>
@@ -191,14 +196,20 @@ async function loadFollowup(){
     const ids=new Set(s.employee_ids||[]);
     $('fuEmployees').innerHTML=r.employees.map(e=>`<label style="display:flex;align-items:center;gap:6px"><input type="checkbox" value="${e.id}" ${ids.has(e.id)?'checked':''}> ${bimEsc(e.name)}</label>`).join('');
     document.querySelector(`input[name=fuScope][value=${ids.size?'some':'all'}]`).checked=true;fuScope();
+    const rids=new Set(s.remind_ids||[]);
+    $('fuReminders').innerHTML=r.employees.filter(e=>e.telegram).map(e=>`<label style="display:flex;align-items:center;gap:6px"><input type="checkbox" value="${e.id}" ${rids.has(e.id)?'checked':''}> ${bimEsc(e.name)}</label>`).join('')||'لا يوجد موظفين مربوطين بـ Telegram';
+    document.querySelector(`input[name=fuRemind][value=${rids.size?'some':'all'}]`).checked=true;fuRemind();
     $('fuState').textContent=r.active?'✅ مفعّلة':'⏸️ موقوفة';
   }catch(e){$('fuPanel').hidden=true}
 }
+function fuRemind(){$('fuReminders').hidden=document.querySelector('input[name=fuRemind]:checked')?.value!=='some'}
 function fuScope(){$('fuEmployees').hidden=document.querySelector('input[name=fuScope]:checked')?.value!=='some'}
 async function saveFollowup(){
   const p={group_id:$('fuGroup').value?Number($('fuGroup').value):null,enabled:$('fuEnabled').value==='1',digest_time:$('fuDigestTime').value||'09:00',
     employee_ids:document.querySelector('input[name=fuScope]:checked')?.value==='some'?[...$('fuEmployees').querySelectorAll('input:checked')].map(x=>Number(x.value)):[]};
   for(const x of $('fuKinds').querySelectorAll('input'))p[x.dataset.k]=x.checked;
+  p.remind_ids=document.querySelector('input[name=fuRemind]:checked')?.value==='some'?[...$('fuReminders').querySelectorAll('input:checked')].map(x=>Number(x.value)):[];
+  if(document.querySelector('input[name=fuRemind]:checked')?.value==='some'&&!p.remind_ids.length){bimToast('اختر شخصاً واحداً على الأقل للتذكير','err');return}
   if(document.querySelector('input[name=fuScope]:checked')?.value==='some'&&!p.employee_ids.length){bimToast('اختر موظفاً واحداً على الأقل','err');return}
   try{await bimRequest('/api/followup',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});bimToast('تم الحفظ');loadFollowup()}catch(e){bimToast(e.message,'err')}
 }
