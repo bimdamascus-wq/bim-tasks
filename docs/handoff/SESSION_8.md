@@ -5,7 +5,7 @@
 
 بأول رسالة قول:
 - شغّل "تقرير حالة BIM" (من سطح المكتب، أو `C:\BIM_Tasks_Server\tools\check_status\CHECK_STATUS.cmd`، كبسة يمين ← Run as administrator) والصق التقرير.
-- شو هنن البرنامجين يلي شغّالين عالبورتين 8080 و8070؟
+- نظام «نواقص الموردين» (8080) رجع اشتغل ولا لسا لازم؟
 - وصل المسؤولين الملخص اليومي الساعة 6 المسا؟
 - في شي بالصفحات الجديدة مو عاجبك (الجرس، ملف الموظف، لوحة المهام، التبويبات)؟
 
@@ -18,7 +18,9 @@ Read `CLAUDE.md` first (deployment log, code layout, design notes). Browser chec
 
 ### UPDATE 2026-11-03 07:51 — both packages INSTALLED and confirmed by report
 - 8797/8798/8799 on 6a5955a (`big_update` + `delete_archive`); `main` fast-forwarded. Nothing pending to install.
-- Still ask: what runs on port 8070; did supervisors get the 18:00 summary; any problem with the new pages/bell.
+- 8070/8080 SOLVED: other systems (Hall Shortages, supplier shortages), see CLAUDE.md correction; our installer
+  used to stop them — fixed on the branch (commit 6d1a6a0), ships with the next package. Ask if 8080 was restarted.
+- Still ask: did supervisors get the 18:00 summary; any problem with the new pages/bell.
 - Bell: first scan started from the install time; check it fills (comments, done, late) during the working day.
 
 ### State at handoff (2026-11-02, evening)
