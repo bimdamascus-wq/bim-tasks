@@ -9,7 +9,8 @@ already done. For every watched employee (all, or a chosen list) the bot posts:
   - every status change from any path (Telegram buttons, web, group-task participants), problems/notes, comments,
     attachments (the file itself), edits (title/priority/due/notes), reassignment, cancel/archive, restore, late,
     every reminder the system sent to the employee, and one morning list of open tasks per employee.
-Group members follow and remind only: the one button is «🔔 ذكّر الموظف» (no status change from the group).
+Group members follow and remind only: the one button is «🔔 ذكّر الموظف», on the card and on the late message only
+(event messages would keep a stale button after the task is done; the card is edited, they are not).
 
 How: the LAN worker calls `process()` every 30 s. It reads what was added since a cursor (task_events, tasks,
 task_comments, task_attachments, notifications), like the bell (`app/inbox.py`). Every message goes through the
@@ -145,11 +146,11 @@ def render_card(c, tid, new=False):
     if t['notes']:
         lines.append(f"📝 ملاحظات: {t['notes'][:1500]}")
     if t['archived_at']:
-        lines += ['', '🗄️ المهمة مؤرشفة — ما في داعي للتذكير']
+        lines += ['', '🗄️ المهمة مؤرشفة — لا حاجة للتذكير']
     elif t['status'] == 'تم':
-        lines += ['', '✅ المهمة منجزة — ما في داعي للتذكير']
+        lines += ['', '✅ المهمة منجزة — لا حاجة للتذكير']
     elif t['status'] == 'ملغاة':
-        lines += ['', '❌ المهمة ملغاة — ما في داعي للتذكير']
+        lines += ['', '❌ المهمة ملغاة — لا حاجة للتذكير']
     return '\n'.join(lines), _buttons(tid, remind=_open(t))
 
 
@@ -259,7 +260,7 @@ def process(c=None, now=None):
             if ev['event_type'] in CARD_EVENTS: edits[t['id']] = ev['id']
             msg = _event_message(c, ev, t)
             if msg and cfg.get(msg[0]):
-                out.append((f"fu:ev:{ev['id']}", msg[1], _buttons(t['id'], remind=_open(t)), 'followup', t['id']))
+                out.append((f"fu:ev:{ev['id']}", msg[1], _buttons(t['id'], remind=False), 'followup', t['id']))
 
         if cfg.get('notes'):
             # Page comments (user_id set). Telegram comments (user_id NULL) are the problem note / attachment caption,
@@ -268,7 +269,7 @@ def process(c=None, now=None):
                 t = task(cm['task_id'])
                 if not t or not _watched(c, cfg, t): continue
                 out.append((f"fu:cm:{cm['id']}", f"💬 تعليق من {cm['username_snapshot'] or 'مستخدم'} على مهمة {_who(c, t)}: «{t['title']}»\n\n{(cm['body'] or '')[:MAX_TEXT]}",
-                            _buttons(t['id'], remind=_open(t)), 'followup', t['id']))
+                            _buttons(t['id'], remind=False), 'followup', t['id']))
 
         if cfg.get('files'):
             from .main import _is_audio
@@ -286,7 +287,7 @@ def process(c=None, now=None):
                 if (ROOT / a['relative_path']).exists():
                     out.append((f"fu:at:{a['id']}", text[:1000], None, 'followup_file', a['id']))
                 else:
-                    out.append((f"fu:at:{a['id']}", text + '\n(الملف غير موجود على السيرفر)', _buttons(t['id'], remind=_open(t)), 'followup', t['id']))
+                    out.append((f"fu:at:{a['id']}", text + '\n(الملف غير موجود على السيرفر)', _buttons(t['id'], remind=False), 'followup', t['id']))
 
         if cfg.get('reminders'):
             marks = ','.join('?' * len(REMINDER_KINDS))
@@ -300,7 +301,7 @@ def process(c=None, now=None):
                 else:
                     ids = {int(x) for x in cfg.get('employee_ids') or []}
                     if ids and n['employee_id'] not in ids: continue
-                    out.append((f"fu:nt:{n['id']}", f"📋 انبعتت لـ {name} قائمة مهامه: {n['kind']}", None, 'followup', None))
+                    out.append((f"fu:nt:{n['id']}", f"📋 أُرسلت إلى {name} قائمة مهامه: {n['kind']}", None, 'followup', None))
 
         if cfg.get('late'):
             for t in c.execute("""SELECT * FROM tasks WHERE archived_at IS NULL AND status NOT IN ('تم','ملغاة') AND due_at IS NOT NULL AND due_at<>''
@@ -401,11 +402,11 @@ def handle_callback(c, cb):
         answer_callback(cbid, 'هذا الزر يعمل من مجموعة المتابعة فقط', True); return True
     t = c.execute('SELECT * FROM tasks WHERE id=?', (tid,)).fetchone()
     if not t or not _open(t):
-        answer_callback(cbid, 'المهمة منتهية أو مؤرشفة، ما في داعي للتذكير', True); return True
+        answer_callback(cbid, 'المهمة منتهية أو مؤرشفة، لا حاجة للتذكير', True); return True
     key = f'followup.remind.{tid}'
     last = c.execute('SELECT value FROM settings WHERE key=?', (key,)).fetchone()
     if last and time.time() - float(last[0]) < REMIND_GAP:
-        answer_callback(cbid, 'انبعت تذكير لهالمهمة من شوي، جرّب بعد ربع ساعة', True); return True
+        answer_callback(cbid, 'أُرسل تذكير لهذه المهمة قبل قليل، حاول بعد ربع ساعة', True); return True
     _put(c, key, str(time.time()))
     if t['is_group']:
         for p in c.execute('SELECT employee_id FROM task_participants WHERE task_id=? AND status<>?', (tid, 'تم')).fetchall():
@@ -414,7 +415,7 @@ def handle_callback(c, cb):
         m._notify_employee(c, tid, 'تذكير من المتابعة', notice_category='reminders')
     f = cb.get('from') or {}
     who = ' '.join(x for x in (f.get('first_name'), f.get('last_name')) if x) or 'المتابعة'
-    answer_callback(cbid, 'انبعت التذكير')
+    answer_callback(cbid, 'تم إرسال التذكير')
     from .telegram_queue import enqueue
     enqueue(chat, f"🔔 {who} ذكّر {_who(c, t)} بمهمة «{t['title']}»", 'followup', tid, dedupe_key=f'fu:reminded:{tid}:{int(time.time())}')
     from .security_center import append_audit  # main.audit needs a web request; this comes from Telegram

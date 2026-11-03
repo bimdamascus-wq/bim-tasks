@@ -273,3 +273,15 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   New request: a FOLLOW-UP GROUP on Telegram that sees everything the manager/employee sees (esp. "تم", so nobody
   reminds a finished task), members can remind but not change status. Started in `app/followup.py` (WIP, not wired).
   Owner ended the session here — everything to do next is in `docs/handoff/SESSION_9.md`.
+
+## Session 9 (2026-11-03)
+- Branch `claude/zealous-lamport-x69beu` = `claude/modest-faraday-syi9e5` + the follow-up group. Server still 6a5955a.
+- Follow-up group DONE on the branch (`app/followup.py`, tests/test_followup.py, settings box at the top of
+  /telegram-groups, `/api/followup`). One scan per 30 s in the LAN worker over tasks, task_events, task_comments
+  (page comments only; Telegram comments are the note/caption), task_attachments (file itself sent) and notifications
+  (reminder kinds only), cursor `followup.cursor`. Group card per task: outbox types `followup_card`/`followup_edit`/
+  `followup_file`, rendered at send time, message ids in table `followup_messages`, edited on every status/edit/
+  reassign/archive/restore/late. «ذكّر الموظف» only on the card and the late message (event messages: link only).
+  New task_events: `restored` (restore_task). `edited` notes now carry `_old` values.
+- Preview for the owner: dist/followup_group_preview.png (capture script idea in SESSION_9 "capture"; dist/ is gitignored).
+- NOT built yet: waiting for the owner's «تمام» on both pictures (telegram_new_look.png and followup_group_preview.png).

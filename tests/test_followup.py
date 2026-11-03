@@ -114,7 +114,7 @@ def test_followup_remind_button_rules(env):
     assert 'من مجموعة المتابعة فقط' in log['answer'][-1]
     assert not [s for s in log['send'] if s[0] == '555']
     assert press(int(GROUP), 2).status_code == 200               # from the group: employee reminded
-    assert log['answer'][-1] == 'انبعت التذكير'
+    assert log['answer'][-1] == 'تم إرسال التذكير'
     assert [s for s in log['send'] if s[0] == '555' and 'اتصال بالمورد' in s[1]]
     _run(env)
     assert any('ريم ذكّر موظف آخر' in s[1] for s in _group(log))
