@@ -15,7 +15,8 @@ Owner: not technical, Syrian Arabic, short answers, exact clicks. Read `CLAUDE.m
 Branch with all work: `claude/zealous-lamport-x69beu` (contains everything of `claude/modest-faraday-syi9e5`).
 
 ### State at handoff (2026-11-03)
-- Server: 6a5955a. Package `followup_group` (bcc6ed2) given, NOT confirmed installed. `main` = 23ef6df.
+- Server: bcc6ed2 (`followup_group`, installed by the owner, no report yet). Package `followup_tasks` (e98e2a8, BASE bcc6ed2)
+  given, NOT confirmed installed. Ask for the status report, then merge the branch into `main`. `main` = 23ef6df.
 - On the branch, NOT shipped, all for ONE package (BASE 6a5955a):
   1. 6d1a6a0 installer/status report touch only our ports (stops no longer kill 8070/8080). IMPORTANT.
   2. 28a345f new Telegram texts for employees (Arabic dates, one button per task in lists).

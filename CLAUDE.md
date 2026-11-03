@@ -290,3 +290,10 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   Telegram (bots cannot list or add members).
 - Package `followup_group` built: commit bcc6ed2, BASE 6a5955a, branch `claude/zealous-lamport-x69beu`, 10 files
   (6d1a6a0 port-only installer + 28a345f Telegram texts + follow-up group). NOT confirmed installed, NOT merged.
+- Owner installed `followup_group` and linked a group (he saw the morning list there; no status report yet).
+  Feedback: all tasks came in ONE message, nobody can act on one task. Package `followup_tasks` (commit e98e2a8, BASE
+  bcc6ed2, 4 files) given — NOT confirmed: morning list = header + one message per employee with a button per task
+  (`fu:open:ID` posts the card now); Reply to any group message about a task = comment on it (table `followup_refs`,
+  saved as task_comments user_id NULL + event 'comment' source telegram_group, sent to the employee; only `remind_ids`
+  people if set); button «📋 أرسل قائمة المهام الآن» (POST /api/followup/digest-now). After install: status report,
+  then merge into `main` (server = e98e2a8).
