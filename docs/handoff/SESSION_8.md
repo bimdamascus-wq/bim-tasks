@@ -4,7 +4,7 @@
 > اتبع الملف المرفق.
 
 بأول رسالة قول:
-- نزّلت التحديث الشامل (`BIM_Update_big_update.zip`) ولا لأ؟ جرّبته أول على النسخة التجريبية؟
+- نزّلت التحديث الشامل (`BIM_Update_big_update.zip`) ولا لأ؟ وبعده التحديث الصغير (`BIM_Update_delete_archive.zip`)؟
 - شغّل "تقرير حالة BIM" (من سطح المكتب، أو `C:\BIM_Tasks_Server\tools\check_status\CHECK_STATUS.cmd`، كبسة يمين ← Run as administrator) والصق التقرير.
 - شو هنن البرنامجين يلي شغّالين عالبورتين 8080 و8070؟
 - وصل المسؤولين الملخص اليومي الساعة 6 المسا؟
@@ -27,6 +27,12 @@ Read `CLAUDE.md` first (deployment log, code layout, design notes). Browser chec
 - Test copy (8799) was not running and dates from 2026-10-31: told the owner to run TEST_COPY_CREATE.cmd before
   INSTALL_TO_TEST.cmd.
 
+### Second package `delete_archive` (2026-11-03, owner asked)
+- Commit 6a5955a, BASE 4cde1b7 (must go on AFTER big_update; install.ps1 now refuses a wrong base using
+  app\release.json). Delete-employee button (employees rows + profile, `bimDeleteEmployee` in bim-shell.js: open-task
+  count, optional handover, then DELETE /api/employees/{id}); archive button inside /task/{id} (tasks.delete).
+- After both are installed and the report shows 6a5955a on 8797/8798: fast-forward `main` to the branch.
+
 ### What `big_update` contains (see the commit message of 50acce9)
 1. Thin column-filter icon (orange only when a filter is active).
 2. `/employee/{id}` profile (`app/employee_profile.py`, template `employee_profile.html`); names link to it everywhere.
@@ -46,7 +52,7 @@ Read `CLAUDE.md` first (deployment log, code layout, design notes). Browser chec
 - All css/js URLs now carry `?v={{ asset_v }}` (hash of every static css/js).
 
 ### After the post-install report
-- Check 8797/8798 on the new commit, workers on 8797, `?secret= REFUSED ... none - good`.
+- Check 8797/8798 on the new commit (4cde1b7 after big_update, 6a5955a after delete_archive), workers on 8797, `?secret= REFUSED ... none - good`.
 - If OK: fast-forward `main` to the branch, record it in CLAUDE.md.
 - If the owner reports a problem: fix on the branch, build a small package with BASE = the installed commit.
 

@@ -239,3 +239,9 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   Details and next steps: `docs/handoff/SESSION_8.md`.
   Deviations told to the owner: menu 36 -> 29 (only the requested merges); late bell once per task+due (not daily);
   Telegram/logs/reports tabs keep their old addresses (only /tasks-table and /manage redirect).
+- 2026-11-03: owner asked why there is no "delete employee" (it existed only on /record-management) and whether a task
+  can be archived from inside it (no). Package `delete_archive` (commit 6a5955a, BASE 4cde1b7 = big_update) given — NOT
+  confirmed: delete button on /employees rows + profile (dialog: open-task count, optional handover, then reversible
+  delete), archive button on /task/{id} (tasks.delete, warns about the Telegram cancel message). install.ps1 now stops
+  if app\release.json on the system is not the package's base, so it cannot go on before big_update.
+  tests/conftest.py runs the route snapshot first (shared DB). Install order for the owner: big_update, then delete_archive.
