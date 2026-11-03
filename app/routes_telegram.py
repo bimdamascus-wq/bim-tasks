@@ -190,6 +190,8 @@ async def telegram_webhook(req:Request):
             send(str(chat),'اختر من أزرار رسالة المهمة أو استخدم «مهامي اليوم».',reply_markup={'inline_keyboard':[[{'text':'📋 مهامي اليوم','callback_data':'my_tasks'}]]})
             return {'ok':True}
         if cb:
+            from .followup import handle_callback as followup_callback
+            if followup_callback(c,cb):return {'ok':True}  # «ذكّر الموظف» in the follow-up group: presser need not be an employee
             cbid=cb.get('id'); data=str(cb.get('data') or ''); chat_id=str((cb.get('from') or {}).get('id') or ''); e=_tg_employee(c,chat_id)
             if not e:
                 answer_callback(cbid,'الحساب غير مربوط',True); return {'ok':True}

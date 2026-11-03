@@ -645,6 +645,31 @@
    "status": 200,
    "type": "application/json"
   },
+  "boss /api/followup": {
+   "shape": {
+    "active": "bool",
+    "employees": [
+     "dict"
+    ],
+    "groups": [],
+    "settings": {
+     "digest": "bool",
+     "digest_time": "str",
+     "edits": "bool",
+     "employee_ids": "list",
+     "enabled": "bool",
+     "files": "bool",
+     "group_id": "NoneType",
+     "late": "bool",
+     "new": "bool",
+     "notes": "bool",
+     "reminders": "bool",
+     "status": "bool"
+    }
+   },
+   "status": 200,
+   "type": "application/json"
+  },
   "boss /api/group-dispatch-log": {
    "shape": [],
    "status": 200,
@@ -3457,6 +3482,13 @@
     "fSpecific",
     "fTime",
     "fWeek",
+    "fuDigestTime",
+    "fuEmployees",
+    "fuEnabled",
+    "fuGroup",
+    "fuKinds",
+    "fuPanel",
+    "fuState",
     "gActive",
     "gDepartment",
     "gName",
@@ -4423,6 +4455,31 @@
      "work_days": "str"
     }
    ],
+   "status": 200,
+   "type": "application/json"
+  },
+  "dep /api/followup": {
+   "shape": {
+    "active": "bool",
+    "employees": [
+     "dict"
+    ],
+    "groups": [],
+    "settings": {
+     "digest": "bool",
+     "digest_time": "str",
+     "edits": "bool",
+     "employee_ids": "list",
+     "enabled": "bool",
+     "files": "bool",
+     "group_id": "NoneType",
+     "late": "bool",
+     "new": "bool",
+     "notes": "bool",
+     "reminders": "bool",
+     "status": "bool"
+    }
+   },
    "status": 200,
    "type": "application/json"
   },
@@ -7238,6 +7295,13 @@
     "fSpecific",
     "fTime",
     "fWeek",
+    "fuDigestTime",
+    "fuEmployees",
+    "fuEnabled",
+    "fuGroup",
+    "fuKinds",
+    "fuPanel",
+    "fuState",
     "gActive",
     "gDepartment",
     "gName",
@@ -7758,6 +7822,13 @@
    "type": "application/json"
   },
   "member /api/employees": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /api/followup": {
    "shape": {
     "detail": "str"
    },
@@ -8901,6 +8972,13 @@
     }
    ],
    "status": 200,
+   "type": "application/json"
+  },
+  "samer /api/followup": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
    "type": "application/json"
   },
   "samer /api/group-dispatch-log": {
@@ -10082,6 +10160,7 @@
   "GET /api/dashboard api_dashboard",
   "GET /api/employee-profile/{eid} employee_profile",
   "GET /api/employees api_employees",
+  "GET /api/followup get_followup",
   "GET /api/group-dispatch-log group_dispatch_log",
   "GET /api/group-reminders api_group_reminders",
   "GET /api/inbox get_inbox",
@@ -10248,6 +10327,7 @@
   "PUT /api/admin-notification-settings update_admin_notification_settings",
   "PUT /api/bim-employee-profile/{eid} bim_employee_profile_update",
   "PUT /api/company put_company",
+  "PUT /api/followup put_followup",
   "PUT /api/iphone/legacy-owner owner",
   "PUT /api/page-visibility put_visibility",
   "PUT /api/security/backup-settings backup_settings",

@@ -6,6 +6,22 @@
   <div class="toolbar"><button onclick="openGroup()">＋ مجموعة</button><button class="btn-light" onclick="openReminder()">＋ تذكير جماعي</button></div>
 </section>
 
+<section class="panel" id="fuPanel">
+<h2>👀 مجموعة المتابعة</h2>
+<p style="margin:0 0 10px">كل ما يصل للموظف أو يراه المدير عن المهمة يُرسل أيضاً إلى هذه المجموعة: المهام الجديدة، كل تغيير حالة، المشاكل والتعليقات، المرفقات، التعديلات، النقل، الأرشفة، التأخير، التذكيرات، وقائمة الصباح. أعضاء المجموعة يتابعون ويذكّرون فقط (زر «🔔 ذكّر الموظف») ولا يغيّرون حالة المهمة.</p>
+<div class="form-grid">
+ <div class="field"><label>المجموعة</label><select id="fuGroup"></select><small>يجب أن تكون مربوطة بـ Telegram (زر «🔗 ربط المجموعة» في الجدول أدناه).</small></div>
+ <div class="field"><label>الحالة</label><select id="fuEnabled"><option value="1">مفعّلة</option><option value="0">موقوفة</option></select></div>
+ <div class="field"><label>وقت قائمة الصباح</label><input id="fuDigestTime" type="time" value="09:00"></div>
+ <div class="field" style="grid-column:1/-1"><label>ما يُرسل إلى المجموعة</label><div id="fuKinds" style="display:flex;flex-wrap:wrap;gap:6px 18px"></div></div>
+ <div class="field" style="grid-column:1/-1"><label>الموظفين</label>
+   <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="fuScope" value="all" onchange="fuScope()"> كل الموظفين</label>
+   <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="fuScope" value="some" onchange="fuScope()"> موظفين محددين</label>
+   <div id="fuEmployees" style="max-height:200px;overflow:auto;border:1px solid #d8dde4;border-radius:8px;padding:10px;display:flex;flex-wrap:wrap;gap:4px 18px"></div></div>
+</div>
+<div class="toolbar" style="justify-content:flex-end;margin-top:10px"><span id="fuState" style="margin-inline-end:auto"></span><button onclick="saveFollowup()">حفظ</button></div>
+</section>
+
 <div class="kpi-grid">
   <div class="kpi"><span>المجموعات</span><b id="kGroups">0</b></div>
   <div class="kpi"><span>المربوطة</span><b id="kLinked">0</b></div>
@@ -165,6 +181,27 @@ async function saveReminder(){
 }
 async function toggleReminder(id,on){try{await bimRequest('/api/group-reminders/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({is_active:!!on})});load()}catch(e){bimToast(e.message,'err')}}
 async function deleteReminder(id){if(!confirm('حذف هذا التذكير؟'))return;try{await bimRequest('/api/group-reminders/'+id,{method:'DELETE'});bimToast('تم الحذف');load()}catch(e){bimToast(e.message,'err')}}
-load();
+const FU_KINDS=[['new','مهمة جديدة'],['status','تغيير الحالة والأرشفة'],['notes','المشاكل والتعليقات'],['files','المرفقات'],['edits','التعديلات والنقل'],['reminders','التذكيرات التي أرسلها النظام'],['late','التأخير'],['digest','قائمة الصباح']];
+async function loadFollowup(){
+  try{
+    const r=await bimRequest('/api/followup'),s=r.settings;
+    $('fuGroup').innerHTML='<option value="">— اختر —</option>'+r.groups.map(g=>`<option value="${g.id}">${bimEsc(g.name)}${g.linked?'':' — غير مربوطة'}</option>`).join('');
+    $('fuGroup').value=s.group_id||'';$('fuEnabled').value=s.enabled?'1':'0';$('fuDigestTime').value=s.digest_time||'09:00';
+    $('fuKinds').innerHTML=FU_KINDS.map(([k,l])=>`<label style="display:flex;align-items:center;gap:6px"><input type="checkbox" data-k="${k}" ${s[k]?'checked':''}> ${l}</label>`).join('');
+    const ids=new Set(s.employee_ids||[]);
+    $('fuEmployees').innerHTML=r.employees.map(e=>`<label style="display:flex;align-items:center;gap:6px"><input type="checkbox" value="${e.id}" ${ids.has(e.id)?'checked':''}> ${bimEsc(e.name)}</label>`).join('');
+    document.querySelector(`input[name=fuScope][value=${ids.size?'some':'all'}]`).checked=true;fuScope();
+    $('fuState').textContent=r.active?'✅ مفعّلة':'⏸️ موقوفة';
+  }catch(e){$('fuPanel').hidden=true}
+}
+function fuScope(){$('fuEmployees').hidden=document.querySelector('input[name=fuScope]:checked')?.value!=='some'}
+async function saveFollowup(){
+  const p={group_id:$('fuGroup').value?Number($('fuGroup').value):null,enabled:$('fuEnabled').value==='1',digest_time:$('fuDigestTime').value||'09:00',
+    employee_ids:document.querySelector('input[name=fuScope]:checked')?.value==='some'?[...$('fuEmployees').querySelectorAll('input:checked')].map(x=>Number(x.value)):[]};
+  for(const x of $('fuKinds').querySelectorAll('input'))p[x.dataset.k]=x.checked;
+  if(document.querySelector('input[name=fuScope]:checked')?.value==='some'&&!p.employee_ids.length){bimToast('اختر موظفاً واحداً على الأقل','err');return}
+  try{await bimRequest('/api/followup',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});bimToast('تم الحفظ');loadFollowup()}catch(e){bimToast(e.message,'err')}
+}
+load();loadFollowup();
 </script>
 {% endblock %}

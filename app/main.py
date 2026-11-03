@@ -700,3 +700,6 @@ inbox.register(app,_sys.modules[__name__])
 
 from . import employee_profile
 employee_profile.register(app,_sys.modules[__name__])
+
+from . import followup
+followup.register(app,_sys.modules[__name__])

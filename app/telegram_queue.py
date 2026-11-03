@@ -64,7 +64,13 @@ def process_queue(limit=25):
                 from .main import _telegram_task_text, _telegram_task_keyboard
                 message_text=_telegram_task_text(t,'تحديث مهمة')
                 markup=_telegram_task_keyboard(int(row['source_id']),t['status'])
-            if row['source_type']=='task_edit':
+            if row['source_type'] in ('followup_card','followup_edit','followup_file'):
+                from .followup import outbox_send
+                result=outbox_send(c,row)
+                if not result.get('ok') and result.get('final'):
+                    c.execute("UPDATE telegram_outbox SET status='failed',last_error=?,updated_at=CURRENT_TIMESTAMP WHERE id=?",(str(result.get('error'))[:1000],row['id']))
+                    continue
+            elif row['source_type']=='task_edit':
                 meta=json.loads(row['reply_markup_json']); result=edit_message(row['chat_id'],meta['message_id'],message_text,reply_markup=markup)
                 if 'message is not modified' in str(result.get('error','')).lower():result={'ok':True}
             else:

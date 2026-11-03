@@ -132,7 +132,7 @@ async def edit_task(tid:int, req:Request):
             else: c.execute('DELETE FROM task_participants WHERE task_id=?',(tid,))
             c.execute('UPDATE tasks SET is_group=? WHERE id=?',(1 if d.get('participants') else 0,tid))
         if 'reminder' in d: _save_reminder(c,tid,d.get('reminder') or {})
-        c.execute("INSERT INTO task_events(task_id,employee_id,event_type,note,source) VALUES(?,?,'edited',?,'dashboard')",(tid,old['employee_id'],json.dumps({k:d[k] for k in d if k in allowed},ensure_ascii=False)))
+        c.execute("INSERT INTO task_events(task_id,employee_id,event_type,note,source) VALUES(?,?,'edited',?,'dashboard')",(tid,old['employee_id'],json.dumps({**{k:d[k] for k in d if k in allowed},'_old':{k:old[k] for k in ('title','priority','due_at','notes','employee_id')}},ensure_ascii=False)))
         if 'status' in d and d['status']!=old['status']:
             c.execute("UPDATE tasks SET started_at=CASE WHEN ? IN ('بدأت','قيد التنفيذ','تم') THEN COALESCE(started_at,CURRENT_TIMESTAMP) ELSE started_at END WHERE id=?",(d['status'],tid))
             c.execute("INSERT INTO task_events(task_id,employee_id,event_type,old_status,new_status,source) VALUES(?,?,'status',?,?,'dashboard')",(tid,old['employee_id'],old['status'],d['status']))
@@ -207,6 +207,7 @@ def restore_task(tid:int, req:Request):
     if not old: c.close(); raise HTTPException(404,'المهمة غير موجودة')
     if not access.can_manage_task(c,u,old): c.close(); raise HTTPException(403,'هذه المهمة خارج نطاق فريقك')
     c.execute('UPDATE tasks SET archived_at=NULL,updated_at=CURRENT_TIMESTAMP WHERE id=?',(tid,))
+    if old['archived_at']:c.execute("INSERT INTO task_events(task_id,employee_id,event_type,note,source) VALUES(?,?,'restored','استرجاع من الأرشيف','dashboard')",(tid,old['employee_id']))
     audit(c,req,u,'task_restore','task',tid,before=dict(old),after={'archived':False}); _touch_task_sync(c,tid,'server','restore'); c.close(); return {'ok':True}
 
 @app.patch('/api/tasks/{tid}/participants/{eid}/status')
