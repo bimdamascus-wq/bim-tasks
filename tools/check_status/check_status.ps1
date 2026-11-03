@@ -23,7 +23,8 @@ $report = & {
     }
     ''
     '[server processes]'
-    Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match 'uvicorn' -and $_.CommandLine -match 'app\.main:app' } | ForEach-Object {
+    # Only our ports: other systems on this server (Hall Shortages 8070, ...) are also uvicorn app.main:app.
+    Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match 'uvicorn' -and $_.CommandLine -match 'app\.main:app' -and $_.CommandLine -match '--port\s+(8797|8798|8799)\b' } | ForEach-Object {
         $port = if ($_.CommandLine -match '--port\s+(\d+)') { $Matches[1] } else { '?' }
         "  pid $($_.ProcessId)  port $port  started $($_.CreationDate)  $($_.ExecutablePath)" }
     ''

@@ -62,11 +62,13 @@ $Deletes = @($U.delete | Where-Object { $_ })
 function Step($t) { Write-Host ''; Write-Host "== $t" -ForegroundColor Cyan }
 function Stop-Bim {
     if (-not $Test) { foreach ($t in $LanTask, $ExtTask) { schtasks /End /TN $t 2>$null | Out-Null } }
-    # The venv launcher starts a child python whose command line may not contain $Root, so match on uvicorn app.main.
+    # The venv launcher starts a child python whose command line may not contain $Root, so match on uvicorn app.main
+    # AND our own ports. Other systems on this server are also FastAPI apps called app.main:app (Hall Shortages on 8070,
+    # supplier shortages on 8080): until 2026-11-03 this matched them too and stopped them on every install.
     # The test copy (8799) and the real system never stop each other.
     Get-CimInstance Win32_Process -Filter "Name='python.exe' OR Name='pythonw.exe'" |
         Where-Object { $_.CommandLine -match 'uvicorn' -and $_.CommandLine -match 'app\.main:app' -and
-                       (($Test -and $_.CommandLine -match '--port\s+8799') -or (-not $Test -and $_.CommandLine -notmatch '--port\s+8799')) } |
+                       $_.CommandLine -match "--port\s+($PortRe)\b" } |
         ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
     for ($i = 0; $i -lt 15; $i++) {
         if (-not (netstat -ano | Select-String -Pattern ":($PortRe)\s.*LISTENING")) { return }
