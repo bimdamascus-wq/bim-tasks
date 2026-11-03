@@ -68,11 +68,9 @@ def _open_task_rows(c,eid):
 def _send_open_tasks(c,e,prefix='📋 مهامك اليوم',rows=None):
     if rows is None: rows=_open_task_rows(c,e['id'])
     if not rows:return send(e['telegram_chat_id'],f"{prefix}\n\n✅ لا توجد لديك مهام مفتوحة حالياً.")
-    lines=[prefix]
-    for i,t in enumerate(rows,1):
-        due=f" | ⏰ {t['due_at']}" if t['due_at'] else ''
-        lines.append(f"{i}. {t['title']} — {t['status']} — {t['priority']}{due}")
-    return send(e['telegram_chat_id'],'\n'.join(lines))
+    from .main import _tg_task_list
+    text,kb=_tg_task_list(prefix,rows)
+    return send(e['telegram_chat_id'],text,reply_markup=kb)
 
 def _matching_shift_messages(c,e,typ,day):
     sql="SELECT * FROM shift_messages WHERE is_active=1 AND message_type=? AND (start_date IS NULL OR start_date='' OR date(start_date)<=date(?)) AND (end_date IS NULL OR end_date='' OR date(end_date)>=date(?)) ORDER BY id"

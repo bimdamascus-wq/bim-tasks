@@ -15,7 +15,7 @@ from .work_settings import permits, profile
 from . import main as _main  # settings that tests or plugins may change at run time are read from main
 from .main import (
     _is_audio, _refresh_telegram_task_messages, _remember_telegram_task_message, _tg_employee,
-    _tg_send_instructions, _tg_send_my_tasks, _tg_set_status, _tg_task_for_employee, app, audit, ctx, need,
+    _tg_send_instructions, _tg_send_my_tasks, _tg_send_task_card, _tg_set_status, _tg_task_for_employee, app, audit, ctx, need,
     perms, templates
 )
 
@@ -201,6 +201,11 @@ async def telegram_webhook(req:Request):
                 answer_callback(cbid,'تعليمات عملي');_tg_send_instructions(c,e);return {'ok':True}
             if data=='my_tasks':
                 answer_callback(cbid,'جاري عرض مهامك'); _tg_send_my_tasks(c,e); return {'ok':True}
+            mo=re.match(r'^open:(\d+)$',data)
+            if mo:
+                if not _tg_task_for_employee(c,int(mo.group(1)),e['id']):
+                    answer_callback(cbid,'هذه المهمة لم تعد مفتوحة لك',True); return {'ok':True}
+                answer_callback(cbid,'جاري فتح المهمة'); _tg_send_task_card(c,int(mo.group(1)),e); return {'ok':True}
             m=re.match(r'^task:(\d+):(started|progress|done|note)$',data)
             if not m:
                 answer_callback(cbid,'أمر غير معروف'); return {'ok':True}

@@ -225,23 +225,50 @@ def _attachment_dir(tid:int):
     return p
 
 def _telegram_task_keyboard(task_id:int, status:str='جديدة'):
+    # Only the next steps: after "بدأت" the start button is gone, after "قيد التنفيذ" only "تم" is left (owner 2026-11-03).
     rows=[]
     if status not in ('تم','ملغاة'):
-        rows.append([
-            {'text':'▶️ بدأت','callback_data':f'task:{task_id}:started'},
-            {'text':'⏳ قيد التنفيذ','callback_data':f'task:{task_id}:progress'},
-            {'text':'✅ تم','callback_data':f'task:{task_id}:done'}
-        ])
+        steps=[('▶️ بدأت','started'),('⏳ قيد التنفيذ','progress'),('✅ تم','done')]
+        if status=='بدأت':steps=steps[1:]
+        elif status=='قيد التنفيذ':steps=steps[2:]
+        rows.append([{'text':t,'callback_data':f'task:{task_id}:{a}'} for t,a in steps])
         rows.append([{'text':'⚠️ مشكلة / ملاحظة','callback_data':f'task:{task_id}:note'}])
     else:
         rows.append([{'text':'⚠️ إضافة ملاحظة','callback_data':f'task:{task_id}:note'}])
     rows.append([{'text':'📋 مهامي اليوم','callback_data':'my_tasks'},{'text':'📖 تعليمات عملي','callback_data':'work_instructions'}])
     return {'inline_keyboard':rows}
 
-def _telegram_task_text(row, kind='مهمة جديدة'):
-    due=f"\n⏰ الموعد: {row['due_at']}" if row['due_at'] else ''
-    notes=f"\n📝 ملاحظات: {row['notes']}" if 'notes' in row.keys() and row['notes'] else ''
-    return f"📌 {kind}\n\nالمهمة: {row['title']}\nالأولوية: {row['priority']}\nالحالة: {row['status']}{due}{notes}\nوقت الإرسال/التحديث: {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+_AR_DIGITS=str.maketrans('0123456789','٠١٢٣٤٥٦٧٨٩')
+_AR_MONTHS=['كانون الثاني','شباط','آذار','نيسان','أيار','حزيران','تموز','آب','أيلول','تشرين الأول','تشرين الثاني','كانون الأول']
+_AR_DAYS=['الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت','الأحد']
+
+def ar_when(value, now=None):
+    """'2026-11-05T14:00' -> 'الخميس ٥ تشرين الثاني، ٢:٠٠ م' ('اليوم'/'غداً'/'أمس' when close). Telegram shows the raw
+    ISO form reversed in right-to-left text, so every message to an employee uses this."""
+    if not value:return ''
+    raw=str(value).strip()
+    try:d=datetime.fromisoformat(raw.replace('Z','').replace(' ','T')[:19])
+    except ValueError:return raw
+    now=now or datetime.now(); delta=(d.date()-now.date()).days
+    day={0:'اليوم',1:'غداً',-1:'أمس'}.get(delta) or f"{_AR_DAYS[d.weekday()]} {d.day} {_AR_MONTHS[d.month-1]}"
+    if len(raw)<=10:return day.translate(_AR_DIGITS)
+    h=d.hour%12 or 12
+    return f"{day}، {h}:{d.minute:02d} {'ص' if d.hour<12 else 'م'}".translate(_AR_DIGITS)
+
+def _is_late(row, now=None):
+    try:d=datetime.fromisoformat(str(row['due_at']).replace(' ','T')[:19])
+    except (ValueError,TypeError):return False
+    return row['status'] not in ('تم','ملغاة') and d<(now or datetime.now())
+
+def _telegram_task_text(row, kind='مهمة جديدة', origin=''):
+    # One header (kind + who it is from), Arabic date, no technical "sent at" line (Telegram shows the time itself).
+    who=(origin.split(' ',1)[1] if origin and ' ' in origin else origin).removeprefix('مهمة ')  # 'من المدير'
+    head=f"📌 {kind}"+(f" — {who}" if who else '')
+    prio={'عاجلة':'🔴 عاجلة','عالية':'🟠 عالية'}.get(row['priority'],row['priority'])
+    lines=[head,'',f"المهمة: {row['title']}",f"الأولوية: {prio}",f"الحالة: {row['status']}"]
+    if row['due_at']:lines.append(f"⏰ الموعد: {ar_when(row['due_at'])}"+(' ⚠️ متأخرة' if _is_late(row) else ''))
+    if 'notes' in row.keys() and row['notes']:lines.append(f"📝 ملاحظات: {row['notes']}")
+    return '\n'.join(lines)
 
 def _remember_telegram_task_message(c, task_id, chat_id, result):
     # Never record queued deliveries before Telegram returns a real message_id.
@@ -271,10 +298,8 @@ def _notify_employee(c, task_id: int, kind='مهمة جديدة', notice_categor
         return {'ok':False,'skipped':True}
     from .work_settings import notices
     if not notices(c,row['employee_id'],notice_category):return {'ok':True,'skipped':True}
-    text=_telegram_task_text(row,kind)
     from .delegation import telegram_prefix
-    prefix=telegram_prefix(c,row)
-    if prefix:text=prefix+'\n'+text
+    text=_telegram_task_text(row,kind,telegram_prefix(c,row))
     prefs=profile(c,row['employee_id']);mode=c.execute('SELECT display_mode FROM bim_employee_prefs WHERE employee_id=?',(row['employee_id'],)).fetchone()
     if not mode or not mode[0]:mode=c.execute('SELECT p.display_mode FROM bim_job_profiles p JOIN bim_employee_jobs j ON j.job_id=p.id WHERE j.employee_id=? AND p.is_active=1 ORDER BY p.name LIMIT 1',(row['employee_id'],)).fetchone()
     display=mode[0] if mode else 'on_demand'
@@ -367,6 +392,24 @@ def _tg_send_instructions(c,e):
     p=profile(c,e['id'])
     return send(e['telegram_chat_id'],p['instructions'] or 'لا توجد تعليمات مسجلة',reply_markup={'inline_keyboard':[[{'text':'قرأت التعليمات','callback_data':'instructions_read'}]]})
 
+def _tg_task_list(title, rows):
+    """List message + one button per task: tapping it sends that task again with its own buttons (owner 2026-11-03)."""
+    lines=[title,'']
+    for i,t in enumerate(rows,1):
+        due=f" · ⏰ {ar_when(t['due_at'])}" if t['due_at'] else ''
+        late=' ⚠️ متأخرة' if t['due_at'] and _is_late(t) else ''
+        lines.append(f"{i}. {t['title']}\n     {t['status']} · {t['priority']}{due}{late}")
+    lines+=['','اكبس على المهمة تحت لتفتحها مع أزرارها.']
+    kb=[[{'text':f"{i}. {t['title'][:48]}",'callback_data':f"open:{t['id']}"}] for i,t in enumerate(rows[:30],1)]
+    return '\n'.join(lines),{'inline_keyboard':kb}
+
+def _tg_send_task_card(c,tid,e):
+    t=_tg_task_for_employee(c,tid,e['id'])
+    if not t:return {'ok':False}
+    r=send(e['telegram_chat_id'],_telegram_task_text(t,'تفاصيل المهمة'),source_type='task_card',source_id=tid,reply_markup=_telegram_task_keyboard(tid,t['status']))
+    _remember_telegram_task_message(c,tid,e['telegram_chat_id'],r)
+    return r
+
 def _tg_send_my_tasks(c,e):
     rows=c.execute("""SELECT id,title,status,priority,due_at FROM tasks
       WHERE (employee_id=? OR EXISTS(SELECT 1 FROM task_participants p WHERE p.task_id=tasks.id AND p.employee_id=? AND p.status<>'تم')) AND archived_at IS NULL AND status NOT IN ('تم','ملغاة')
@@ -374,11 +417,8 @@ def _tg_send_my_tasks(c,e):
       CASE WHEN due_at IS NULL THEN 1 ELSE 0 END,due_at,id DESC""",(e['id'],e['id'])).fetchall()
     if not rows:
         return send(e['telegram_chat_id'],'✅ لا توجد لديك مهام مفتوحة حالياً.')
-    lines=[f"📋 مهامك المفتوحة — {e['name']}"]
-    for i,t in enumerate(rows,1):
-        due=f" | ⏰ {t['due_at']}" if t['due_at'] else ''
-        lines.append(f"{i}. {t['title']} — {t['status']} — {t['priority']}{due}")
-    return send(e['telegram_chat_id'],'\n'.join(lines))
+    text,kb=_tg_task_list(f"📋 مهامك المفتوحة — {e['name']}",rows)
+    return send(e['telegram_chat_id'],text,reply_markup=kb)
 
 def _tg_set_status(c,task,e,new_status):
     action={'بدأت':'start','قيد التنفيذ':'progress','تم':'complete'}.get(new_status)

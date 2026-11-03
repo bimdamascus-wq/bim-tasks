@@ -14,7 +14,7 @@ from .main import (
     ROOT, SQL_NOT_AUDIO, _attachment_dir, _is_audio, _notify_admin_comment, _notify_employee,
     _notify_employee_id, _notify_task_attachment, _notify_task_notes_update, _refresh_telegram_task_messages,
     _safe_filename, _save_reminder, _task_accessible, _task_with_reminder, _telegram_task_keyboard,
-    _touch_task_sync, _try_instant_sheet_push, app, audit, need, need_work_write
+    _touch_task_sync, _try_instant_sheet_push, app, ar_when, audit, need, need_work_write
 )
 
 # ---------- tasks ----------
@@ -154,7 +154,7 @@ async def edit_task(tid:int, req:Request):
     if 'employee_id' in d and old_emp != new_emp:
         if old_emp:
             _notify_employee_id(c,old_emp,
-              f"🔁 تم نقل المهمة منك\n\nالمهمة: {old['title']}\nلن تظهر لك كت مهمة مسندة بعد الآن.",
+              f"🔁 تم نقل المهمة منك\n\nالمهمة: {old['title']}\nلن تظهر لك كمهمة مسندة بعد الآن.",
               tid,'نقل المهمة من الموظف السابق')
         if new_emp:
             _notify_employee(c,tid,'تم إسناد المهمة إليك')
@@ -174,7 +174,8 @@ async def edit_task(tid:int, req:Request):
     labels={'title':'اسم المهمة','priority':'الأولوية','due_at':'الموعد'}
     for k in ('title','priority','due_at'):
         if k in d and (d.get(k) or None)!=(old[k] or None):
-            changed.append(f"{labels[k]}: {old[k] or '—'} ← {d.get(k) or '—'}")
+            fmt=(lambda v: ar_when(v) or '—') if k=='due_at' else (lambda v: v or '—')
+            changed.append(f"{labels[k]}: {fmt(old[k])} ← {fmt(d.get(k))}")
     if changed and new_emp:
         fresh=c.execute("SELECT * FROM tasks WHERE id=?",(tid,)).fetchone()
         text="✏️ تم تعديل المهمة\n\n"+f"المهمة: {fresh['title']}\n"+"\n".join(changed)
