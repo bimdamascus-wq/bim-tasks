@@ -24,6 +24,19 @@ New-Item -ItemType Directory -Force -Path $Marks, "$Root\logs" | Out-Null
 $InProgress = "$Marks\$($U.name).inprogress"
 $Done = "$Marks\$($U.name).done"
 if (Test-Path $Done) { Write-Host "هالتحديث ($($U.title)) منزّل من قبل. ما في شي لازم ينعمل." -ForegroundColor Green; exit 0 }
+# The package carries only the files changed since its base commit: installed over another version it would leave a mix.
+# app\release.json is written by every package since telegram_backup (2026-10-31); older systems have none and pass.
+$Rel = "$Root\app\release.json"
+if ($U.base -and (Test-Path $Rel)) {
+    $Cur = ''
+    try { $Cur = [string](Get-Content $Rel -Raw -Encoding UTF8 | ConvertFrom-Json).commit } catch { $Cur = '' }
+    if ($Cur -and -not ($Cur.StartsWith($U.base) -or $U.base.StartsWith($Cur))) {
+        Write-Host 'هالتحديث لازم ينزل فوق نسخة تانية. ما تغيّر شي.' -ForegroundColor Red
+        Write-Host "النسخة يلي عالنظام هلق: $Cur   والنسخة المطلوبة: $($U.base)" -ForegroundColor Yellow
+        Write-Host 'نزّل التحديث الأقدم أول، أو ابعت هالرسالة.' -ForegroundColor Yellow
+        exit 1
+    }
+}
 if (Test-Path $InProgress) {
     Write-Host 'في محاولة سابقة لهالتحديث ما كملت. ما رح كمّل لحتى ما تخرب النسخة الاحتياطية.' -ForegroundColor Red
     Write-Host "النسخة الأصلية: $(Get-Content $InProgress)" -ForegroundColor Yellow

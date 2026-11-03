@@ -116,3 +116,32 @@ function schedule(){if(!pending)pending=setTimeout(enhance,150)}
 function startEnhance(){enhance();new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true});setInterval(()=>{for(const i of document.querySelectorAll('input[data-ds-date]'))refreshDate(i)},2000)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startEnhance);else startEnhance();
 })();
+/* Delete an employee (employees page + employee profile). Reversible "delete" of app/lifecycle.py: the record is hidden,
+   logins stop, history stays. Open tasks do NOT move by themselves, so the dialog offers to hand them over first
+   (POST /api/handover, needs users.manage) before DELETE /api/employees/{id} (needs employees.edit). */
+window.bimDeleteEmployee=async(id,name,canMove)=>{
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const ar=v=>String(v??'').replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[+d]);
+  const json={'Content-Type':'application/json'};
+  let open=[],people=[];
+  try{
+    if(canMove){open=(await bimRequest('/api/handover/preview',{method:'POST',headers:json,body:JSON.stringify({from_employee:id})})).tasks||[];
+      people=(await bimRequest('/api/task-options/employees')).filter(e=>+e.id!==+id)}
+    else open=(await bimRequest('/api/tasks?employee_id='+id)).filter(t=>!['تم','ملغاة'].includes(t.status));
+  }catch(e){bimToast(e.message,'err');return false}
+  const d=document.createElement('dialog');d.className='ds-dialog';d.dir='rtl';
+  d.innerHTML=`<form method="dialog"><h2>حذف الموظف: ${esc(name)}</h2>
+   <p>بينخفى من القوائم وما بيقدر يفوت عالنظام، ومهامه القديمة وسجله بيضلّوا محفوظين. فيك ترجّعه من «إدارة السجلات والحذف».</p>
+   ${open.length?`<p class="ds-dialog-warn">عنده <b>${ar(open.length)}</b> ${open.length===1?'مهمة مفتوحة':'مهام مفتوحة'}، وما بتنتقل لحالها.</p>
+     ${canMove?`<label for="dsMoveTo">انقل مهامه المفتوحة إلى</label><select id="dsMoveTo"><option value="">— خلّيها باسمه —</option>${people.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('')}</select>`
+       :'<p>لنقل المهام قبل الحذف: صفحة «تسليم الأعمال».</p>'}`:'<p>ما عنده مهام مفتوحة.</p>'}
+   <div class="ds-dialog-actions"><button value="cancel" class="btn-light">إلغاء</button><button value="ok" class="btn-danger" id="dsDelOk">حذف الموظف</button></div></form>`;
+  document.body.append(d);
+  const answer=await new Promise(res=>{d.addEventListener('close',()=>res(d.returnValue),{once:true});d.showModal()});
+  const to=d.querySelector('#dsMoveTo')?.value||'';d.remove();
+  if(answer!=='ok')return false;
+  try{
+    if(to&&open.length){await bimRequest('/api/handover',{method:'POST',headers:json,body:JSON.stringify({from_employee:id,to_employee:+to,task_ids:open.map(t=>t.id)})});bimToast('انتقلت المهام المفتوحة')}
+    await bimRequest('/api/employees/'+id,{method:'DELETE'});bimToast('انحذف الموظف '+name);return true;
+  }catch(e){bimToast(e.message,'err');return false}
+};

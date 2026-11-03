@@ -81,6 +81,7 @@ async function load(){
         {% if 'recurring.view' in permissions %}<a class="btn btn-sm" href="/recurring?employee_id=${e.id}">المهام الثابتة</a>{% endif %}
         <button class="btn-sm btn-light" onclick="makeLink(${e.id})">🔗 ${e.telegram_chat_id?'رابط ربط جديد':'ربط Telegram'}</button>
         ${e.telegram_chat_id?`<button class="btn-sm btn-light" onclick="unlinkTelegram(${e.id})">⛓️‍💥 فك الربط</button>`:''}
+        <button class="btn-sm btn-danger" onclick="deleteEmployee(${e.id})">🗑 حذف</button>
       </div></td>
       {% endif %}
     </tr>`).join('');
@@ -88,6 +89,7 @@ async function load(){
     bimToast(e.message||'تعذر تحميل الموظفين','err');
   }
 }
+async function deleteEmployee(id){const e=(rows||[]).find(x=>+x.id===+id)||{};if(await bimDeleteEmployee(id,e.name||'',{{ 'true' if 'users.manage' in permissions else 'false' }}))load()}
 function closeModal(){$('modal').classList.remove('show')}
 function openAdd(){
   editingId=null;$('modalTitle').textContent='إضافة موظف';

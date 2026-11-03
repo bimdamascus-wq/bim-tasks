@@ -747,3 +747,13 @@ body.ds .ds-tabs{margin:0}
 @media (max-width:700px){body.ds #epKpis{grid-template-columns:1fr 1fr}body.ds #epKpis .kpi{padding:14px 16px!important}body.ds #epKpis .kpi b{font-size:32px!important}}
 body.ds #dsBellBtn{color:#2B1D0E!important}body.ds #dsBellCount{color:#fff!important;background:#D92D20!important}
 body.ds td>.actions{flex-wrap:nowrap!important}
+/* small confirm dialogs (delete employee, archive task) */
+.ds-dialog{max-width:520px;width:calc(100% - 32px);border:0;border-radius:22px;padding:22px 24px;background:#fff;color:#2B1D0E;box-shadow:0 30px 60px -20px rgba(60,40,10,.5)}
+.ds-dialog::backdrop{background:rgba(43,29,14,.45)}
+.ds-dialog h2{margin:0 0 10px;font-size:22px}
+.ds-dialog p{margin:0 0 10px;line-height:1.7}
+.ds-dialog label{display:block;font-weight:700;margin:6px 0 4px}
+.ds-dialog select{width:100%}
+.ds-dialog-warn{background:#FFF3E3;border-radius:12px;padding:8px 12px}
+.ds-dialog-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
+body.ds .ds-dialog .btn-danger{background:#B42318!important;border-color:#B42318!important;color:#fff!important}

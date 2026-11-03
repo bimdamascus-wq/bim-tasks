@@ -1706,6 +1706,7 @@
     "dsState",
     "dsToday",
     "epCards",
+    "epDelete",
     "epEmpty",
     "epHead",
     "epKpis",
@@ -3021,6 +3022,7 @@
     "/static/record-management.js"
    ],
    "ids": [
+    "archiveTask",
     "attachments",
     "commentText",
     "comments",
@@ -5485,6 +5487,7 @@
     "dsState",
     "dsToday",
     "epCards",
+    "epDelete",
     "epEmpty",
     "epHead",
     "epKpis",
@@ -6800,6 +6803,7 @@
     "/static/record-management.js"
    ],
    "ids": [
+    "archiveTask",
     "attachments",
     "commentText",
     "comments",

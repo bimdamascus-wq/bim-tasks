@@ -9,6 +9,7 @@
   <div class="ep-links">
     {% if 'tasks.create' in permissions %}<a class="btn" href="/tasks?view=cards&new=1">＋ مهمة جديدة</a>{% endif %}
     {% if 'reports.team' in permissions %}<a class="btn btn-light" href="/team-performance">تقرير أداء الفريق</a>{% endif %}
+    {% if 'employees.edit' in permissions %}<button type="button" class="btn-danger" id="epDelete">🗑 حذف الموظف</button>{% endif %}
   </div>
 </section>
 
@@ -85,5 +86,6 @@ async function epAssign(id,eid){const name=(PEOPLE.find(e=>String(e.id)===String
 async function epRemind(id,btn){btn.disabled=true;try{const r=await bimRequest('/api/tasks/'+id+'/telegram',{method:'POST'});bimToast(r.ok?(r.queued?'التذكير بالطابور وسيُرسل قريباً':'تم إرسال التذكير'):'تعذر الإرسال: '+(r.error||'الموظف غير مربوط بـ Telegram'),r.ok?'ok':'err')}catch(e){bimToast(e.message,'err')}finally{btn.disabled=false}}
 epTabs.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;TAB=b.dataset.tab;UNSEEN=false;render()});
 document.querySelector('.ep-kpis').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;UNSEEN=b.dataset.tab==='unseen';TAB=UNSEEN?'open':b.dataset.tab;render();epTabs.scrollIntoView({behavior:'smooth',block:'start'})});
+document.getElementById('epDelete')?.addEventListener('click',async()=>{if(await bimDeleteEmployee(EID,document.getElementById('epName').textContent.trim(),{{ 'true' if 'users.manage' in permissions else 'false' }}))location.href='/employees'});
 loadProfile();loadTasks();
 </script>{% endblock %}
