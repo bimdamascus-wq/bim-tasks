@@ -40,11 +40,15 @@ def api_tasks(req: Request, status:Optional[str]=None, employee_id:Optional[int]
       r.type reminder_type,r.start_at reminder_start_at,r.specific_at reminder_specific_at,
       r.weekly_day reminder_weekly_day,r.weekly_time reminder_weekly_time,r.monthly_day reminder_monthly_day,
       r.monthly_time reminder_monthly_time,r.is_active reminder_active,r.last_sent_at reminder_last_sent_at,
+      r.every_n reminder_every_n,r.every_unit reminder_every_unit,r.before_minutes reminder_before_minutes,
       (SELECT COUNT(*) FROM task_participants p3 WHERE p3.task_id=t.id) participant_count
       FROM tasks t LEFT JOIN employees e ON e.id=t.employee_id LEFT JOIN task_reminders r ON r.task_id=t.id {w}
       ORDER BY CASE t.status WHEN 'جديدة' THEN 1 WHEN 'بدأت' THEN 2 WHEN 'قيد التنفيذ' THEN 3 WHEN 'بانتظار' THEN 4 ELSE 9 END,t.id DESC''',p)]
     from .delegation import decorate
     decorate(c,rows)
+    from .reminders import label as reminder_label
+    for r in rows: r['reminder_label']=reminder_label({'type':r['reminder_type'],'start_at':r['reminder_start_at'],'every_n':r['reminder_every_n'],
+        'every_unit':r['reminder_every_unit'],'before_minutes':r['reminder_before_minutes'],'is_active':r['reminder_active']})
     c.close(); return rows
 
 @app.get('/api/tasks/{tid}')
@@ -54,7 +58,11 @@ def api_task(tid:int, req:Request):
     if u['role_code']=='employee' and not access['viewed_at']:
         c.execute('UPDATE tasks SET viewed_at=CURRENT_TIMESTAMP WHERE id=?',(tid,))
     row=_task_with_reminder(c,tid)
-    d=dict(row); d['participants']=[dict(x) for x in c.execute('''SELECT p.*,e.name FROM task_participants p JOIN employees e ON e.id=p.employee_id WHERE p.task_id=?''',(tid,))]
+    d=dict(row)
+    from .reminders import label as reminder_label
+    d['reminder_label']=reminder_label({'type':d['reminder_type'],'start_at':d['reminder_start_at'],'every_n':d['reminder_every_n'],
+        'every_unit':d['reminder_every_unit'],'before_minutes':d['reminder_before_minutes'],'is_active':d['reminder_active']})
+    d['participants']=[dict(x) for x in c.execute('''SELECT p.*,e.name FROM task_participants p JOIN employees e ON e.id=p.employee_id WHERE p.task_id=?''',(tid,))]
     d['completion_entries']=[dict(x) for x in c.execute('SELECT * FROM bim_completion_entries WHERE task_id=? ORDER BY id',(tid,))]
     d['subtasks']=[dict(x) for x in c.execute('SELECT * FROM task_subtasks WHERE task_id=? ORDER BY id',(tid,))]
     d['comments']=[dict(x) for x in c.execute('SELECT * FROM task_comments WHERE task_id=? ORDER BY id',(tid,))]
@@ -69,6 +77,10 @@ def api_task(tid:int, req:Request):
 async def create_task(req: Request):
     u=need(req,'tasks.create'); d=await req.json(); title=str(d.get('title','')).strip()
     if not title: raise HTTPException(400,'المهمة مطلوبة')
+    from .reminders import normalize as check_reminder
+    try: check_reminder(d.get('reminder'))  # refuse before the task row exists
+    except ValueError as e: raise HTTPException(400,str(e))
+    if (d.get('reminder') or {}).get('type')=='قبل الموعد' and not d.get('due_at'): raise HTTPException(400,'«قبل الموعد» يحتاج موعداً للمهمة')
     c=connect(); code=f"TASK-{int(time.time()*1000)}"; emp=d.get('employee_id') or None
     participants=d.get('participants') or []
     if not isinstance(participants,list): c.close();raise HTTPException(400,'قائمة المشاركين غير صحيحة')

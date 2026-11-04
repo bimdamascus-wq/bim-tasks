@@ -168,7 +168,7 @@ CREATE TABLE IF NOT EXISTS recurring_tasks(
 CREATE TABLE IF NOT EXISTS task_reminders(
  id INTEGER PRIMARY KEY AUTOINCREMENT,
  task_id INTEGER NOT NULL UNIQUE REFERENCES tasks(id) ON DELETE CASCADE,
- type TEXT NOT NULL DEFAULT 'بدون' CHECK(type IN('بدون','مرة واحدة','كل ساعة','كل ساعتين','أسبوعياً','شهرياً','تاريخ محدد')),
+ type TEXT NOT NULL DEFAULT 'بدون',
  start_at TEXT,
  specific_at TEXT,
  weekly_day INTEGER,
@@ -177,7 +177,10 @@ CREATE TABLE IF NOT EXISTS task_reminders(
  monthly_time TEXT,
  last_sent_at TEXT,
  is_active INTEGER NOT NULL DEFAULT 0,
- updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+ updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ every_n INTEGER,
+ every_unit TEXT,
+ before_minutes INTEGER
 );
 CREATE TABLE IF NOT EXISTS notifications(
  id INTEGER PRIMARY KEY AUTOINCREMENT,

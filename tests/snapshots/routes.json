@@ -4,6 +4,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -109,6 +110,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -177,6 +179,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -252,6 +255,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -1007,6 +1011,10 @@
      "participant_count": "int",
      "priority": "str",
      "reminder_active": "int",
+     "reminder_before_minutes": "NoneType",
+     "reminder_every_n": "NoneType",
+     "reminder_every_unit": "NoneType",
+     "reminder_label": "str",
      "reminder_last_sent_at": "NoneType",
      "reminder_monthly_day": "NoneType",
      "reminder_monthly_time": "NoneType",
@@ -1058,6 +1066,10 @@
     "participants": [],
     "priority": "str",
     "reminder_active": "int",
+    "reminder_before_minutes": "NoneType",
+    "reminder_every_n": "NoneType",
+    "reminder_every_unit": "NoneType",
+    "reminder_label": "str",
     "reminder_last_sent_at": "NoneType",
     "reminder_monthly_day": "NoneType",
     "reminder_monthly_time": "NoneType",
@@ -1340,6 +1352,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -1406,6 +1419,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -1472,6 +1486,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -1543,6 +1558,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -1612,6 +1628,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -1687,6 +1704,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -1771,6 +1789,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -1858,6 +1877,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -1939,6 +1959,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -2006,6 +2027,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -2083,6 +2105,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -2182,6 +2205,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -2260,6 +2284,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -2330,6 +2355,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -2413,6 +2439,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -2482,6 +2509,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -2547,6 +2575,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -2613,6 +2642,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -2694,6 +2724,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -2779,6 +2810,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -2878,6 +2910,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -2952,6 +2985,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -3018,6 +3052,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -3095,6 +3130,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -3165,20 +3201,14 @@
     "groupSelect",
     "isGroup",
     "modal",
-    "monthDay",
-    "monthTime",
     "notes",
     "priority",
     "q",
-    "remAt",
-    "remExtra",
-    "remType",
+    "remBox",
     "retryTasks",
     "status",
     "taskLoadState",
-    "title",
-    "weekDay",
-    "weekTime"
+    "title"
    ],
    "status": 200,
    "title": "بيم دمشق | كل المهام",
@@ -3193,6 +3223,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -3268,6 +3299,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -3345,6 +3377,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -3435,6 +3468,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -3540,6 +3574,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -3616,6 +3651,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -3684,6 +3720,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -3764,6 +3801,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -3832,6 +3870,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -3937,6 +3976,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -4005,6 +4045,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -4080,6 +4121,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -4835,6 +4877,10 @@
      "participant_count": "int",
      "priority": "str",
      "reminder_active": "int",
+     "reminder_before_minutes": "NoneType",
+     "reminder_every_n": "NoneType",
+     "reminder_every_unit": "NoneType",
+     "reminder_label": "str",
      "reminder_last_sent_at": "NoneType",
      "reminder_monthly_day": "NoneType",
      "reminder_monthly_time": "NoneType",
@@ -4886,6 +4932,10 @@
     "participants": [],
     "priority": "str",
     "reminder_active": "int",
+    "reminder_before_minutes": "NoneType",
+    "reminder_every_n": "NoneType",
+    "reminder_every_unit": "NoneType",
+    "reminder_label": "str",
     "reminder_last_sent_at": "NoneType",
     "reminder_monthly_day": "NoneType",
     "reminder_monthly_time": "NoneType",
@@ -5168,6 +5218,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -5234,6 +5285,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -5300,6 +5352,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -5371,6 +5424,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -5440,6 +5494,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -5515,6 +5570,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -5599,6 +5655,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -5686,6 +5743,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -5767,6 +5825,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -5834,6 +5893,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -5911,6 +5971,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -6010,6 +6071,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -6088,6 +6150,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -6158,6 +6221,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -6241,6 +6305,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -6310,6 +6375,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -6375,6 +6441,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -6441,6 +6508,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -6522,6 +6590,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -6607,6 +6676,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -6706,6 +6776,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -6780,6 +6851,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -6846,6 +6918,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -6923,6 +6996,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -6993,20 +7067,14 @@
     "groupSelect",
     "isGroup",
     "modal",
-    "monthDay",
-    "monthTime",
     "notes",
     "priority",
     "q",
-    "remAt",
-    "remExtra",
-    "remType",
+    "remBox",
     "retryTasks",
     "status",
     "taskLoadState",
-    "title",
-    "weekDay",
-    "weekTime"
+    "title"
    ],
    "status": 200,
    "title": "بيم دمشق | كل المهام",
@@ -7021,6 +7089,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -7096,6 +7165,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -7173,6 +7243,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -7263,6 +7334,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -7368,6 +7440,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -7444,6 +7517,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -7512,6 +7586,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -7592,6 +7667,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -7672,6 +7748,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -8117,6 +8194,10 @@
      "participant_count": "int",
      "priority": "str",
      "reminder_active": "int",
+     "reminder_before_minutes": "NoneType",
+     "reminder_every_n": "NoneType",
+     "reminder_every_unit": "NoneType",
+     "reminder_label": "str",
      "reminder_last_sent_at": "NoneType",
      "reminder_monthly_day": "NoneType",
      "reminder_monthly_time": "NoneType",
@@ -8168,6 +8249,10 @@
     "participants": [],
     "priority": "str",
     "reminder_active": "int",
+    "reminder_before_minutes": "NoneType",
+    "reminder_every_n": "NoneType",
+    "reminder_every_unit": "NoneType",
+    "reminder_label": "str",
     "reminder_last_sent_at": "NoneType",
     "reminder_monthly_day": "NoneType",
     "reminder_monthly_time": "NoneType",
@@ -8320,6 +8405,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -8478,6 +8564,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -8590,6 +8677,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -8637,6 +8725,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -8675,20 +8764,14 @@
     "groupSelect",
     "isGroup",
     "modal",
-    "monthDay",
-    "monthTime",
     "notes",
     "priority",
     "q",
-    "remAt",
-    "remExtra",
-    "remType",
+    "remBox",
     "retryTasks",
     "status",
     "taskLoadState",
-    "title",
-    "weekDay",
-    "weekTime"
+    "title"
    ],
    "status": 200,
    "title": "بيم دمشق | كل المهام",
@@ -8771,6 +8854,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -9262,6 +9346,10 @@
      "participant_count": "int",
      "priority": "str",
      "reminder_active": "int",
+     "reminder_before_minutes": "NoneType",
+     "reminder_every_n": "NoneType",
+     "reminder_every_unit": "NoneType",
+     "reminder_label": "str",
      "reminder_last_sent_at": "NoneType",
      "reminder_monthly_day": "NoneType",
      "reminder_monthly_time": "NoneType",
@@ -9313,6 +9401,10 @@
     "participants": [],
     "priority": "str",
     "reminder_active": "int",
+    "reminder_before_minutes": "NoneType",
+    "reminder_every_n": "NoneType",
+    "reminder_every_unit": "NoneType",
+    "reminder_label": "str",
     "reminder_last_sent_at": "NoneType",
     "reminder_monthly_day": "NoneType",
     "reminder_monthly_time": "NoneType",
@@ -9479,6 +9571,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -9558,6 +9651,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -9619,6 +9713,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -9746,6 +9841,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -9837,6 +9933,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -9928,6 +10025,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -9982,6 +10080,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",
@@ -10030,20 +10129,14 @@
     "groupSelect",
     "isGroup",
     "modal",
-    "monthDay",
-    "monthTime",
     "notes",
     "priority",
     "q",
-    "remAt",
-    "remExtra",
-    "remType",
+    "remBox",
     "retryTasks",
     "status",
     "taskLoadState",
-    "title",
-    "weekDay",
-    "weekTime"
+    "title"
    ],
    "status": 200,
    "title": "بيم دمشق | كل المهام",
@@ -10058,6 +10151,7 @@
    "assets": [
     "/static/bim-ds.css",
     "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
     "/static/bim-delegate.js",
     "/static/bim-v81-center-ar.js",
     "/static/bim-arabic-date-labels-v1.js",

@@ -237,20 +237,15 @@ def process_group_reminders():
 def process_reminders():
     c=connect(); now=datetime.now()
     try:
-        rows=c.execute("SELECT r.*,t.status FROM task_reminders r JOIN tasks t ON t.id=r.task_id WHERE r.is_active=1 AND t.status NOT IN ('تم','ملغاة')").fetchall()
+        # Three options (app/reminders.py). last_sent_at is local time (compared with now). Archived tasks never remind.
+        from .reminders import due as reminder_due, before_text
+        rows=c.execute("SELECT r.*,t.status,t.employee_id,t.due_at FROM task_reminders r JOIN tasks t ON t.id=r.task_id WHERE r.is_active=1 AND t.archived_at IS NULL AND t.status NOT IN ('تم','ملغاة')").fetchall()
         for r in rows:
-            due=False; last=_parse(r['last_sent_at']); typ=r['type']
-            if typ in ('مرة واحدة','تاريخ محدد'):
-                at=_parse(r['specific_at'] if typ=='تاريخ محدد' else r['start_at']); due=bool(at and now>=at and not last)
-            elif typ in ('كل ساعة','كل ساعتين'):
-                start=_parse(r['start_at']) or now; hours=1 if typ=='كل ساعة' else 2; due=now>=start and (not last or (now-last).total_seconds()>=hours*3600)
-            elif typ=='أسبوعياً':
-                h,m=map(int,(r['weekly_time'] or '09:00').split(':')); weekday=(now.weekday()+1)%7; due=(weekday==int(r['weekly_day'] or 0) and (now.hour,now.minute)>=(h,m) and (not last or (now-last).total_seconds()>=6*86400))
-            elif typ=='شهرياً':
-                h,m=map(int,(r['monthly_time'] or '09:00').split(':')); max_day=calendar.monthrange(now.year,now.month)[1]; day=min(max(1,int(r['monthly_day'] or 1)),max_day); due=(now.day>=day and (now.hour,now.minute)>=(h,m) and (not last or (last.year,last.month)!=(now.year,now.month)))
-            if due and _send_task(c,r['task_id'],'تذكير تلقائي'):
-                c.execute('UPDATE task_reminders SET last_sent_at=CURRENT_TIMESTAMP,updated_at=CURRENT_TIMESTAMP WHERE id=?',(r['id'],))
-                if typ in ('مرة واحدة','تاريخ محدد'): c.execute('UPDATE task_reminders SET is_active=0 WHERE id=?',(r['id'],))
+            if not reminder_due(c,r,r,now):continue
+            kind='تذكير تلقائي' if r['type']!='قبل الموعد' else 'تذكير تلقائي — '+before_text(r['before_minutes'])
+            if _send_task(c,r['task_id'],kind):
+                c.execute('UPDATE task_reminders SET last_sent_at=?,updated_at=CURRENT_TIMESTAMP WHERE id=?',(now.strftime('%Y-%m-%dT%H:%M:%S'),r['id']))
+                if r['type']=='مرة واحدة': c.execute('UPDATE task_reminders SET is_active=0 WHERE id=?',(r['id'],))
     finally:c.close()
 
 def process_recurring():

@@ -274,4 +274,6 @@ def init_db():
     migrate_security(c)
     from .inbox import migrate as migrate_inbox
     migrate_inbox(c)
+    from .reminders import migrate as migrate_reminders  # 3 reminder options (owner 2026-11-04)
+    migrate_reminders(c)
     c.close()

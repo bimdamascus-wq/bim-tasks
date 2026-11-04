@@ -446,21 +446,27 @@ def _task_with_reminder(c, tid):
       r.type reminder_type,r.start_at reminder_start_at,r.specific_at reminder_specific_at,
       r.weekly_day reminder_weekly_day,r.weekly_time reminder_weekly_time,
       r.monthly_day reminder_monthly_day,r.monthly_time reminder_monthly_time,
-      r.is_active reminder_active,r.last_sent_at reminder_last_sent_at
+      r.is_active reminder_active,r.last_sent_at reminder_last_sent_at,
+      r.every_n reminder_every_n,r.every_unit reminder_every_unit,r.before_minutes reminder_before_minutes
       FROM tasks t LEFT JOIN employees e ON e.id=t.employee_id
       LEFT JOIN task_reminders r ON r.task_id=t.id WHERE t.id=?''', (tid,)).fetchone()
 
 def _save_reminder(c, tid, rem):
-    rem = rem or {}; typ = rem.get('type', 'بدون') or 'بدون'
-    active = 0 if typ == 'بدون' else 1
-    c.execute('''INSERT INTO task_reminders(task_id,type,start_at,specific_at,weekly_day,weekly_time,monthly_day,monthly_time,is_active,updated_at)
-      VALUES(?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)
-      ON CONFLICT(task_id) DO UPDATE SET type=excluded.type,start_at=excluded.start_at,
-      specific_at=excluded.specific_at,weekly_day=excluded.weekly_day,weekly_time=excluded.weekly_time,
-      monthly_day=excluded.monthly_day,monthly_time=excluded.monthly_time,is_active=excluded.is_active,
-      updated_at=CURRENT_TIMESTAMP''',
-      (tid, typ, rem.get('start_at'), rem.get('specific_at'), rem.get('weekly_day'), rem.get('weekly_time'),
-       rem.get('monthly_day'), rem.get('monthly_time'), active))
+    # Three options since 2026-11-04 (app/reminders.py); old type names are converted. A changed reminder starts
+    # fresh (last_sent_at cleared), an unchanged one keeps its history.
+    from .reminders import normalize
+    try: r = normalize(rem)
+    except ValueError as e: raise HTTPException(400, str(e))
+    old = c.execute('SELECT type,start_at,every_n,every_unit,before_minutes,is_active FROM task_reminders WHERE task_id=?', (tid,)).fetchone()
+    same = old is not None and (old['type'], old['start_at'], old['every_n'], old['every_unit'], old['before_minutes'], old['is_active']) == \
+        (r['type'], r['start_at'], r['every_n'], r['every_unit'], r['before_minutes'], r['is_active'])
+    if same: return
+    c.execute('''INSERT INTO task_reminders(task_id,type,start_at,every_n,every_unit,before_minutes,is_active,last_sent_at,updated_at)
+      VALUES(?,?,?,?,?,?,?,NULL,CURRENT_TIMESTAMP)
+      ON CONFLICT(task_id) DO UPDATE SET type=excluded.type,start_at=excluded.start_at,every_n=excluded.every_n,
+      every_unit=excluded.every_unit,before_minutes=excluded.before_minutes,is_active=excluded.is_active,
+      last_sent_at=NULL,updated_at=CURRENT_TIMESTAMP''',
+      (tid, r['type'], r['start_at'], r['every_n'], r['every_unit'], r['before_minutes'], r['is_active']))
 
 
 def _setting(c, key:str, default:str=''):

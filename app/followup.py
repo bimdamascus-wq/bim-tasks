@@ -329,7 +329,7 @@ def process(c=None, now=None):
         if cfg.get('reminders'):
             marks = ','.join('?' * len(REMINDER_KINDS))
             for n in c.execute(f"""SELECT * FROM notifications WHERE id>? AND id<=? AND status<>'failed'
-                    AND (kind IN ({marks}) OR kind LIKE 'الموعد يقترب%') ORDER BY id""", (lo['nt'], top['nt'], *REMINDER_KINDS)).fetchall():
+                    AND (kind IN ({marks}) OR kind LIKE 'الموعد يقترب%' OR kind LIKE 'تذكير تلقائي%') ORDER BY id""", (lo['nt'], top['nt'], *REMINDER_KINDS)).fetchall():
                 name = _emp_name(c, n['employee_id']) or 'موظف'
                 if n['task_id']:
                     t = task(n['task_id'])
