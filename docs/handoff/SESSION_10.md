@@ -16,7 +16,8 @@ Branch with all work: `claude/zealous-lamport-x69beu` (contains everything of `c
 
 ### State at handoff (2026-11-03)
 - Server: e98e2a8 (`followup_tasks`, report 2026-11-04 06:35, all ports). Package `followup_lively` (d4d84ab, BASE e98e2a8,
-  bold/emoji group messages) given, NOT confirmed. Then `dashboard_pro` (e4f1485, BASE d4d84ab): new manager dashboard. Ask for the status report
+  bold/emoji group messages) given, NOT confirmed. Then `dashboard_pro` (e4f1485, BASE d4d84ab): new manager dashboard. Then `reminders3`
+  (7da6b1d, BASE e4f1485): 3 reminder options (see CLAUDE.md). Ask for the status report
   after both, then fast-forward `main`.
   Ask whether the per-task buttons and Reply-comments work in the real group. `main` = 23ef6df.
 - On the branch, NOT shipped, all for ONE package (BASE 6a5955a):

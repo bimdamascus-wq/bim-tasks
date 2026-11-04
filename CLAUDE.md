@@ -311,3 +311,10 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   profile links, activity); the separate "quick filter by employee" card became an employee select + clickable team rows.
   Before/after: dist/dashboard_old.png / dashboard_new.png (demo data). Package `dashboard_pro` (commit e4f1485, BASE
   d4d84ab = followup_lively, so lively must be installed first) given — NOT confirmed.
+- 2026-11-04: owner wanted fewer reminder options covering everything ("every 10 days"). Agreed 3 options: مرة واحدة /
+  يتكرر (every N ساعة|يوم|أسبوع|شهر from a start time; hours only in working time) / قبل الموعد (30 min..2 days).
+  `app/reminders.py` + `bim-reminder.js` (new-task window, 🔔 window in the quick list and on the task page). On first start
+  `reminders.migrate()` rebuilds task_reminders (old CHECK removed, every_n/every_unit/before_minutes added, old rows
+  converted, last_sent_at -> local time). Rolling back to old code keeps working but old code ignores the new types.
+  Package `reminders3` (commit 7da6b1d, BASE e4f1485 = dashboard_pro) given — NOT confirmed. Install order:
+  followup_lively -> dashboard_pro -> reminders3.
