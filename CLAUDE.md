@@ -305,3 +305,9 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   status/priority icons; `followup.h()` escapes user text, `send_html` falls back to plain if Telegram refuses the HTML;
   file captions stay plain). Preview dist/followup_lively_preview.png. Package `followup_lively` (commit d4d84ab, BASE
   e98e2a8, 3 files) given — NOT confirmed. Font size cannot be changed on Telegram (only bold/italic).
+- 2026-11-04: owner: dashboard looks "like a kids' app", wants a professional one that uses the space. Redesigned `/`
+  (command_center.html + scoped `#dx` block at the end of bim-ds.css; /api/v2/dashboard gained due_today, unassigned,
+  unseen, done_week, mix, trend, team done7). Every old action kept (quick add/Ctrl K, period, mark done, team filter,
+  profile links, activity); the separate "quick filter by employee" card became an employee select + clickable team rows.
+  Before/after: dist/dashboard_old.png / dashboard_new.png (demo data). Package `dashboard_pro` (commit e4f1485, BASE
+  d4d84ab = followup_lively, so lively must be installed first) given — NOT confirmed.
