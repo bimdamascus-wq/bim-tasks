@@ -320,3 +320,12 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   followup_lively -> dashboard_pro -> reminders3.
 - Session 9 ended 2026-11-04 at the owner's request. Next: `docs/handoff/SESSION_10.md` (3 packages waiting for install,
   in order followup_lively -> dashboard_pro -> reminders3; then status report and fast-forward `main`).
+
+## Session 10 (2026-11-04)
+- Owner says `followup_lively`, `dashboard_pro`, `reminders3` are installed (NO status report yet -> `main` not moved).
+- Owner asked how to remind an employee again by WhatsApp/Telegram. Before: Telegram «🔔 تذكير» only on /my-team and the
+  employee profile, the follow-up group button, scheduled reminders; WhatsApp only through «توزيع المهمة» (logged as a
+  delegation). Package `remind_now` (commit 5adabad, BASE 7da6b1d, 5 files) given — NOT confirmed: task page buttons
+  «🔔 ذكّر الآن (تلغرام)» / «💬 ذكّر على الواتس», POST /api/tasks/{tid}/remind (tasks.edit + team scope, Telegram
+  at most once a minute per task, WhatsApp = wa.me link, the manager presses send), task_event `reminded` + audit
+  `task_remind`, follow-up group shows it (kind `reminders`). After the report shows 5adabad on all ports: fast-forward `main`.
