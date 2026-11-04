@@ -297,3 +297,7 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   saved as task_comments user_id NULL + event 'comment' source telegram_group, sent to the employee; only `remind_ids`
   people if set); button «📋 أرسل قائمة المهام الآن» (POST /api/followup/digest-now). After install: status report,
   then merge into `main` (server = e98e2a8).
+- Report 06:35 (2026-11-04): `followup_tasks` installed 06:35; 8797 lan+workers, 8798 external, 8799 test all on
+  e98e2a8. `main` fast-forwarded to the branch. Sync incremental OK (seconds, unchanged=946). Off-site 02:00 backup OK.
+  `?secret=` refused: none. Duplicates: none. Test copy data still from 2026-10-31 (TEST_COPY_CREATE.cmd never re-run).
+  Still ask: does the per-task morning list / Reply-comment work in the real group? 18:00 supervisor summary arrived?
