@@ -15,7 +15,8 @@ Owner: not technical, Syrian Arabic, short answers, exact clicks. Read `CLAUDE.m
 Branch with all work: `claude/zealous-lamport-x69beu` (contains everything of `claude/modest-faraday-syi9e5`).
 
 ### State at handoff (2026-11-03)
-- Server: e98e2a8 (`followup_tasks`, report 2026-11-04 06:35, all ports). `main` = branch. Nothing waiting to be installed.
+- Server: e98e2a8 (`followup_tasks`, report 2026-11-04 06:35, all ports). Package `followup_lively` (d4d84ab, BASE e98e2a8,
+  bold/emoji group messages) given, NOT confirmed: ask for the status report, then fast-forward `main`.
   Ask whether the per-task buttons and Reply-comments work in the real group. `main` = 23ef6df.
 - On the branch, NOT shipped, all for ONE package (BASE 6a5955a):
   1. 6d1a6a0 installer/status report touch only our ports (stops no longer kill 8070/8080). IMPORTANT.

@@ -301,3 +301,7 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   e98e2a8. `main` fast-forwarded to the branch. Sync incremental OK (seconds, unchanged=946). Off-site 02:00 backup OK.
   `?secret=` refused: none. Duplicates: none. Test copy data still from 2026-10-31 (TEST_COPY_CREATE.cmd never re-run).
   Still ask: does the per-task morning list / Reply-comment work in the real group? 18:00 supervisor summary arrived?
+- 2026-11-04: owner asked for livelier, clearer group messages. Group texts are now Telegram HTML (bold, emojis, ━ separators,
+  status/priority icons; `followup.h()` escapes user text, `send_html` falls back to plain if Telegram refuses the HTML;
+  file captions stay plain). Preview dist/followup_lively_preview.png. Package `followup_lively` (commit d4d84ab, BASE
+  e98e2a8, 3 files) given — NOT confirmed. Font size cannot be changed on Telegram (only bold/italic).
