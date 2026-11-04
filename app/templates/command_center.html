@@ -1,34 +1,81 @@
 {% extends "base.html" %}{% block content %}
-<main class="ds-home" aria-labelledby="title">
-  <form class="ds-quick" id="cmd" autocomplete="off">
-    <img class="ds-i3d" src="/static/icons3d/pencil.png" alt="" aria-hidden="true">
+{# Manager dashboard, redesigned 2026-11-04 (owner: "professional, uses the space, easy on the eyes").
+   Same data and actions as before: quick add (Ctrl K), period switch, KPIs, the three task lists with "mark done",
+   team load with profile links and click-to-filter, employee filter, live activity. New: 14-day chart, status mix. #}
+<main class="dx" id="dx" aria-labelledby="dxTitle">
+  <header class="dx-head">
+    <div class="dx-title">
+      <h1 id="dxTitle"><span id="title">اليوم</span></h1>
+      <p id="sub"></p>
+    </div>
+    <div class="dx-tools">
+      <label class="dx-select"><span>الموظف</span><select id="empSel" aria-label="فلترة حسب الموظف"><option value="">كل الموظفين</option></select></label>
+      <div class="dx-seg" id="seg" role="group" aria-label="الفترة"><button type="button" data-s="today" class="on">اليوم</button><button type="button" data-s="week">هذا الأسبوع</button><button type="button" data-s="all">الكل</button></div>
+    </div>
+  </header>
+
+  <form class="dx-quick" id="cmd" autocomplete="off">
+    <span class="dx-quick-ico" aria-hidden="true">＋</span>
     <input id="q" placeholder="اكتب مهمة جديدة… مثال: «سامر يجرد مستودع الزبلطاني عاجل»" aria-label="مهمة جديدة">
     <span class="pv" id="pv"></span><span class="kbd" dir="ltr">Ctrl K</span>
     <button class="go" id="go" disabled>إضافة</button>
   </form>
-  <div class="ds-home-head">
-    <div><h1><span id="title">اليوم</span> <span class="ds-badge num" id="sLate" title="متأخرة"></span></h1><p id="sub"></p></div>
-    <div class="seg" id="seg" role="group" aria-label="الفترة"><button type="button" data-s="today" class="on">اليوم</button><button type="button" data-s="week">هذا الأسبوع</button><button type="button" data-s="all">الكل</button></div>
-  </div>
-  <div class="ds-home-kpis">
-    <div class="kpi"><span>مفتوحة</span><div class="ds-kpi-row"><b class="num" id="kOpen">—</b><img class="ds-i3d ds-i3d-lg" src="/static/icons3d/folder.png" alt="" aria-hidden="true"></div></div>
-    <div class="kpi is-late"><span>متأخرة</span><div class="ds-kpi-row"><b class="num" id="kLate">—</b><img class="ds-i3d ds-i3d-lg" src="/static/icons3d/stopwatch.png" alt="" aria-hidden="true"></div></div>
-    <div class="kpi is-done"><span>أُنجزت اليوم</span><div class="ds-kpi-row"><b class="num" id="kDone">—</b><img class="ds-i3d ds-i3d-lg" src="/static/icons3d/check.png" alt="" aria-hidden="true"></div></div>
-    <div class="kpi"><span>بالوقت آخر ٧ أيام</span><div class="ds-kpi-row"><b class="num" id="kRate">—</b><img class="ds-i3d ds-i3d-lg" src="/static/icons3d/target.png" alt="" aria-hidden="true"></div></div>
-  </div>
+
   <div id="filter"></div>
-  <div class="ds-home-grid">
-    <div class="ds-home-col">
-      <section class="ds-card is-late"><div class="ds-card-head"><h2><img class="ds-i3d" src="/static/icons3d/stopwatch.png" alt="" aria-hidden="true">يحتاج انتباهك <span class="ds-count num" id="cA">٠</span></h2></div><div id="gA"></div></section>
-      <section class="ds-card is-due"><div class="ds-card-head"><h2><img class="ds-i3d" src="/static/icons3d/folder.png" alt="" aria-hidden="true"><span id="dueLabel">مستحقة اليوم</span> <span class="ds-count num" id="cD">٠</span></h2></div><div id="gD"></div></section>
-      <section class="ds-card is-done"><div class="ds-card-head"><h2><img class="ds-i3d" src="/static/icons3d/check.png" alt="" aria-hidden="true"><span id="doneLabel">أُنجزت اليوم</span> <span class="ds-count num" id="cO">٠</span></h2></div><div id="gO"></div></section>
-    </div>
-    <div class="ds-home-col">
-      <section class="ds-card"><div class="ds-card-head"><h2><img class="ds-i3d" src="/static/icons3d/team.png" alt="" aria-hidden="true">الفريق</h2><small>الحمل الحالي — اضغط اسماً لعرض مهامه</small></div><div id="team"></div></section>
-      <section class="ds-card"><div class="ds-card-head"><h2><img class="ds-i3d" src="/static/icons3d/user.png" alt="" aria-hidden="true">فلترة سريعة حسب الموظف</h2></div><div class="ds-members" id="sTeam"></div></section>
-      <section class="ds-card"><div class="ds-card-head"><h2><img class="ds-i3d" src="/static/icons3d/bolt.png" alt="" aria-hidden="true">النشاط المباشر</h2></div><div id="feed"></div></section>
-    </div>
+
+  <section class="dx-kpis" aria-label="الأرقام الرئيسية">
+    <div class="dx-kpi"><span class="lbl">المهام المفتوحة</span><b class="num" id="kOpen">—</b><small id="kOpenSub"></small></div>
+    <div class="dx-kpi is-late"><span class="lbl"><i class="dot r"></i>متأخرة</span><b class="num" id="kLate">—</b><small id="kLateSub"></small></div>
+    <div class="dx-kpi"><span class="lbl"><i class="dot a"></i>مستحقة اليوم</span><b class="num" id="kDue">—</b><small>لم يحن موعدها بعد</small></div>
+    <div class="dx-kpi"><span class="lbl"><i class="dot g"></i>أُنجزت اليوم</span><b class="num" id="kDone">—</b><small id="kDoneSub"></small></div>
+    <div class="dx-kpi"><span class="lbl">الإنجاز بالوقت</span><b class="num" id="kRate">—</b><small>آخر ٧ أيام</small></div>
+    <div class="dx-kpi"><span class="lbl">لم يفتحها الموظف</span><b class="num" id="kUnseen">—</b><small id="kUnseenSub"></small></div>
+  </section>
+
+  <div class="dx-grid">
+    <section class="dx-card dx-work">
+      <div class="dx-card-head">
+        <div class="dx-tabs" role="tablist">
+          <button type="button" role="tab" data-tab="A" class="on">يحتاج انتباهك <span class="cnt r" id="cA">٠</span></button>
+          <button type="button" role="tab" data-tab="D"><span id="dueLabel">مستحقة اليوم</span> <span class="cnt" id="cD">٠</span></button>
+          <button type="button" role="tab" data-tab="O"><span id="doneLabel">أُنجزت اليوم</span> <span class="cnt" id="cO">٠</span></button>
+        </div>
+        <a class="dx-more" href="/tasks">كل المهام ←</a>
+      </div>
+      <div class="dx-cols" aria-hidden="true"><span></span><span>المهمة</span><span>الموظف</span><span id="colDue">الموعد</span></div>
+      <div class="dx-list" id="gA" role="tabpanel"></div>
+      <div class="dx-list" id="gD" role="tabpanel" hidden></div>
+      <div class="dx-list" id="gO" role="tabpanel" hidden></div>
+    </section>
+
+    <aside class="dx-side">
+      <section class="dx-card">
+        <div class="dx-card-head"><h2>حمل الفريق</h2>
+          <span class="dx-legend"><i style="background:var(--dx-s1)"></i>مفتوحة <i style="background:var(--dx-late)"></i>متأخرة</span></div>
+        <div class="dx-team-cols" aria-hidden="true"><span>الموظف</span><span></span><span>مفتوحة</span><span>متأخرة</span><span title="أُنجزت آخر ٧ أيام">أنجز/أسبوع</span><span></span></div>
+        <div id="team"></div>
+        <p class="dx-hint">اضغط على اسم لعرض مهامه فقط</p>
+      </section>
+      <section class="dx-card">
+        <div class="dx-card-head"><h2>المفتوحة حسب الحالة</h2><span class="dx-muted" id="mixTotal"></span></div>
+        <div class="dx-mixbar" id="mixBar" role="img"></div>
+        <div class="dx-mixlist" id="mixList"></div>
+      </section>
+    </aside>
+
+    <section class="dx-card dx-trend">
+      <div class="dx-card-head"><h2>آخر ١٤ يوم</h2>
+        <span class="dx-legend"><i style="background:var(--dx-s1)"></i>أُضيفت <i style="background:var(--dx-s3)"></i>أُنجزت</span></div>
+      <div class="dx-chart" id="trend"></div>
+      <p class="dx-hint" id="trendSum"></p>
+    </section>
+
+    <section class="dx-card dx-feed-card">
+      <div class="dx-card-head"><h2>النشاط المباشر</h2><span class="dx-live"><i></i>مباشر</span></div>
+      <div id="feed"></div>
+    </section>
   </div>
+  <div class="dx-tip" id="tip" role="tooltip" hidden></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </main>
 {% endblock %}{% block scripts %}
@@ -37,54 +84,108 @@
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ar=v=>String(v??'').replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
-// Avatar colours: fixed order by team position (never red/green, which mean late/done).
-const COLORS=['#3d414a','#2459c5','#8a4b0f','#6b3fa0','#0e6e7a','#7a5c00','#5b6475','#9c3d6b'];
+// Avatar colours: fixed order by team position, muted tones (never red/green, which mean late/done).
+const COLORS=['#475569','#3b5b92','#7c5a3a','#5b4b8a','#2f6f73','#6b6236','#64748b','#7a4560'];
 let teamOrder=[];
 const colorOf=name=>{const i=teamOrder.indexOf(name);if(i>=0)return COLORS[i%COLORS.length];let h=0;for(const ch of String(name||''))h=(h*31+ch.charCodeAt(0))>>>0;return COLORS[h%COLORS.length]};
-const av=(name,sz)=>`<span class="av" style="background:${colorOf(name)}${sz?`;width:${sz}px;height:${sz}px;font-size:${Math.round(sz/2)}px`:''}">${esc(String(name||'؟').trim().slice(0,1))}</span>`;
+const av=(name,sz)=>`<span class="av" style="background:${colorOf(name)}${sz?`;width:${sz}px;height:${sz}px;font-size:${Math.round(sz/2.2)}px`:''}">${esc(String(name||'؟').trim().slice(0,1))}</span>`;
 const parseD=v=>{if(!v)return null;const d=new Date(String(v).replace(' ','T'));return isNaN(d)?null:d};
 const utc=v=>parseD(String(v||'').includes('T')?v:String(v||'').replace(' ','T')+'Z');
 const fmtTime=d=>new Intl.DateTimeFormat('ar-SY',{hour:'numeric',minute:'2-digit'}).format(d);
 const fmtDay=d=>new Intl.DateTimeFormat('ar-SY',{weekday:'long',day:'numeric',month:'long'}).format(d);
+const fmtShort=d=>ar(d.getDate()+'/'+(d.getMonth()+1));
 function lateText(d){const m=Math.max(1,Math.round((Date.now()-d)/60000));if(m<60)return `متأخرة ${ar(m)} د`;const h=Math.round(m/60);if(h<24)return `متأخرة ${ar(h)} س`;return `متأخرة ${ar(Math.round(h/24))} يوم`}
 function dueText(t,kind){
   if(kind==='done'){const d=utc(t.completed_at);return d?fmtTime(d):''}
-  const d=parseD(t.due_at);if(!d)return '<span style="color:var(--muted)">بدون موعد</span>';
+  const d=parseD(t.due_at);if(!d)return '<span class="dx-muted">بدون موعد</span>';
   if(kind==='late')return lateText(d);
-  const today=new Date();return d.toDateString()===today.toDateString()?fmtTime(d):fmtDay(d);
+  const today=new Date();return d.toDateString()===today.toDateString()?'اليوم '+fmtTime(d):fmtDay(d);
 }
 function ago(v){const d=utc(v);if(!d)return '';const m=Math.round((Date.now()-d)/60000);if(m<1)return 'الآن';if(m<60)return `قبل ${ar(m)} دقيقة`;const h=Math.round(m/60);if(h<24)return `قبل ${ar(h)} ساعة`;return `قبل ${ar(Math.round(h/24))} يوم`}
 function toast(msg,err){const t=$('toast');t.textContent=msg;t.className='toast show'+(err?' err':'');clearTimeout(t._h);t._h=setTimeout(()=>t.className='toast',3200)}
-let scope='today',emp=null,data=null,busy=false;
+let scope='today',emp=null,data=null,busy=false,tab='A';
 function row(t,kind){
-  const dl=t.last_delegation?`<small>↪ وُزّعت إلى ${esc(t.last_delegation.employee_name)} عبر ${t.last_delegation.channel==='whatsapp'?'واتساب':'Telegram'}</small>`:'';
+  const dl=t.last_delegation?` · ↪ وُزّعت إلى ${esc(t.last_delegation.employee_name)} عبر ${t.last_delegation.channel==='whatsapp'?'واتساب':'Telegram'}`:'';
   const urgent=['عاجلة','عالية'].includes(t.priority);
-  return `<div class="row ${kind==='done'?'done':''}" data-id="${t.id}">
+  const badge=t.priority==='عاجلة'?'<em class="pr u">عاجلة</em>':t.priority==='عالية'?'<em class="pr h">عالية</em>':'';
+  return `<div class="dx-row ${kind==='done'?'done':''}" data-id="${t.id}">
     <button class="ck ${kind==='done'?'d':urgent?'u':''}" ${kind==='done'?'disabled':''} data-done="${t.id}" title="${kind==='done'?'منجزة':'تحديد كمنجزة'}" aria-label="تحديد كمنجزة"></button>
-    <a class="t" href="/task/${t.id}"><span>${esc(t.title)}</span>${dl}<small class="mw">${esc(t.employee_name)} · ${esc(t.origin_label)}</small></a>
-    <span class="chip c-${esc(t.origin)}">${esc(t.origin_label)}</span>
-    <span class="who">${av(t.employee_name)}<b>${t.employee_id?`<a class="emp-link" href="/employee/${t.employee_id}">${esc(t.employee_name)}</a>`:esc(t.employee_name)}</b></span>
+    <a class="t" href="/task/${t.id}"><span>${badge}${esc(t.title)}</span><small><span class="chip c-${esc(t.origin)}">${esc(t.origin_label)}</span>${dl}</small></a>
+    <span class="who">${av(t.employee_name,28)}${t.employee_id?`<a class="emp-link" href="/employee/${t.employee_id}">${esc(t.employee_name)}</a>`:`<span>${esc(t.employee_name)}</span>`}</span>
     <span class="due ${kind==='late'?'r':''}">${dueText(t,kind)}</span></div>`;
 }
-function list(el,rows,kind,empty){$(el).innerHTML=rows.length?rows.map(t=>row(t,kind)).join(''):`<div class="empty">${empty}</div>`}
+function list(el,rows,kind,empty){$(el).innerHTML=rows.length?rows.map(t=>row(t,kind)).join(''):`<div class="dx-empty">${empty}</div>`}
+function showTab(k){tab=k;document.querySelectorAll('.dx-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===k));
+  ['A','D','O'].forEach(x=>$('g'+x).hidden=x!==k);$('colDue').textContent=k==='O'?'وقت الإنجاز':'الموعد'}
+document.querySelectorAll('.dx-tabs button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+
+// ---- charts (hand-written SVG; colours from CSS tokens) ----
+const tip=$('tip');
+function showTip(e,html){tip.innerHTML=html;tip.hidden=false;const r=tip.getBoundingClientRect();
+  let x=e.clientX-r.width/2,y=e.clientY-r.height-14;x=Math.max(8,Math.min(innerWidth-r.width-8,x));if(y<8)y=e.clientY+18;tip.style.left=x+'px';tip.style.top=y+'px'}
+function hideTip(){tip.hidden=true}
+function trendChart(){
+  const el=$('trend'),T=data.trend||[];if(!T.length){el.innerHTML='';return}
+  const W=Math.max(320,el.clientWidth),H=220,padT=14,padB=30,padX=8;
+  const max=Math.max(1,...T.map(d=>Math.max(d.created,d.done)));const step=max<=4?1:max<=10?2:max<=20?5:Math.ceil(max/4/5)*5;const top=Math.ceil(max/step)*step;
+  const plotH=H-padT-padB,gw=(W-padX*2-44)/T.length,bw=Math.max(4,Math.min(16,gw*0.32));
+  const y=v=>padT+plotH-(v/top)*plotH;
+  let g='';for(let v=0;v<=top;v+=step){g+=`<line x1="${padX}" x2="${W-padX-44}" y1="${y(v)}" y2="${y(v)}" class="grid"/><text x="${W-padX}" y="${y(v)+4}" class="ax" text-anchor="end">${ar(v)}</text>`}
+  let bars='',hits='';
+  T.forEach((d,i)=>{ // RTL: the newest day on the left, like reading order of the dates
+    const cx=padX+(T.length-1-i)*gw+gw/2,dd=new Date(d.day+'T12:00');
+    const bar=(v,x,cls)=>{if(!v)return '';const h=(v/top)*plotH,yy=padT+plotH-h,r=Math.min(4,h);return `<path class="${cls}" d="M${x},${padT+plotH}V${yy+r}q0,-${r} ${r},-${r}h${bw-2*r}q${r},0 ${r},${r}V${padT+plotH}Z"/>`};
+    bars+=bar(d.created,cx-bw-1,'s1')+bar(d.done,cx+1,'s3');
+    if(i===T.length-1||i%2===1)bars+=`<text x="${cx}" y="${H-10}" class="ax" text-anchor="middle">${i===T.length-1?'اليوم':fmtShort(dd)}</text>`;
+    hits+=`<rect class="hit" x="${cx-gw/2}" y="${padT}" width="${gw}" height="${plotH}" data-i="${i}"/>`;
+  });
+  el.innerHTML=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="المهام المضافة والمنجزة آخر ١٤ يوم">${g}${bars}${hits}</svg>`;
+  el.querySelectorAll('.hit').forEach(r=>{r.onmousemove=e=>{const d=T[+r.dataset.i];r.classList.add('on');showTip(e,`<b>${fmtDay(new Date(d.day+'T12:00'))}</b><span><i style="background:var(--dx-s1)"></i>أُضيفت: ${ar(d.created)}</span><span><i style="background:var(--dx-s3)"></i>أُنجزت: ${ar(d.done)}</span>`)};r.onmouseleave=()=>{r.classList.remove('on');hideTip()}});
+  const sc=T.reduce((a,d)=>a+d.created,0),sd=T.reduce((a,d)=>a+d.done,0);
+  $('trendSum').textContent=`خلال ١٤ يوم: أُضيفت ${ar(sc)} مهمة وأُنجزت ${ar(sd)}`;
+}
+const MIX=[['جديدة','var(--dx-s1)'],['بدأت','var(--dx-s2)'],['قيد التنفيذ','var(--dx-s3)'],['بانتظار','var(--dx-s4)']];
+function mixChart(){
+  const m=data.mix||{},total=Object.values(m).reduce((a,b)=>a+b,0);
+  $('mixTotal').textContent=ar(total)+' مهمة';
+  const parts=MIX.map(([k,c])=>({k,c,n:m[k]||0})).filter(p=>p.n);
+  Object.keys(m).filter(k=>!MIX.some(x=>x[0]===k)).forEach(k=>parts.push({k,c:'var(--dx-muted-mark)',n:m[k]}));
+  $('mixBar').setAttribute('aria-label',parts.map(p=>p.k+' '+p.n).join('، '));
+  $('mixBar').innerHTML=parts.map(p=>`<i style="flex:${p.n};background:${p.c}" data-k="${esc(p.k)}" data-n="${p.n}"></i>`).join('')||'<i style="flex:1;background:var(--dx-line)"></i>';
+  $('mixBar').querySelectorAll('i[data-k]').forEach(i=>{i.onmousemove=e=>showTip(e,`<b>${esc(i.dataset.k)}</b><span>${ar(i.dataset.n)} مهمة · ${ar(Math.round(100*i.dataset.n/total))}٪</span>`);i.onmouseleave=hideTip});
+  $('mixList').innerHTML=MIX.map(([k,c])=>{const n=m[k]||0;return `<div><i style="background:${c}"></i><span>${k}</span><b class="num">${ar(n)}</b><small>${total?ar(Math.round(100*n/total))+'٪':''}</small></div>`}).join('')
+    +`<div class="late"><i style="background:var(--dx-late)"></i><span>منها متأخرة</span><b class="num">${ar(data.stats.late)}</b><small>${total?ar(Math.round(100*data.stats.late/total))+'٪':''}</small></div>`;
+}
 function render(){
   const s=data.stats,g=data.groups;teamOrder=data.team.map(m=>m.name);
   $('kOpen').textContent=ar(s.open);$('kLate').textContent=ar(s.late);$('kDone').textContent=ar(s.done_today);$('kRate').textContent=s.on_time==null?'—':ar(s.on_time)+'٪';
-  $('sLate').textContent=s.late?ar(s.late):'';
+  $('kDue').textContent=ar(s.due_today??0);$('kUnseen').textContent=ar(s.unseen??0);
+  const working=(data.mix['بدأت']||0)+(data.mix['قيد التنفيذ']||0);
+  $('kOpenSub').textContent=`منها ${ar(working)} قيد العمل`;
+  $('kLateSub').textContent=s.open?`${ar(Math.round(100*s.late/s.open))}٪ من المفتوحة`:'';
+  $('kDoneSub').textContent=`${ar(s.done_week??0)} آخر ٧ أيام`;
+  $('kUnseenSub').textContent=s.unassigned?`و${ar(s.unassigned)} بدون موظف`:'كل المهام لها موظف';
   const labels={today:['اليوم','مستحقة اليوم','أُنجزت اليوم'],week:['هذا الأسبوع','مستحقة خلال ٧ أيام','أُنجزت هذا الأسبوع'],all:['كل المهام المفتوحة','باقي المهام المفتوحة','أُنجزت آخر ٣٠ يوم']}[data.scope];
   $('title').textContent=labels[0];$('dueLabel').textContent=labels[1];$('doneLabel').textContent=labels[2];
   $('sub').textContent=fmtDay(new Date())+' · '+ar(g.attention.length+g.due.length)+' مهمة تحتاج متابعتك';
   $('cA').textContent=ar(g.attention.length);$('cD').textContent=ar(g.due.length);$('cO').textContent=ar(g.done.length);
   list('gA',g.attention,'late','لا يوجد شيء متأخر 👌');list('gD',g.due,'due','لا توجد مهام مستحقة');list('gO',g.done,'done','لم يُنجز شيء بعد');
   const member=data.team.find(m=>m.id===emp);
-  $('filter').innerHTML=member?`<span class="filter">${av(member.name)} مهام ${esc(member.name)} فقط <button type="button" id="clr" aria-label="إلغاء الفلتر">×</button></span>`:'';
+  $('filter').innerHTML=member?`<span class="dx-filter">${av(member.name,24)} مهام ${esc(member.name)} فقط <button type="button" id="clr" aria-label="إلغاء الفلتر">×</button></span>`:'';
   if(member)$('clr').onclick=()=>{emp=null;load()};
-  $('sTeam').innerHTML=data.team.map(m=>`<button class="mem ${m.id===emp?'on':''}" data-emp="${m.id}">${av(m.name,22)}<span>${esc(m.name)}</span><span class="n num ${m.late?'r':''}">${ar(m.late||m.open)}</span></button>`).join('');
-  $('team').innerHTML=data.team.map(m=>`<div class="tm-row"><a class="tm-profile" href="/employee/${m.id}" title="ملف ${esc(m.name)}" aria-label="ملف ${esc(m.name)}">ملف</a><button class="tm" data-emp="${m.id}">${av(m.name)}<div><b>${esc(m.name)}</b><small>${ar(m.open)} مفتوحة${m.late?' · '+ar(m.late)+' متأخرة':''}</small></div><div class="load"><div class="bar"><i style="width:${m.load}%"></i></div><small>${m.load>=75?'مرتفع':m.load>=40?'متوسط':'خفيف'}</small></div></button></div>`).join('')||'<div class="empty">اربط حسابات المسؤولين بأسمائهم ليظهروا هنا</div>';
-  $('feed').innerHTML=data.feed.map(e=>`<a class="ev" href="/task/${e.task_id}">${av(e.name||'إ',26)}<div>${esc(e.text)}<time>${ago(e.at)}</time></div></a>`).join('')||'<div class="empty">لا يوجد نشاط بعد</div>';
+  const sel=$('empSel');sel.innerHTML='<option value="">كل الموظفين</option>'+data.team.map(m=>`<option value="${m.id}" ${m.id===emp?'selected':''}>${esc(m.name)} (${ar(m.late||m.open)})</option>`).join('');
+  const top=Math.max(1,...data.team.map(m=>m.open||0));
+  $('team').innerHTML=data.team.map(m=>{const ok=(m.open||0)-(m.late||0);return `<div class="dx-tm ${m.id===emp?'on':''}">
+    <button class="tm" data-emp="${m.id}" title="عرض مهام ${esc(m.name)}">${av(m.name,28)}<b>${esc(m.name)}</b></button>
+    <span class="bar" title="${ar(m.open)} مفتوحة · ${ar(m.late)} متأخرة"><i class="ok" style="width:${100*ok/top}%"></i><i class="lt" style="width:${100*(m.late||0)/top}%"></i></span>
+    <span class="num">${ar(m.open)}</span><span class="num ${m.late?'r':'z'}">${ar(m.late)}</span><span class="num z2">${ar(m.done7||0)}</span>
+    <a class="tm-profile" href="/employee/${m.id}" title="ملف ${esc(m.name)}" aria-label="ملف ${esc(m.name)}">ملف</a></div>`}).join('')||'<div class="dx-empty">اربط حسابات المسؤولين بأسمائهم ليظهروا هنا</div>';
+  $('feed').innerHTML=data.feed.map(e=>`<a class="dx-ev" href="/task/${e.task_id}">${av(e.name||'إ',28)}<div><span>${esc(e.text)}</span><time>${ago(e.at)}</time></div></a>`).join('')||'<div class="dx-empty">لا يوجد نشاط بعد</div>';
   document.querySelectorAll('[data-emp]').forEach(b=>b.onclick=()=>{emp=+b.dataset.emp===emp?null:+b.dataset.emp;load()});
   document.querySelectorAll('[data-done]').forEach(b=>b.onclick=()=>done(+b.dataset.done,b));
+  trendChart();mixChart();
 }
+$('empSel').onchange=e=>{emp=e.target.value?+e.target.value:null;load()};
 async function load(){
   if(busy)return;busy=true;
   try{const r=await fetch(`/api/v2/dashboard?scope=${scope}`+(emp?`&employee_id=${emp}`:''),{cache:'no-store'});
@@ -111,6 +212,7 @@ $('cmd').addEventListener('submit',async e=>{e.preventDefault();const v=$('q').v
     $('q').value='';$('pv').textContent='';parsed=null;toast('✓ تمت إضافة المهمة'+(x.telegram&&x.telegram.ok?' وإرسالها':''));load()}
   catch(err){toast(err.message,true);$('go').disabled=false}});
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('q').focus()}});
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(data)trendChart()},150)});
 load();setInterval(()=>{if(!document.hidden&&document.activeElement!==$('q'))load()},30000);
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/service-worker.js',{scope:'/'}).catch(()=>{});
 })();

@@ -69,6 +69,8 @@ def dashboard_data(c, scope='today', employee_id=None):
     if not team:
         team=[dict(x) for x in c.execute(f'''SELECT e.id,e.name,COUNT(t.id) open,SUM(CASE WHEN datetime(t.due_at)<datetime('now','localtime') THEN 1 ELSE 0 END) late
           FROM tasks t JOIN employees e ON e.id=t.employee_id WHERE {OPEN} GROUP BY e.id ORDER BY open DESC LIMIT 6''')]
+    for m in team:  # done in the last 7 days (dashboard redesign 2026-11-04)
+        m['done7']=q("SELECT COUNT(*) FROM tasks t WHERE t.employee_id=? AND t.status='تم' AND datetime(t.completed_at,'localtime')>=datetime('now','localtime','-7 days')",(m['id'],))
     top=max([m['open'] or 0 for m in team]+[1])
     for m in team:
         m['late']=m['late'] or 0; m['load']=round(100*(m['open'] or 0)/top)
@@ -84,7 +86,18 @@ def dashboard_data(c, scope='today', employee_id=None):
         else:
             text=f"{r['name'] or 'موظف'} أضاف ملاحظة على «{r['title']}»"
         feed.append({'text':text,'at':r['created_at'],'task_id':r['task_id'],'name':r['name']})
-    return {'scope':scope,'stats':stats,'groups':groups,'team':team,'feed':feed}
+    # Extra figures for the redesigned dashboard (owner 2026-11-04): due today, unassigned, unopened, the mix of open
+    # tasks by status, and created vs completed per day for the last 14 days.
+    stats['due_today']=q(f"SELECT COUNT(*) FROM tasks t WHERE {OPEN} AND NOT ({LATE}) AND date(t.due_at)=date('now','localtime'){emp_sql}",emp_p)
+    stats['unassigned']=q(f"SELECT COUNT(*) FROM tasks t WHERE {OPEN} AND t.employee_id IS NULL AND COALESCE(t.is_group,0)=0")
+    stats['unseen']=q(f"SELECT COUNT(*) FROM tasks t WHERE {OPEN} AND t.viewed_at IS NULL{emp_sql}",emp_p)
+    stats['done_week']=week_done[0] or 0
+    mix={r[0]:r[1] for r in c.execute(f'SELECT t.status,COUNT(*) FROM tasks t WHERE {OPEN}{emp_sql} GROUP BY t.status',emp_p)}
+    days=[r[0] for r in c.execute("WITH RECURSIVE d(n) AS (SELECT 13 UNION ALL SELECT n-1 FROM d WHERE n>0) SELECT date('now','localtime','-'||n||' days') FROM d")]
+    made={r[0]:r[1] for r in c.execute(f"SELECT date(t.created_at,'localtime') d,COUNT(*) FROM tasks t WHERE date(t.created_at,'localtime')>=? {emp_sql} GROUP BY d",[days[0]]+emp_p)}
+    done={r[0]:r[1] for r in c.execute(f"SELECT date(t.completed_at,'localtime') d,COUNT(*) FROM tasks t WHERE t.status='تم' AND date(t.completed_at,'localtime')>=? {emp_sql} GROUP BY d",[days[0]]+emp_p)}
+    trend=[{'day':d,'created':made.get(d,0),'done':done.get(d,0)} for d in days]
+    return {'scope':scope,'stats':stats,'groups':groups,'team':team,'feed':feed,'mix':mix,'trend':trend}
 
 def register(app, m):
     def _manager(req):
