@@ -318,3 +318,5 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   converted, last_sent_at -> local time). Rolling back to old code keeps working but old code ignores the new types.
   Package `reminders3` (commit 7da6b1d, BASE e4f1485 = dashboard_pro) given — NOT confirmed. Install order:
   followup_lively -> dashboard_pro -> reminders3.
+- Session 9 ended 2026-11-04 at the owner's request. Next: `docs/handoff/SESSION_10.md` (3 packages waiting for install,
+  in order followup_lively -> dashboard_pro -> reminders3; then status report and fast-forward `main`).
