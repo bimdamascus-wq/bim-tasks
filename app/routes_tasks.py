@@ -253,6 +253,67 @@ async def participant_status(tid:int,eid:int,req:Request):
     except Exception:c.rollback();raise
     finally:c.close()
 
+REMIND_GAP = 60  # seconds: a second click within a minute does not send a second reminder
+
+def _remind_text(t, sender, note=''):
+    lines=['🔔 تذكير بمهمة', f"📝 {t['title']}"]
+    if t['due_at']:lines.append(f"⏰ الموعد: {ar_when(t['due_at'])}")
+    lines.append(f"📌 الحالة: {t['status']}")
+    if note:lines.append(f"💬 {note}")
+    lines.append(f"👤 من: {sender}")
+    from . import main as _main
+    lines.append(f"🔗 {str(_main.PUBLIC_URL).rstrip('/')}/task/{t['id']}")
+    return '\n'.join(lines)
+
+@app.post('/api/tasks/{tid}/remind')
+async def remind_task(tid:int, req:Request):
+    """«🔔 ذكّر» on the task page (owner 2026-11-04): channel 'telegram' sends the task card again with a reminder
+    title; 'whatsapp' returns a wa.me link with a ready reminder text (the manager presses send in WhatsApp).
+    Both are logged as a 'reminded' task_event (not 'delegated'), which the follow-up group also shows."""
+    u=need(req,'tasks.edit')
+    try:d=await req.json()
+    except Exception:d={}
+    ch=str(d.get('channel') or '')
+    if ch not in ('telegram','whatsapp'):raise HTTPException(400,'اختر Telegram أو واتساب')
+    note=str(d.get('note') or '').strip()[:500]
+    c=connect()
+    try:
+        t=c.execute('SELECT * FROM tasks WHERE id=?',(tid,)).fetchone()
+        if not t:raise HTTPException(404,'المهمة غير موجودة')
+        if not access.can_manage_task(c,u,t):raise HTTPException(403,'هذه المهمة خارج نطاق فريقك')
+        if t['archived_at'] or t['status'] in ('تم','ملغاة'):raise HTTPException(400,'المهمة منتهية، ما في داعي للتذكير')
+        e=c.execute('SELECT * FROM employees WHERE id=?',(t['employee_id'],)).fetchone() if t['employee_id'] else None
+        if not e:raise HTTPException(400,'المهمة غير مسندة لموظف')
+        sender=u['full_name'] or u['username']
+        how='Telegram' if ch=='telegram' else 'واتساب'
+        out={'ok':True,'channel':ch,'employee':e['name']}
+        if ch=='telegram':
+            if not (e['telegram_enabled'] and e['telegram_chat_id']):
+                raise HTTPException(400,'هذا الموظف غير مربوط على Telegram؛ استخدم واتساب')
+            last=c.execute("""SELECT 1 FROM task_events WHERE task_id=? AND event_type='reminded' AND source='telegram'
+              AND created_at>=datetime('now',?)""",(tid,f'-{REMIND_GAP} seconds')).fetchone()
+            if last:return {**out,'already':True}
+            from .main import send, _remember_telegram_task_message
+            r=send(e['telegram_chat_id'],_remind_text(t,sender,note),source_type='task_card',source_id=tid,
+                   reply_markup=_telegram_task_keyboard(tid,t['status']))
+            if not r.get('ok') and not r.get('queued'):raise HTTPException(502,r.get('error') or 'تعذر الإرسال على Telegram')
+            _remember_telegram_task_message(c,tid,e['telegram_chat_id'],r)
+            c.execute("""INSERT INTO notifications(task_id,employee_id,channel,kind,status,error,sent_at)
+              VALUES(?,?,'telegram','تذكير من الإدارة',?,?,CURRENT_TIMESTAMP)""",
+              (tid,e['id'],'queued' if r.get('queued') else 'sent',r.get('error')))
+            out['queued']=bool(r.get('queued'))
+        else:
+            from .delegation import whatsapp_number
+            from urllib.parse import quote
+            num=whatsapp_number(e['whatsapp'])
+            out['url']=('https://wa.me/'+num if num else 'https://wa.me/')+'?text='+quote(_remind_text(t,sender,note))
+            out['has_number']=bool(num)
+        c.execute("INSERT INTO task_events(task_id,employee_id,event_type,note,source) VALUES(?,?,'reminded',?,?)",
+                  (tid,e['id'],f"{sender} ذكّر {e['name']} ({how})"+(f" — {note}" if note else ''),ch))
+        audit(c,req,u,'task_remind','task',tid,after={'employee':e['name'],'channel':ch,'note':note})
+        return out
+    finally:c.close()
+
 @app.post('/api/tasks/{tid}/telegram')
 def resend_telegram(tid:int, req:Request):
     u=need(req,'tasks.edit'); c=connect(); old=c.execute('SELECT * FROM tasks WHERE id=?',(tid,)).fetchone()

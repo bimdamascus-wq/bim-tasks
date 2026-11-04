@@ -257,6 +257,8 @@ def _event_message(c, ev, t):
                           f"{STATUS_ICON.get(t['status'], '🔹')} الحالة: <b>{h(t['status'])}</b>{_by(_actor(c, ev))}")
     if typ == 'template_cancel':
         return 'status', f"❌ <b>أُلغيت مهمة {h(who)} من إدارة القالب</b>\n{title}"
+    if typ == 'reminded':  # «🔔 ذكّر» on the task page, by Telegram or WhatsApp
+        return 'reminders', f"🔔 <b>تذكير لـ {h(who)}</b>\n{title}\n{h(ev['note'] or '')}"
     if typ == 'template_update':
         return 'edits', f"✏️ <b>تحدّثت مهمة {h(who)} من القالب</b>\n{title}"
     return None  # created / comment / attachment / admin_note / telegram_sent / telegram_notice: covered elsewhere

@@ -10433,6 +10433,7 @@
   "POST /api/tasks/{tid}/attachments add_task_attachment",
   "POST /api/tasks/{tid}/comments add_task_comment",
   "POST /api/tasks/{tid}/delegate delegate",
+  "POST /api/tasks/{tid}/remind remind_task",
   "POST /api/tasks/{tid}/restore restore_task",
   "POST /api/tasks/{tid}/telegram resend_telegram",
   "POST /api/telegram-groups add_telegram_group",
