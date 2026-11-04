@@ -49,8 +49,10 @@ def send(chat_id:str,text:str,reply_markup=None,parse_mode=None):
 def answer_callback(callback_query_id:str,text:str="",show_alert:bool=False):
     return _api("answerCallbackQuery",{"callback_query_id":callback_query_id,"text":text,"show_alert":show_alert})
 
-def edit_message(chat_id:str,message_id:int,text:str,reply_markup=None):
+def edit_message(chat_id:str,message_id:int,text:str,reply_markup=None,parse_mode=None):
     payload={"chat_id":chat_id,"message_id":message_id,"text":text}
+    if parse_mode:
+        payload["parse_mode"]=parse_mode
     if reply_markup is not None:
         payload["reply_markup"]=reply_markup
     return _api("editMessageText",payload)

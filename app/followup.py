@@ -18,6 +18,7 @@ Telegram outbox with a dedupe key, so a crash or a second run never posts the sa
 rendered when the outbox sends them (`render_card`), so a card queued while Telegram was down still shows the
 latest state.
 """
+import html
 import json
 import re
 import time
@@ -34,8 +35,37 @@ FAR_BEHIND = 5000     # cursor this far behind (e.g. turned on after months off)
 MAX_TEXT = 3500
 CLOSED = ('تم', 'ملغاة')
 
-STATUS_LINE = {'بدأت': '▶️ {who} بدأ بالمهمة', 'قيد التنفيذ': '⏳ {who}: المهمة قيد التنفيذ', 'تم': '✅ {who} أنجز المهمة',
-               'ملغاة': '❌ أُلغيت المهمة', 'بانتظار': '⏸️ المهمة صارت «بانتظار»', 'جديدة': '↩️ رجعت المهمة «جديدة»'}
+# Group messages are Telegram HTML (owner 2026-11-04: livelier, emojis, clearer): bold for what matters, every value
+# that comes from users goes through h().
+STATUS_LINE = {'بدأت': '▶️ <b>{who} بدأ بالمهمة</b> 💪', 'قيد التنفيذ': '⏳ <b>{who}: المهمة قيد التنفيذ</b> 🔧',
+               'تم': '✅ <b>{who} أنجز المهمة</b> 🎉', 'ملغاة': '❌ <b>أُلغيت المهمة</b>',
+               'بانتظار': '⏸️ <b>المهمة صارت «بانتظار»</b>', 'جديدة': '↩️ <b>رجعت المهمة «جديدة»</b>'}
+STATUS_ICON = {'جديدة': '🆕', 'بدأت': '▶️', 'قيد التنفيذ': '⏳', 'بانتظار': '⏸️', 'تم': '✅', 'ملغاة': '❌'}
+PRIO_ICON = {'عاجلة': '🔴', 'عالية': '🟠', 'عادي': '🟢', 'منخفضة': '⚪'}
+SEP = '━━━━━━━━━━━━━━'
+h = lambda v: html.escape(str(v if v is not None else ''), quote=False)
+
+
+def plain(text):
+    """HTML message -> plain text (fallback when Telegram refuses the HTML, file captions)."""
+    return html.unescape(re.sub(r'<[^>]+>', '', str(text or '')))
+
+
+def send_html(chat, text, reply_markup=None):
+    """Send one group message as HTML; if Telegram cannot parse it, send it as plain text instead of failing."""
+    from . import telegram_queue as q
+    r = q.low_level_send(chat, text, reply_markup=reply_markup, parse_mode='HTML')
+    if not r.get('ok') and "parse entities" in str(r.get('error', '')).lower():
+        r = q.low_level_send(chat, plain(text), reply_markup=reply_markup)
+    return r
+
+
+def _title_line(t):
+    return f"📝 <b>{h(t['title'])}</b>"
+
+
+def _by(actor, skip=''):
+    return f"\n👤 بواسطة: {h(actor)}" if actor and actor != skip else ''
 # notifications.kind values that are reminders (everything else the employee gets is already a group message:
 # new task, edit, cancel, reassignment, comment, attachment). 'تذكير من المتابعة' is posted by handle_callback.
 REMINDER_KINDS = ('تذكير تلقائي', 'المهمة متأخرة', 'إعادة إرسال المهمة', 'مهام بداية الشيفت', 'ملخص نهاية الشيفت')
@@ -148,19 +178,20 @@ def render_card(c, tid, new=False):
     from .main import ar_when, _is_late
     t = c.execute('SELECT * FROM tasks WHERE id=?', (tid,)).fetchone()
     if not t: return None
-    prio = {'عاجلة': '🔴 عاجلة', 'عالية': '🟠 عالية'}.get(t['priority'], t['priority'])
-    lines = ['🆕 مهمة جديدة' if new else '📌 مهمة', '', f"👤 الموظف: {_who(c, t)}", f"✍️ من: {_origin(c, t)}",
-             f"المهمة: {t['title']}", f"الأولوية: {prio}", f"الحالة: {t['status']}"]
+    lines = ['🆕 <b>مهمة جديدة</b> 🚀' if new else '📌 <b>بطاقة مهمة</b>', SEP, _title_line(t), '',
+             f"👤 الموظف: <b>{h(_who(c, t))}</b>", f"✍️ من: {h(_origin(c, t))}",
+             f"{PRIO_ICON.get(t['priority'], '🔹')} الأولوية: <b>{h(t['priority'])}</b>",
+             f"{STATUS_ICON.get(t['status'], '🔹')} الحالة: <b>{h(t['status'])}</b>"]
     if t['due_at']:
-        lines.append(f"⏰ الموعد: {ar_when(t['due_at'])}" + (' ⚠️ متأخرة' if _is_late(t) else ''))
+        lines.append(f"⏰ الموعد: <b>{h(ar_when(t['due_at']))}</b>" + (' ⚠️ <b>متأخرة!</b>' if _is_late(t) else ''))
     if t['notes']:
-        lines.append(f"📝 ملاحظات: {t['notes'][:1500]}")
+        lines.append(f"🗒️ ملاحظات: <i>{h(t['notes'][:1500])}</i>")
     if t['archived_at']:
-        lines += ['', '🗄️ المهمة مؤرشفة — لا حاجة للتذكير']
+        lines += [SEP, '🗄️ <b>المهمة مؤرشفة</b> — لا حاجة للتذكير']
     elif t['status'] == 'تم':
-        lines += ['', '✅ المهمة منجزة — لا حاجة للتذكير']
+        lines += [SEP, '✅ <b>المهمة منجزة</b> — لا حاجة للتذكير 🎉']
     elif t['status'] == 'ملغاة':
-        lines += ['', '❌ المهمة ملغاة — لا حاجة للتذكير']
+        lines += [SEP, '❌ <b>المهمة ملغاة</b> — لا حاجة للتذكير']
     return '\n'.join(lines), _buttons(tid, remind=_open(t))
 
 
@@ -190,48 +221,44 @@ def _edit_lines(c, ev):
     for k, lab in labels.items():
         if k in d and (d.get(k) or None) != (old.get(k) or None):
             fmt = (lambda v: ar_when(v) or '—') if k == 'due_at' else (lambda v: v or '—')
-            out.append(f"{lab}: {fmt(old.get(k))} ← {fmt(d.get(k))}")
+            out.append(f"🔸 {lab}: {h(fmt(old.get(k)))} ← <b>{h(fmt(d.get(k)))}</b>")
     if 'notes' in d and str(d.get('notes') or '').strip() != str(old.get('notes') or '').strip():
-        out.append(f"📝 الملاحظات صارت: {str(d.get('notes') or '—').strip()[:1500]}")
+        out.append(f"🗒️ الملاحظات صارت: <i>{h(str(d.get('notes') or '—').strip()[:1500])}</i>")
     return out
 
 
 def _event_message(c, ev, t):
-    """(kind, text) for one task_event, or None when another source already covers it."""
-    typ = ev['event_type']; title = f"«{t['title']}»"; who = _who(c, t)
+    """(kind, HTML text) for one task_event, or None when another source already covers it."""
+    typ = ev['event_type']; who = _who(c, t); title = _title_line(t)
     if typ == 'status':
-        line = STATUS_LINE.get(ev['new_status'], '🔄 تغيّرت حالة المهمة').format(who=who)
-        actor = _actor(c, ev)
-        by = f"\nبواسطة: {actor}" if actor and actor != who else ''
-        return 'status', f"{line}\n{title}\nالحالة: {ev['old_status'] or '—'} ← {ev['new_status']}{by}"
+        line = STATUS_LINE.get(ev['new_status'], '🔄 <b>تغيّرت حالة المهمة</b>').format(who=h(who))
+        return 'status', f"{line}\n{title}\n🔄 {h(ev['old_status'] or '—')} ← <b>{h(ev['new_status'])}</b>{_by(_actor(c, ev), who)}"
     if typ == 'participant_status':
         name = _emp_name(c, ev['employee_id']) or 'مشارك'
-        actor = _actor(c, ev)
-        by = f"\nبواسطة: {actor}" if actor and actor != name else ''
-        return 'status', f"👥 {name} — حالته بالمهمة الجماعية: {ev['old_status'] or '—'} ← {ev['new_status']}\n{title}{by}"
+        icon = STATUS_ICON.get(ev['new_status'], '👥')
+        return 'status', (f"👥 <b>{h(name)}</b> — حالته بالمهمة الجماعية {icon}\n{title}\n"
+                          f"🔄 {h(ev['old_status'] or '—')} ← <b>{h(ev['new_status'])}</b>{_by(_actor(c, ev), name)}")
     if typ == 'note':
-        return 'notes', f"⚠️ {_emp_name(c, ev['employee_id']) or who} كتب مشكلة / ملاحظة على {title}:\n\n{(ev['note'] or '')[:MAX_TEXT]}"
+        return 'notes', (f"⚠️ <b>مشكلة / ملاحظة من {h(_emp_name(c, ev['employee_id']) or who)}</b>\n{title}\n{SEP}\n"
+                         f"💬 {h((ev['note'] or '')[:MAX_TEXT])}")
     if typ == 'edited':
         lines = _edit_lines(c, ev)
         if not lines: return None
-        actor = _actor(c, ev)
-        return 'edits', f"✏️ تعديل على مهمة {who}: {title}\n" + '\n'.join(lines) + (f"\nبواسطة: {actor}" if actor else '')
+        return 'edits', f"✏️ <b>تعديل على مهمة {h(who)}</b>\n{title}\n" + '\n'.join(lines) + _by(_actor(c, ev))
     if typ in ('reassigned', 'handover'):
         a, b = _names_in(c, ev['note'])
-        actor = _actor(c, ev)
-        return 'edits', f"🔁 نُقلت المهمة {title}\nمن: {a} ← إلى: {b}" + (f"\nبواسطة: {actor}" if actor else '')
+        return 'edits', f"🔁 <b>نُقلت المهمة</b>\n{title}\n👤 من: {h(a)} ← إلى: <b>{h(b)}</b>{_by(_actor(c, ev))}"
     if typ == 'delegated':
-        return 'edits', f"↪️ تحويل المهمة {title}: {ev['note'] or ''}"
+        return 'edits', f"↪️ <b>تحويل المهمة</b>\n{title}\n{h(ev['note'] or '')}"
     if typ == 'cancelled' or (typ == 'lifecycle' and ev['note'] in ('delete', 'disable')):
-        actor = _actor(c, ev)
-        return 'status', f"🗄️ أُرشفت / أُلغيت مهمة {who}: {title}" + (f"\nبواسطة: {actor}" if actor else '')
+        return 'status', f"🗄️ <b>أُرشفت / أُلغيت مهمة {h(who)}</b>\n{title}{_by(_actor(c, ev))}"
     if typ == 'restored' or (typ == 'lifecycle' and ev['note'] in ('restore', 'enable')):
-        actor = _actor(c, ev)
-        return 'status', f"♻️ رجعت مهمة {who} من الأرشيف: {title}\nالحالة: {t['status']}" + (f"\nبواسطة: {actor}" if actor else '')
+        return 'status', (f"♻️ <b>رجعت مهمة {h(who)} من الأرشيف</b>\n{title}\n"
+                          f"{STATUS_ICON.get(t['status'], '🔹')} الحالة: <b>{h(t['status'])}</b>{_by(_actor(c, ev))}")
     if typ == 'template_cancel':
-        return 'status', f"❌ أُلغيت مهمة {who} من إدارة القالب: {title}"
+        return 'status', f"❌ <b>أُلغيت مهمة {h(who)} من إدارة القالب</b>\n{title}"
     if typ == 'template_update':
-        return 'edits', f"✏️ تحدّثت مهمة {who} من القالب: {title}"
+        return 'edits', f"✏️ <b>تحدّثت مهمة {h(who)} من القالب</b>\n{title}"
     return None  # created / comment / attachment / admin_note / telegram_sent / telegram_notice: covered elsewhere
 
 
@@ -278,7 +305,7 @@ def process(c=None, now=None):
             for cm in c.execute('SELECT * FROM task_comments WHERE id>? AND id<=? AND user_id IS NOT NULL ORDER BY id', (lo['cm'], top['cm'])).fetchall():
                 t = task(cm['task_id'])
                 if not t or not _watched(c, cfg, t): continue
-                out.append((f"fu:cm:{cm['id']}", f"💬 تعليق من {cm['username_snapshot'] or 'مستخدم'} على مهمة {_who(c, t)}: «{t['title']}»\n\n{(cm['body'] or '')[:MAX_TEXT]}",
+                out.append((f"fu:cm:{cm['id']}", f"💬 <b>تعليق من {h(cm['username_snapshot'] or 'مستخدم')}</b> على مهمة {h(_who(c, t))}\n{_title_line(t)}\n{SEP}\n🗨️ {h((cm['body'] or '')[:MAX_TEXT])}",
                             _buttons(t['id'], remind=False), 'followup', t['id']))
 
         if cfg.get('files'):
@@ -293,11 +320,11 @@ def process(c=None, now=None):
                     by = _emp_name(c, ev[0]) if ev else _who(c, t)
                 cap = c.execute("SELECT body FROM task_comments WHERE task_id=? AND user_id IS NULL AND id>? AND id<=? AND body<>'مرفق من Telegram' ORDER BY id DESC LIMIT 1",
                                 (t['id'], lo['cm'], top['cm'])).fetchone() if not a['user_id'] else None
-                text = f"📎 مرفق من {by or 'موظف'} على مهمة {_who(c, t)}: «{t['title']}»\nالملف: {a['original_name']}" + (f"\n\n{cap[0][:600]}" if cap else '')
+                text = f"📎 مرفق من {by or 'موظف'} على مهمة {_who(c, t)}\n📝 {t['title']}\n📄 الملف: {a['original_name']}" + (f"\n\n💬 {cap[0][:600]}" if cap else '')
                 if (ROOT / a['relative_path']).exists():
                     out.append((f"fu:at:{a['id']}", text[:1000], None, 'followup_file', a['id']))
                 else:
-                    out.append((f"fu:at:{a['id']}", text + '\n(الملف غير موجود على السيرفر)', _buttons(t['id'], remind=False), 'followup', t['id']))
+                    out.append((f"fu:at:{a['id']}", h(text) + '\n(الملف غير موجود على السيرفر)', _buttons(t['id'], remind=False), 'followup', t['id']))
 
         if cfg.get('reminders'):
             marks = ','.join('?' * len(REMINDER_KINDS))
@@ -307,11 +334,11 @@ def process(c=None, now=None):
                 if n['task_id']:
                     t = task(n['task_id'])
                     if not t or not _watched(c, cfg, t): continue
-                    out.append((f"fu:nt:{n['id']}", f"🔔 النظام ذكّر {name} بمهمة «{t['title']}»\n({n['kind']})", _buttons(t['id'], remind=False), 'followup', t['id']))
+                    out.append((f"fu:nt:{n['id']}", f"🔔 <b>النظام ذكّر {h(name)}</b>\n{_title_line(t)}\n🕒 {h(n['kind'])}", _buttons(t['id'], remind=False), 'followup', t['id']))
                 else:
                     ids = {int(x) for x in cfg.get('employee_ids') or []}
                     if ids and n['employee_id'] not in ids: continue
-                    out.append((f"fu:nt:{n['id']}", f"📋 أُرسلت إلى {name} قائمة مهامه: {n['kind']}", None, 'followup', None))
+                    out.append((f"fu:nt:{n['id']}", f"📋 أُرسلت إلى <b>{h(name)}</b> قائمة مهامه: {h(n['kind'])}", None, 'followup', None))
 
         if cfg.get('late'):
             for t in c.execute("""SELECT * FROM tasks WHERE archived_at IS NULL AND status NOT IN ('تم','ملغاة') AND due_at IS NOT NULL AND due_at<>''
@@ -321,7 +348,7 @@ def process(c=None, now=None):
                 key = f"fu:late:{t['id']}:{t['due_at']}"
                 if c.execute('SELECT 1 FROM telegram_outbox WHERE dedupe_key=?', (key,)).fetchone(): continue
                 edits.setdefault(t['id'], f"late{t['due_at']}")
-                out.append((key, f"⏰ تأخرت مهمة {_who(c, t)}: «{t['title']}»\nكان موعدها {ar_when(t['due_at'])}، وحالتها: {t['status']}", _buttons(t['id']), 'followup', t['id']))
+                out.append((key, f"🚨 <b>تأخرت مهمة {h(_who(c, t))}</b>\n{_title_line(t)}\n⏰ كان موعدها: <b>{h(ar_when(t['due_at']))}</b>\n{STATUS_ICON.get(t['status'], '🔹')} حالتها: <b>{h(t['status'])}</b>", _buttons(t['id']), 'followup', t['id']))
 
         now = now or datetime.now(); day = now.date().isoformat()
         if cfg.get('digest') and now.strftime('%H:%M') >= (cfg.get('digest_time') or '09:00'):
@@ -362,20 +389,21 @@ def digest(c, cfg, now=None):
     if not by: return []
     ar = lambda n: str(n).translate(str.maketrans('0123456789', '٠١٢٣٤٥٦٧٨٩'))
     total = sum(len(ts) for ts in by.values())
-    out = [(f"📋 المهام المفتوحة — {ar_when((now or datetime.now()).date().isoformat())}\n"
-            f"{ar(total)} مهمة عند {ar(len(by))} موظف.\n\nتحت كل موظف لحاله: اضغط على أي مهمة لتظهر بطاقتها هنا "
-            f"(فيها «🔔 ذكّر الموظف»، وللتعليق اعمل «رد / Reply» على البطاقة واكتب تعليقك).", None)]
+    out = [(f"☀️ <b>صباح الخير! المهام المفتوحة — {h(ar_when((now or datetime.now()).date().isoformat()))}</b>\n{SEP}\n"
+            f"📊 <b>{ar(total)}</b> مهمة عند <b>{ar(len(by))}</b> موظف\n\n"
+            f"👇 تحت كل موظف لحاله: اضغط على أي مهمة لتظهر بطاقتها هنا\n"
+            f"🔔 من البطاقة: «ذكّر الموظف»\n💬 للتعليق: اعمل «رد / Reply» على البطاقة واكتب تعليقك", None)]
     for name, ts in by.items():
         late = sum(1 for t in ts if t['due_at'] and _is_late(t))
         for part in range(0, len(ts), 40):
             chunk = ts[part:part + 40]
-            lines = [f"👤 {name} — {ar(len(ts))} مفتوحة" + (f"، ⚠️ {ar(late)} متأخرة" if late else '') + (' (تابع)' if part else ''), '']
+            lines = [f"👤 <b>{h(name)}</b> — {ar(len(ts))} مفتوحة" + (f" · 🚨 <b>{ar(late)} متأخرة</b>" if late else '') + (' (تابع)' if part else ''), SEP]
             kb = []
             for i, t in enumerate(chunk, part + 1):
                 bad = t['due_at'] and _is_late(t)
                 due = f" · ⏰ {ar_when(t['due_at'])}" if t['due_at'] else ''
-                lines.append(f"{ar(i)}. {t['title'][:120]} · {t['status']}{due}" + (' ⚠️' if bad else ''))
-                kb.append([{'text': f"{'⚠️ ' if bad else ''}{i}. {t['title'][:45]}", 'callback_data': f"fu:open:{t['id']}"}])
+                lines.append(f"{PRIO_ICON.get(t['priority'], '🔹')} {ar(i)}. <b>{h(t['title'][:120])}</b>\n      {STATUS_ICON.get(t['status'], '🔹')} {h(t['status'])}{h(due)}" + (' 🚨' if bad else ''))
+                kb.append([{'text': f"{'🚨 ' if bad else ''}{ar(i)}. {t['title'][:45]}", 'callback_data': f"fu:open:{t['id']}"}])
             out.append(('\n'.join(lines)[:MAX_TEXT], {'inline_keyboard': kb}))
     return out
 
@@ -390,18 +418,18 @@ def outbox_send(c, row):
         from .telegram_media import send_attachment
         a = c.execute('SELECT * FROM task_attachments WHERE id=?', (sid,)).fetchone()
         if not a: return {'ok': False, 'error': 'المرفق محذوف', 'final': True}
-        return send_attachment(row['chat_id'], ROOT / a['relative_path'], a['mime_type'] or '', row['message_text'])
+        return send_attachment(row['chat_id'], ROOT / a['relative_path'], a['mime_type'] or '', plain(row['message_text']))
     card = render_card(c, sid, new=(st == 'followup_card'))
     if not card: return {'ok': False, 'error': 'المهمة محذوفة', 'final': True}
     text, kb = card
     if st in ('followup_card', 'followup_show'):
-        r = q.low_level_send(row['chat_id'], text, reply_markup=kb)
+        r = send_html(row['chat_id'], text, kb)
         if r.get('ok') and r.get('message_id'):
             c.execute('INSERT OR IGNORE INTO followup_messages(task_id,chat_id,message_id) VALUES(?,?,?)', (sid, str(row['chat_id']), int(r['message_id'])))
             remember_ref(c, row['chat_id'], r['message_id'], sid)
         return r
     meta = json.loads(row['reply_markup_json'] or '{}')
-    r = q.edit_message(row['chat_id'], int(meta['message_id']), text, reply_markup=kb)
+    r = q.edit_message(row['chat_id'], int(meta['message_id']), text, reply_markup=kb, parse_mode='HTML')
     if 'message is not modified' in str(r.get('error', '')).lower(): return {'ok': True}
     if 'message to edit not found' in str(r.get('error', '')).lower():
         c.execute('DELETE FROM followup_messages WHERE task_id=? AND chat_id=? AND message_id=?', (sid, str(row['chat_id']), int(meta['message_id'])))
@@ -423,7 +451,7 @@ def post_card(c, chat, tid):
     from . import telegram_queue as q
     card = render_card(c, tid)
     if not card: return {'ok': False}
-    r = q.low_level_send(chat, card[0], reply_markup=card[1])
+    r = send_html(chat, card[0], card[1])
     if r.get('ok') and r.get('message_id'):
         c.execute('INSERT OR IGNORE INTO followup_messages(task_id,chat_id,message_id) VALUES(?,?,?)', (tid, chat, int(r['message_id'])))
         remember_ref(c, chat, r['message_id'], tid)
@@ -447,7 +475,7 @@ def handle_group_message(c, msg):
     f = msg.get('from') or {}
     who = ' '.join(x for x in (f.get('first_name'), f.get('last_name')) if x) or 'المتابعة'
     if not _may_act(c, f.get('id')):
-        enqueue(chat, f"⛔ {who}: التعليق مسموح فقط للأشخاص المحددين في إعدادات مجموعة المتابعة.", 'followup', None,
+        enqueue(chat, f"⛔ <b>{h(who)}</b>: التعليق مسموح فقط للأشخاص المحددين في إعدادات مجموعة المتابعة.", 'followup', None,
                 dedupe_key=f"fu:deny:{chat}:{msg.get('message_id')}")
         return True
     t = c.execute('SELECT * FROM tasks WHERE id=?', (row[0],)).fetchone()
@@ -462,7 +490,7 @@ def handle_group_message(c, msg):
     else:
         sent = bool(m._notify_admin_comment(c, t['id'], who, body).get('ok'))
     to = _who(c, t)
-    enqueue(chat, f"✅ تم حفظ تعليق {who} على «{t['title']}»" + (f" وإرساله إلى {to}" if sent else f" (لم يصل إلى {to} على Telegram، سيراه في النظام)"),
+    enqueue(chat, f"✅ <b>تم حفظ تعليق {h(who)}</b>\n{_title_line(t)}\n" + (f"📨 وصل إلى {h(to)}" if sent else f"📭 لم يصل إلى {h(to)} على Telegram، سيراه في النظام"),
             'followup', t['id'], dedupe_key=f"fu:commented:{chat}:{msg.get('message_id')}")
     from .security_center import append_audit
     append_audit(c, {'user_id': None, 'username_snapshot': f'telegram:{who}', 'action': 'followup_comment', 'entity_type': 'task',
@@ -505,7 +533,7 @@ def handle_callback(c, cb):
     who = ' '.join(x for x in (f.get('first_name'), f.get('last_name')) if x) or 'المتابعة'
     answer_callback(cbid, 'تم إرسال التذكير')
     from .telegram_queue import enqueue
-    enqueue(chat, f"🔔 {who} ذكّر {_who(c, t)} بمهمة «{t['title']}»", 'followup', tid, dedupe_key=f'fu:reminded:{tid}:{int(time.time())}')
+    enqueue(chat, f"🔔 <b>{h(who)} ذكّر {h(_who(c, t))}</b> 👀\n{_title_line(t)}", 'followup', tid, dedupe_key=f'fu:reminded:{tid}:{int(time.time())}')
     from .security_center import append_audit  # main.audit needs a web request; this comes from Telegram
     append_audit(c, {'user_id': None, 'username_snapshot': f'telegram:{who}', 'action': 'followup_remind', 'entity_type': 'task',
                      'entity_id': str(tid), 'before_json': None, 'after_json': json.dumps({'by_telegram': who, 'telegram_user_id': f.get('id')}, ensure_ascii=False),

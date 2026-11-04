@@ -16,7 +16,7 @@ def _setup(env):
         mid = next(seq); log['send'].append((str(chat), text, reply_markup, mid))
         return {'ok': True, 'message_id': mid, 'result': {'message_id': mid}}
     tq.low_level_send = fake_send
-    tq.edit_message = lambda chat, mid, text, reply_markup=None: log['edit'].append((str(chat), mid, text, reply_markup)) or {'ok': True}
+    tq.edit_message = lambda chat, mid, text, reply_markup=None, **kw: log['edit'].append((str(chat), mid, _plain(text), reply_markup)) or {'ok': True}
     ts.answer_callback = lambda cbid, text='', show_alert=False: log['answer'].append(text) or {'ok': True}
     m = env['m']; c = m.connect()
     c.execute("INSERT OR IGNORE INTO telegram_groups(name,chat_id) VALUES('المتابعة',?)", (GROUP,))
@@ -31,8 +31,13 @@ def _run(env):
     followup.process(); telegram_queue.process_queue(200)
 
 
+def _plain(t):
+    import html, re
+    return html.unescape(re.sub(r'<[^>]+>', '', t))
+
+
 def _group(log):
-    return [s for s in log['send'] if s[0] == GROUP]
+    return [(s[0], _plain(s[1]),) + tuple(s[2:]) for s in log['send'] if s[0] == GROUP]
 
 
 def _buttons(markup):
@@ -158,7 +163,7 @@ def test_followup_problem_note_and_system_reminder(env):
     c = m.connect(); m._notify_employee(c, tid, 'تذكير تلقائي', notice_category='reminders'); c.close()
     _run(env)
     texts = '\n---\n'.join(s[1] for s in _group(log))
-    assert 'كتب مشكلة' in texts and 'القطعة مو موجودة' in texts
+    assert 'مشكلة / ملاحظة من موظف آخر' in texts and 'القطعة مو موجودة' in texts
     assert texts.count('القطعة مو موجودة') == 1          # the Telegram comment row is not posted a second time
     assert 'النظام ذكّر موظف آخر' in texts and 'تذكير تلقائي' in texts
     boss.put('/api/followup', json={'enabled': False})
@@ -228,3 +233,19 @@ def test_followup_morning_list_buttons_and_reply_comment(env):
     assert not c.execute("SELECT 1 FROM task_comments WHERE body='تعليق ممنوع'").fetchone()
     c.close()
     boss.put('/api/followup', json={'enabled': False, 'remind_ids': []})
+
+
+def test_followup_html_escapes_and_falls_back_to_plain(env, monkeypatch):
+    import app.telegram_queue as tq
+    from app import followup
+    sent = []
+
+    def fake(chat, text, reply_markup=None, parse_mode=None, **kw):
+        sent.append((text, parse_mode))
+        if parse_mode == 'HTML' and len(sent) == 1:
+            return {'ok': False, 'error': "Bad Request: can't parse entities"}
+        return {'ok': True, 'message_id': 1}
+    monkeypatch.setattr(tq, 'low_level_send', fake)
+    assert followup.h('<b>a & b</b>') == '&lt;b&gt;a &amp; b&lt;/b&gt;'
+    assert followup.send_html('-1', '<b>x &amp; y</b>')['ok']
+    assert sent == [('<b>x &amp; y</b>', 'HTML'), ('x & y', None)]   # refused HTML -> resent as plain text

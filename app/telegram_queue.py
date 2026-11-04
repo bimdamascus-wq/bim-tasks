@@ -73,6 +73,9 @@ def process_queue(limit=25):
             elif row['source_type']=='task_edit':
                 meta=json.loads(row['reply_markup_json']); result=edit_message(row['chat_id'],meta['message_id'],message_text,reply_markup=markup)
                 if 'message is not modified' in str(result.get('error','')).lower():result={'ok':True}
+            elif row['source_type']=='followup':
+                from .followup import send_html  # follow-up group messages are HTML (bold, owner 2026-11-04)
+                result=send_html(row['chat_id'],message_text,markup)
             else:
                 result=low_level_send(row['chat_id'],message_text,reply_markup=markup)
             if result.get('ok'):
