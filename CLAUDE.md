@@ -358,3 +358,8 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   since the install; 8 rows "retrying" may be old-chat rows that will migrate on their next try) — next report: no new
   "upgraded to a supergroup" failures. Sync: 20:32 Google-side error + 20:37 timeout, 20:42 OK (transient). Minor:
   scheduled.log shows "WARN: ERROR: 'charmap' codec can't encode" (Arabic error text printed on cp1252) — cosmetic, not fixed.
+- 2026-11-10: follow-up group works again (owner: the task list arrived). Owner: dashboard v3 barely changed (as warned),
+  still too many pages. Short menu built: `shell_nav.PRIMARY` (/, /my-work, /my-team, /tasks, /recurring, /employees,
+  /team-performance) + «الإعدادات» = /settings (`settings_hub.html`, `shell_nav.hub`), all other pages as tiles there.
+  Package `short_menu` given — NOT confirmed (BASE 0b7aca0). Option B (plain line icons) still on the table if he
+  asks for a less playful look; preview recipe: inline <svg><path d="{{ l.icon }}"> instead of the 3D <img> in base.html.
