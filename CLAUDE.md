@@ -329,3 +329,18 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   «🔔 ذكّر الآن (تلغرام)» / «💬 ذكّر على الواتس», POST /api/tasks/{tid}/remind (tasks.edit + team scope, Telegram
   at most once a minute per task, WhatsApp = wa.me link, the manager presses send), task_event `reminded` + audit
   `task_remind`, follow-up group shows it (kind `reminders`). After the report shows 5adabad on all ports: fast-forward `main`.
+- Report 20:29 (2026-11-10): all 19 packages done; 8797 lan+workers and 8798 external on 5adabad (`remind_now`); 8799 test
+  copy not running (data still 2026-10-31). `main` fast-forwarded to df21ef6 (= 5adabad + docs). Sync incremental OK,
+  off-site 02:00 OK (one failure 11-06), `?secret=` refused: none, duplicates: none.
+  FOUND: the follow-up group was upgraded to a SUPERGROUP; its chat id changed and every group message since 2026-11-10
+  06:00 failed (119 failed rows, 400 + migrate_to_chat_id). Those failed rows are NOT retried (stale).
+- Owner: «ذكّر» said «غير مربوط» for an employee shown as «✅ مربوط» — cause confirmed by him: «إرسال Telegram» was off.
+- Package `telegram_fixes` (commit 052c218, BASE 5adabad, 8 files) given — NOT confirmed: `main.telegram_block_reason()`
+  names the real cause (not linked / sending off / channel web-only / notice kind off) on both reminder routes; list and
+  profile show «مربوط · الإرسال موقوف»; finishing a Telegram link turns sending on; `telegram_service._api` follows
+  `migrate_to_chat_id` (moves telegram_groups + pending outbox, audit `telegram_group_migrated`, resends once, not edits);
+  webhook handles the migrate service message too.
+- Owner unhappy with the dashboard again ("kids' game") and says there are too many pages (admin menu = 30 entries).
+  Advice given: do NOT redesign blindly (8th look change); first a short menu (6 daily pages + «⚙️ الإعدادات» page
+  holding the rest, nothing deleted; employee sees مهامي only), then the dashboard from a screenshot + 3 concrete
+  complaints, approved as a picture before code. Waiting for his answer.
