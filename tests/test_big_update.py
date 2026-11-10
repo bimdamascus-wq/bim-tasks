@@ -30,8 +30,11 @@ def test_menu_is_merged(env):
     side = html[html.index('ds-nav'):html.index('ds-user')]
     for gone in ('href="/tasks-table"', 'href="/manage"', 'href="/telegram-groups"', 'href="/audit"', 'href="/operations-reports"'):
         assert gone not in side, gone
-    for kept in ('href="/tasks"', 'href="/telegram-center"', 'href="/activity-log"', 'href="/team-performance"'):
+    for kept in ('href="/tasks"', 'href="/team-performance"', 'href="/settings"'):
         assert kept in side, kept
+    hub = client(env, 'boss').get('/settings').text  # short menu (2026-11-10): the rest lives on /settings
+    for kept in ('href="/telegram-center"', 'href="/activity-log"'):
+        assert kept in hub[hub.index('hub-group'):], kept
     tg = client(env, 'boss').get('/telegram-health').text
     assert 'href="/telegram-groups"' in tg[tg.index('ds-tabs'):]
 

@@ -72,6 +72,7 @@ ICONS = {
     'sync': 'M23 4v6h-6M1 20v-6h6M3.5 9a9 9 0 0 1 14.9-3.4L23 10M1 14l4.6 4.4A9 9 0 0 0 20.5 15',
     'account': 'M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM3 22a9 9 0 0 1 18 0',
     'logout': 'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9',
+    'gear': 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z',
 }
 
 # Colour of each page's 3D icon (bim-ds.css .c-<name>): related pages share a colour family.
@@ -108,7 +109,10 @@ ICON3D = {
 TITLES = {p: l for _, items in GROUPS for p, l, _ in items}
 PAGE_ICON = {p: ic for _, items in GROUPS for p, _, ic in items}
 PAGE_ICON['/account'] = 'account'
-TITLES.update({'/account': 'حسابي', '/telegram-center': 'Telegram', '/telegram-groups': 'Telegram', '/telegram-health': 'Telegram',
+PAGE_ICON['/settings'] = 'gear'
+ICON3D['/settings'] = 'gear'
+COLORS['/settings'] = 'slate'
+TITLES.update({'/settings': 'الإعدادات وباقي الصفحات', '/account': 'حسابي', '/telegram-center': 'Telegram', '/telegram-groups': 'Telegram', '/telegram-health': 'Telegram',
                '/telegram-dashboard': 'Telegram', '/activity-log': 'السجلات', '/audit': 'السجلات',
                '/team-performance': 'التقارير', '/operations-reports': 'التقارير'})
 for _p in ('/telegram-groups', '/telegram-health', '/telegram-dashboard'): PAGE_ICON[_p] = 'send'
@@ -127,18 +131,20 @@ def _hidden():
         return set()
 
 
-def nav(user, permissions, path='/'):
-    """[(group, [{'path','label','icon','active'}])] for this account; empty groups are dropped.
-    Pages the admin hid on /page-visibility are not dropped (the old top links still showed them): they move to a
-    last group "صفحات أخرى", so every page stays one click away."""
-    if not user:
-        return []
+# Short menu (owner 2026-11-10: "too many pages, people get lost"): only the pages used every day stay in the side
+# menu; every other page the account may open is one click away on /settings («الإعدادات»), grouped as before.
+# Nothing is removed and every address still works.
+PRIMARY = ('/', '/my-work', '/my-team', '/tasks', '/recurring', '/employees', '/team-performance')
+SETTINGS = '/settings'
+
+
+def _items(user, permissions, path):
+    """Every page this account may open: [(group, path key, item)] in menu order; hidden pages flagged."""
     perms = set(permissions or ())
     role = user['role_code']
     hidden = _hidden()
-    out, more = [], []
+    out = []
     for group, items in GROUPS:
-        links = []
         for p, label, icon in items:
             if p == '/' and role not in access.MANAGERS:
                 continue
@@ -159,10 +165,42 @@ def nav(user, permissions, path='/'):
                     continue
                 href = p
                 active = path == p or (p != '/' and path.startswith(p + '/'))
-            item = {'path': href, 'label': label, 'icon': ICONS[icon], 'active': active, 'color': COLORS.get(p, 'blue'), 'img': ICON3D.get(p, 'clipboard')}
-            (more if p in hidden and p not in ('/', '/my-work', '/my-team') else links).append(item)
-        if links:
-            out.append((group, links))
+            item = {'path': href, 'label': label, 'icon': ICONS[icon], 'active': active, 'color': COLORS.get(p, 'blue'),
+                    'img': ICON3D.get(p, 'clipboard'), 'hidden': p in hidden and p not in ('/', '/my-work', '/my-team')}
+            out.append((group, p, item))
+    return out
+
+
+def nav(user, permissions, path='/'):
+    """[(group, [{'path','label','icon','active'}])] for the side menu: the daily pages, then «الإعدادات» when this
+    account may open any other page. Pages the admin hid on /page-visibility leave the menu but stay on /settings."""
+    if not user:
+        return []
+    all_items = _items(user, permissions, path)
+    main = sorted([(PRIMARY.index(p), it) for _, p, it in all_items if p in PRIMARY and not it['hidden']], key=lambda x: x[0])
+    links = [it for _, it in main]
+    rest = [it for _, p, it in all_items if not (p in PRIMARY and not it['hidden'])]
+    if rest:
+        on_rest = path == SETTINGS or any(it['active'] for it in rest)
+        links.append({'path': SETTINGS, 'label': 'الإعدادات', 'icon': ICONS['gear'], 'active': on_rest, 'color': 'slate',
+                      'img': 'gear', 'hidden': False})
+    return [('الصفحات', links)] if links else []
+
+
+def hub(user, permissions):
+    """/settings: [(group, [item])] of every page not in the short menu, in the old menu groups; hidden ones last."""
+    if not user:
+        return []
+    out, more = [], []
+    for group, p, it in _items(user, permissions, SETTINGS):
+        if p in PRIMARY and not it['hidden']:
+            continue
+        if it['hidden']:
+            more.append(it)
+        elif out and out[-1][0] == group:
+            out[-1][1].append(it)
+        else:
+            out.append((group, [it]))
     if more:
         out.append(('صفحات أخرى', more))
     return out

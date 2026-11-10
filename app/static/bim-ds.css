@@ -952,3 +952,16 @@ body.ds:has(#dx){background:#F3F4F6!important}
 #dx .dx-main .dx-work,#dx .dx-main .dx-trend{grid-column:auto;grid-row:auto}
 #dx .dx-side{grid-row:1}
 @media (max-width:1100px){#dx .dx-main{grid-column:1;grid-row:auto}}
+
+/* ===== «الإعدادات» hub page (owner 2026-11-10: short menu, the rest here) ===== */
+.hub{padding:22px 28px 40px;display:flex;flex-direction:column;gap:18px}
+body.ds main.hub .hub-head h1{font-size:22px!important;font-weight:800!important;margin:0!important;line-height:1.3!important}
+.hub-head p{margin:4px 0 0;color:#6B7280;font-size:14.5px}
+.hub-group h2{font-size:15px!important;font-weight:800!important;color:#6B7280!important;margin:0 0 8px!important}
+.hub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.hub-tile{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #E3E6EB;border-radius:8px;padding:12px 14px;
+  color:#111827;text-decoration:none;font-weight:700;font-size:15px;min-height:58px}
+.hub-tile:hover{border-color:#9CA3AF;background:#F9FAFB}
+.hub-tile img{width:30px;height:30px;flex:none}
+.hub-empty{color:#6B7280}
+@media (max-width:700px){.hub{padding:14px 12px 30px}.hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}

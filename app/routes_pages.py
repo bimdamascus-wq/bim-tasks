@@ -25,6 +25,18 @@ def dashboard(req: Request):
     nav=[(g,items) for g,items in nav if items]
     if 'users.manage' in perms(admin['user_id']):nav.append(('الإعدادات',[('/page-visibility','الصفحات الظاهرة')]))
     return templates.TemplateResponse(request=req,name='command_center.html',context={**ctx(req,'الرئيسية'),'cc_nav':nav})
+@app.get('/settings', response_class=HTMLResponse)
+def settings_hub(req: Request):
+    """«الإعدادات»: every page that left the short side menu (owner 2026-11-10), as tiles. Login only; each tile is
+    shown only if this account may open that page (same rules as the menu)."""
+    u = session(req)
+    if not u:
+        return RedirectResponse('/login', status_code=303)
+    from . import shell_nav
+    return templates.TemplateResponse(request=req, name='settings_hub.html',
+                                      context={**ctx(req, 'الإعدادات وباقي الصفحات'), 'hub': shell_nav.hub(u, perms(u['user_id']))})
+
+
 # "المهام": one page, four views (big_update). Each view keeps the permission of the page it replaces.
 TASK_VIEWS = {'cards': ('tasks.html', 'tasks.view', 'كل المهام'), 'table': ('tasks_table.html', 'tasks.view', 'المهام كجدول'),
               'quick': ('manage.html', 'tasks.edit', 'إدارة المهام'), 'board': ('tasks_board.html', 'tasks.view', 'لوحة المهام')}

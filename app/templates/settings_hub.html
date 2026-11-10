@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block content %}
+{# «الإعدادات» (owner 2026-11-10: too many pages in the menu). Every page that is not in the short side menu, in the
+   old menu groups; nothing was removed. Built by shell_nav.hub() with the same permission rules as the menu. #}
+<main class="hub" aria-labelledby="hubTitle">
+  <header class="hub-head">
+    <h1 id="hubTitle">الإعدادات وباقي الصفحات</h1>
+    <p>الصفحات يلي بتستعملها كل يوم موجودة بالقائمة الجانبية. هون كل الباقي.</p>
+  </header>
+  {% for group, items in hub %}
+  <section class="hub-group" aria-labelledby="hg{{ loop.index }}">
+    <h2 id="hg{{ loop.index }}">{{ group }}</h2>
+    <div class="hub-grid">
+      {% for it in items %}
+      <a class="hub-tile" href="{{ it.path }}"><img src="/static/icons3d/{{ it.img }}.png" alt="" aria-hidden="true"><span>{{ it.label }}</span></a>
+      {% endfor %}
+    </div>
+  </section>
+  {% else %}
+  <p class="hub-empty">ما في صفحات تانية لحسابك.</p>
+  {% endfor %}
+</main>
+{% endblock %}
