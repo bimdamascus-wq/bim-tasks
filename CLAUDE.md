@@ -344,3 +344,9 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   Advice given: do NOT redesign blindly (8th look change); first a short menu (6 daily pages + «⚙️ الإعدادات» page
   holding the rest, nothing deleted; employee sees مهامي only), then the dashboard from a screenshot + 3 concrete
   complaints, approved as a picture before code. Waiting for his answer.
+- Owner: «سوّيه انت» (no screenshot, no list). Dashboard v3 "sober" committed (38a607d, NOT shipped): see commit message.
+  Finding: the "kids' game" feel comes mostly from the SHELL (3D Fluent icons in the rail and top bar, peach active item,
+  beige top bar), which he himself asked for on 2026-10-31/11-01. Shown 3 pictures: current / A = v3 only /
+  B = v3 + plain line icons (shell_nav.ICONS paths already exist) + white rail, dark active item (B was a scratch-copy
+  preview of base.html only, not committed). Waiting for A or B. Package must use BASE 052c218 (telegram_fixes) once
+  that one is confirmed installed.
