@@ -353,3 +353,8 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 - Owner chose A and says `telegram_fixes` is installed (no status report yet -> `main` stays df21ef6 = 5adabad).
   Package `dashboard_v3` (commit 0b7aca0, BASE 052c218, 2 files: bim-ds.css + command_center.html) given — NOT
   confirmed. After the report shows 0b7aca0 on 8797/8798: fast-forward `main` to the branch.
+- Report 20:45 (2026-11-10): `telegram_fixes` 20:38 and `dashboard_v3` 20:44 installed; 8797 lan+workers and 8798
+  external on 0b7aca0. `main` fast-forwarded to the branch. Follow-up group migration not yet proven (no group send
+  since the install; 8 rows "retrying" may be old-chat rows that will migrate on their next try) — next report: no new
+  "upgraded to a supergroup" failures. Sync: 20:32 Google-side error + 20:37 timeout, 20:42 OK (transient). Minor:
+  scheduled.log shows "WARN: ERROR: 'charmap' codec can't encode" (Arabic error text printed on cp1252) — cosmetic, not fixed.
