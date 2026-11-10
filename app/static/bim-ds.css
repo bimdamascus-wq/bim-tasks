@@ -899,3 +899,56 @@ body.ds:has(#dx){background:#F6F4F1!important}
 @media (max-width:700px){#dx{padding:14px 12px 30px}#dx .dx-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}#dx #feed{grid-template-columns:1fr}
   #dx .dx-cols{display:none}#dx .dx-row{grid-template-columns:24px minmax(0,1fr) max-content;row-gap:2px}#dx .dx-row .who{grid-column:2}#dx .dx-row .due{grid-column:3;grid-row:1}
   #dx .dx-quick .kbd,#dx .dx-quick .pv{display:none}#dx .dx-select select{min-width:0}}
+
+/* ===== Manager dashboard v3 "sober" (owner 2026-11-10: the dashboard still felt "like a kids' game") =====
+   Cool neutral page instead of warm beige, square-ish corners, one connected KPI strip, neutral initials instead of
+   coloured circles, underline tabs, no emoji. Colour only for meaning: red = late, amber = due, green = done. */
+#dx{--dx-bg:#F3F4F6;--dx-line:#E3E6EB;--dx-line-2:#EEF0F3;--dx-ink:#111827;--dx-ink-2:#374151;--dx-muted:#6B7280;
+  --dx-act:#1F2937;--dx-s1:#3B6FB6;--dx-s3:#2E9A6B;gap:14px}
+body.ds:has(#dx){background:#F3F4F6!important}
+#dx .dx-title h1{font-size:22px!important;display:flex;align-items:baseline;gap:10px}
+#dx .dx-title .dx-scope{font-size:15px;font-weight:700;color:var(--dx-muted);padding:2px 10px;border:1px solid var(--dx-line);border-radius:6px;background:#fff}
+#dx .dx-card,#dx .dx-quick,#dx .dx-seg,#dx .dx-select select{border-radius:8px!important}
+#dx .dx-seg button{border-radius:6px!important}
+#dx .dx-quick-ico{border-radius:6px}
+/* KPI strip: one card, cells divided by lines */
+#dx .dx-kpis{gap:0;background:#fff;border:1px solid var(--dx-line);border-radius:8px;overflow:hidden}
+#dx .dx-kpi{border:0;border-radius:0;border-inline-start:1px solid var(--dx-line-2);padding:14px 18px 12px;position:relative}
+#dx .dx-kpi:first-child{border-inline-start:0}
+#dx .dx-kpi::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:transparent}
+#dx .dx-kpi.is-late{border-color:var(--dx-line-2)}
+#dx .dx-kpi.is-late::before{background:var(--dx-late)}
+#dx .dx-kpi:nth-child(3)::before{background:var(--dx-due)}
+#dx .dx-kpi:nth-child(4)::before{background:var(--dx-done)}
+#dx .dx-kpi b{font-size:28px}
+#dx .dx-kpi .zero{font-size:16px;font-weight:700;color:#9CA3AF;line-height:42px}
+#dx .dot{display:none}
+/* neutral initials */
+#dx .av{color:#374151!important;background:#E8EBF0!important;font-weight:800}
+/* tabs: underline instead of a dark pill */
+#dx .dx-tabs button{border-radius:0!important;height:42px!important;min-height:42px!important;border-bottom:2px solid transparent!important;padding:0 10px!important}
+#dx .dx-tabs button:hover{background:transparent!important;color:var(--dx-ink)!important}
+#dx .dx-tabs button.on{background:transparent!important;color:var(--dx-ink)!important;border-bottom-color:var(--dx-ink)!important}
+#dx .dx-tabs button.on .cnt{background:var(--dx-line-2);color:var(--dx-ink)}
+#dx .dx-tabs button.on .cnt.r{background:var(--dx-late-50);color:var(--dx-late)}
+#dx .dx-card-head{padding-block:4px}
+#dx .dx-cols,#dx .dx-team-cols{background:#F9FAFB}
+#dx .dx-row:hover{background:#F9FAFB}
+#dx .dx-tm.on{background:#F3F4F6}
+#dx .ck{border-radius:4px!important;border-color:#9CA3AF!important}
+#dx .tm-profile{border:0;color:var(--dx-s1);font-weight:700}
+#dx .tm-profile:hover{text-decoration:underline}
+/* activity: compact list in the side column */
+#dx #feed{display:block;padding:0 16px}
+#dx .dx-ev{padding:8px 0;font-size:13.5px}
+#dx .dx-ev .av{width:24px!important;height:24px!important;font-size:11px!important}
+#dx .dx-feed-more{display:block;padding:8px 16px 10px;font-size:13.5px}
+#dx .dx-feed-card{grid-column:auto;grid-row:auto}
+#dx .dx-live i{box-shadow:none}
+@media (max-width:1180px){#dx .dx-kpi:nth-child(4){border-inline-start:0}#dx .dx-kpi{border-top:1px solid var(--dx-line-2)}}
+@media (max-width:700px){#dx .dx-kpi:nth-child(odd){border-inline-start:0}#dx .dx-kpi:nth-child(even){border-inline-start:1px solid var(--dx-line-2)}
+  #dx .dx-title h1{font-size:20px!important}}
+#dx .dx-main{grid-column:1;grid-row:1;display:flex;flex-direction:column;gap:16px;min-width:0}
+#dx .dx-main .dx-work,#dx .dx-main .dx-trend{grid-column:auto;grid-row:auto}
+#dx .dx-side{grid-row:1}
+@media (max-width:1100px){#dx .dx-main{grid-column:1;grid-row:auto}}

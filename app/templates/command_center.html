@@ -1,11 +1,11 @@
 {% extends "base.html" %}{% block content %}
-{# Manager dashboard, redesigned 2026-11-04 (owner: "professional, uses the space, easy on the eyes").
+{# Manager dashboard, redesigned 2026-11-04, sober v3 2026-11-10 (owner: still "like a kids' game") (owner: "professional, uses the space, easy on the eyes").
    Same data and actions as before: quick add (Ctrl K), period switch, KPIs, the three task lists with "mark done",
    team load with profile links and click-to-filter, employee filter, live activity. New: 14-day chart, status mix. #}
 <main class="dx" id="dx" aria-labelledby="dxTitle">
   <header class="dx-head">
     <div class="dx-title">
-      <h1 id="dxTitle"><span id="title">اليوم</span></h1>
+      <h1 id="dxTitle">لوحة المدير <span class="dx-scope" id="title">اليوم</span></h1>
       <p id="sub"></p>
     </div>
     <div class="dx-tools">
@@ -33,6 +33,7 @@
   </section>
 
   <div class="dx-grid">
+   <div class="dx-main">
     <section class="dx-card dx-work">
       <div class="dx-card-head">
         <div class="dx-tabs" role="tablist">
@@ -48,6 +49,13 @@
       <div class="dx-list" id="gO" role="tabpanel" hidden></div>
     </section>
 
+    <section class="dx-card dx-trend">
+      <div class="dx-card-head"><h2>آخر ١٤ يوم</h2>
+        <span class="dx-legend"><i style="background:var(--dx-s1)"></i>أُضيفت <i style="background:var(--dx-s3)"></i>أُنجزت</span></div>
+      <div class="dx-chart" id="trend"></div>
+      <p class="dx-hint" id="trendSum"></p>
+    </section>
+   </div>
     <aside class="dx-side">
       <section class="dx-card">
         <div class="dx-card-head"><h2>حمل الفريق</h2>
@@ -61,19 +69,14 @@
         <div class="dx-mixbar" id="mixBar" role="img"></div>
         <div class="dx-mixlist" id="mixList"></div>
       </section>
+      <section class="dx-card dx-feed-card">
+        <div class="dx-card-head"><h2>النشاط المباشر</h2><span class="dx-live"><i></i>مباشر</span></div>
+        <div id="feed"></div>
+        <a class="dx-more dx-feed-more" href="/activity-log">السجل الكامل ←</a>
+      </section>
     </aside>
 
-    <section class="dx-card dx-trend">
-      <div class="dx-card-head"><h2>آخر ١٤ يوم</h2>
-        <span class="dx-legend"><i style="background:var(--dx-s1)"></i>أُضيفت <i style="background:var(--dx-s3)"></i>أُنجزت</span></div>
-      <div class="dx-chart" id="trend"></div>
-      <p class="dx-hint" id="trendSum"></p>
-    </section>
 
-    <section class="dx-card dx-feed-card">
-      <div class="dx-card-head"><h2>النشاط المباشر</h2><span class="dx-live"><i></i>مباشر</span></div>
-      <div id="feed"></div>
-    </section>
   </div>
   <div class="dx-tip" id="tip" role="tooltip" hidden></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -84,8 +87,9 @@
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ar=v=>String(v??'').replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+const kv=n=>n?ar(n):'<span class="zero">لا يوجد</span>';  // «٠» looks like a dot on the KPI tiles
 // Avatar colours: fixed order by team position, muted tones (never red/green, which mean late/done).
-const COLORS=['#475569','#3b5b92','#7c5a3a','#5b4b8a','#2f6f73','#6b6236','#64748b','#7a4560'];
+const COLORS=['#E8EBF0'];  // v3: one neutral tone; colour is kept for meaning (late/done) only
 let teamOrder=[];
 const colorOf=name=>{const i=teamOrder.indexOf(name);if(i>=0)return COLORS[i%COLORS.length];let h=0;for(const ch of String(name||''))h=(h*31+ch.charCodeAt(0))>>>0;return COLORS[h%COLORS.length]};
 const av=(name,sz)=>`<span class="av" style="background:${colorOf(name)}${sz?`;width:${sz}px;height:${sz}px;font-size:${Math.round(sz/2.2)}px`:''}">${esc(String(name||'؟').trim().slice(0,1))}</span>`;
@@ -158,18 +162,18 @@ function mixChart(){
 }
 function render(){
   const s=data.stats,g=data.groups;teamOrder=data.team.map(m=>m.name);
-  $('kOpen').textContent=ar(s.open);$('kLate').textContent=ar(s.late);$('kDone').textContent=ar(s.done_today);$('kRate').textContent=s.on_time==null?'—':ar(s.on_time)+'٪';
-  $('kDue').textContent=ar(s.due_today??0);$('kUnseen').textContent=ar(s.unseen??0);
+  $('kOpen').innerHTML=kv(s.open);$('kLate').innerHTML=kv(s.late);$('kDone').innerHTML=kv(s.done_today);$('kRate').textContent=s.on_time==null?'—':ar(s.on_time)+'٪';
+  $('kDue').innerHTML=kv(s.due_today??0);$('kUnseen').innerHTML=kv(s.unseen??0);
   const working=(data.mix['بدأت']||0)+(data.mix['قيد التنفيذ']||0);
   $('kOpenSub').textContent=`منها ${ar(working)} قيد العمل`;
   $('kLateSub').textContent=s.open?`${ar(Math.round(100*s.late/s.open))}٪ من المفتوحة`:'';
-  $('kDoneSub').textContent=`${ar(s.done_week??0)} آخر ٧ أيام`;
+  $('kDoneSub').textContent=s.done_week?`${ar(s.done_week)} آخر ٧ أيام`:'لا شيء خلال ٧ أيام';
   $('kUnseenSub').textContent=s.unassigned?`و${ar(s.unassigned)} بدون موظف`:'كل المهام لها موظف';
   const labels={today:['اليوم','مستحقة اليوم','أُنجزت اليوم'],week:['هذا الأسبوع','مستحقة خلال ٧ أيام','أُنجزت هذا الأسبوع'],all:['كل المهام المفتوحة','باقي المهام المفتوحة','أُنجزت آخر ٣٠ يوم']}[data.scope];
   $('title').textContent=labels[0];$('dueLabel').textContent=labels[1];$('doneLabel').textContent=labels[2];
   $('sub').textContent=fmtDay(new Date())+' · '+ar(g.attention.length+g.due.length)+' مهمة تحتاج متابعتك';
   $('cA').textContent=ar(g.attention.length);$('cD').textContent=ar(g.due.length);$('cO').textContent=ar(g.done.length);
-  list('gA',g.attention,'late','لا يوجد شيء متأخر 👌');list('gD',g.due,'due','لا توجد مهام مستحقة');list('gO',g.done,'done','لم يُنجز شيء بعد');
+  list('gA',g.attention,'late','لا يوجد شيء متأخر');list('gD',g.due,'due','لا توجد مهام مستحقة');list('gO',g.done,'done','لم يُنجز شيء بعد');
   const member=data.team.find(m=>m.id===emp);
   $('filter').innerHTML=member?`<span class="dx-filter">${av(member.name,24)} مهام ${esc(member.name)} فقط <button type="button" id="clr" aria-label="إلغاء الفلتر">×</button></span>`:'';
   if(member)$('clr').onclick=()=>{emp=null;load()};
@@ -178,9 +182,9 @@ function render(){
   $('team').innerHTML=data.team.map(m=>{const ok=(m.open||0)-(m.late||0);return `<div class="dx-tm ${m.id===emp?'on':''}">
     <button class="tm" data-emp="${m.id}" title="عرض مهام ${esc(m.name)}">${av(m.name,28)}<b>${esc(m.name)}</b></button>
     <span class="bar" title="${ar(m.open)} مفتوحة · ${ar(m.late)} متأخرة"><i class="ok" style="width:${100*ok/top}%"></i><i class="lt" style="width:${100*(m.late||0)/top}%"></i></span>
-    <span class="num">${ar(m.open)}</span><span class="num ${m.late?'r':'z'}">${ar(m.late)}</span><span class="num z2">${ar(m.done7||0)}</span>
-    <a class="tm-profile" href="/employee/${m.id}" title="ملف ${esc(m.name)}" aria-label="ملف ${esc(m.name)}">ملف</a></div>`}).join('')||'<div class="dx-empty">اربط حسابات المسؤولين بأسمائهم ليظهروا هنا</div>';
-  $('feed').innerHTML=data.feed.map(e=>`<a class="dx-ev" href="/task/${e.task_id}">${av(e.name||'إ',28)}<div><span>${esc(e.text)}</span><time>${ago(e.at)}</time></div></a>`).join('')||'<div class="dx-empty">لا يوجد نشاط بعد</div>';
+    <span class="num">${m.open?ar(m.open):'–'}</span><span class="num ${m.late?'r':'z'}">${m.late?ar(m.late):'–'}</span><span class="num z2">${m.done7?ar(m.done7):'–'}</span>
+    <a class="tm-profile" href="/employee/${m.id}" title="ملف ${esc(m.name)}" aria-label="ملف ${esc(m.name)}">الملف</a></div>`}).join('')||'<div class="dx-empty">اربط حسابات المسؤولين بأسمائهم ليظهروا هنا</div>';
+  $('feed').innerHTML=data.feed.slice(0,8).map(e=>`<a class="dx-ev" href="/task/${e.task_id}">${av(e.name||'إ',28)}<div><span>${esc(e.text)}</span><time>${ago(e.at)}</time></div></a>`).join('')||'<div class="dx-empty">لا يوجد نشاط بعد</div>';
   document.querySelectorAll('[data-emp]').forEach(b=>b.onclick=()=>{emp=+b.dataset.emp===emp?null:+b.dataset.emp;load()});
   document.querySelectorAll('[data-done]').forEach(b=>b.onclick=()=>done(+b.dataset.done,b));
   trendChart();mixChart();
@@ -204,7 +208,7 @@ document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>{scope=b.datas
 let parsed=null,pt=null;
 $('q').addEventListener('input',()=>{const v=$('q').value.trim();$('go').disabled=!v;clearTimeout(pt);if(!v){$('pv').textContent='';parsed=null;return}
   pt=setTimeout(async()=>{try{const r=await fetch('/api/v2/parse-task?text='+encodeURIComponent(v));parsed=await r.json();parsed._for=v;
-    $('pv').textContent=(parsed.employee?'📌 ل'+parsed.employee:'بدون موظف')+' · '+parsed.priority}catch{}},250)});
+    $('pv').textContent=(parsed.employee?'إلى '+parsed.employee:'بدون موظف')+' · '+parsed.priority}catch{}},250)});
 $('cmd').addEventListener('submit',async e=>{e.preventDefault();const v=$('q').value.trim();if(!v)return;$('go').disabled=true;
   try{if(!parsed||parsed._for!==v){const r=await fetch('/api/v2/parse-task?text='+encodeURIComponent(v));parsed=await r.json();parsed._for=v}
     const r=await fetch('/api/tasks',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({employee_id:parsed.employee_id,title:parsed.title||v,priority:parsed.priority||'عادي',reminder:{type:'بدون'}})});
