@@ -12,7 +12,46 @@ def _token():
 def _verify():
     return str(CA_BUNDLE) if CA_BUNDLE.exists() else True
 
+def migrate_chat(old, new):
+    """A Telegram group upgraded to a supergroup gets a NEW chat id; the old one answers every send with 400
+    «group chat was upgraded to a supergroup chat» + parameters.migrate_to_chat_id (seen 2026-11-10: the follow-up
+    group lost every message from that morning). Point everything stored at the new id. Never raises."""
+    old, new = str(old), str(new)
+    if not old or not new or old == new:
+        return False
+    try:
+        from .db import connect
+        c = connect()
+        try:
+            n = c.execute("UPDATE telegram_groups SET chat_id=?,updated_at=CURRENT_TIMESTAMP WHERE chat_id=?", (new, old)).rowcount
+            c.execute("UPDATE telegram_outbox SET chat_id=?,updated_at=CURRENT_TIMESTAMP WHERE chat_id=? AND status IN ('pending','retrying')", (new, old))
+            import json
+            from .security_center import append_audit
+            append_audit(c, {'user_id': None, 'username_snapshot': 'telegram', 'action': 'telegram_group_migrated',
+                             'entity_type': 'telegram_group', 'entity_id': None, 'before_json': json.dumps({'chat_id': old}),
+                             'after_json': json.dumps({'chat_id': new, 'groups': n}), 'reason': None, 'gateway': 'telegram', 'ip_address': None})
+            return True
+        finally:
+            c.close()
+    except Exception:
+        return False
+
+def _migrated_to(r):
+    try:
+        return ((r.get("raw") or {}).get("parameters") or {}).get("migrate_to_chat_id")
+    except AttributeError:
+        return None
+
 def _api(method:str, payload=None, timeout=20):
+    r = _api_once(method, payload, timeout)
+    new = None if r.get("ok") else _migrated_to(r)
+    if new and payload and payload.get("chat_id") is not None:
+        migrate_chat(payload["chat_id"], new)
+        if method != "editMessageText":  # old message ids do not exist in the supergroup
+            r = _api_once(method, {**payload, "chat_id": new}, timeout)
+    return r
+
+def _api_once(method:str, payload=None, timeout=20):
     token = _token()
     if not token:
         return {"ok":False,"error":"TELEGRAM_BOT_TOKEN غير مضبوط"}

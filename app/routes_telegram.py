@@ -110,6 +110,9 @@ async def telegram_webhook(req:Request):
         if msg:
             chat_obj=msg.get('chat') or {}
             chat=chat_obj.get('id'); chat_type=str(chat_obj.get('type') or '')
+            if msg.get('migrate_to_chat_id'):  # group upgraded to a supergroup: follow the new chat id
+                from .telegram_service import migrate_chat
+                migrate_chat(chat,msg['migrate_to_chat_id']); return {'ok':True}
             text=str(msg.get('text') or '').strip()
             if not chat: return {'ok':True}
             if chat_type in ('group','supergroup') and text.startswith('/linkgroup'):
