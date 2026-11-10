@@ -350,3 +350,6 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   B = v3 + plain line icons (shell_nav.ICONS paths already exist) + white rail, dark active item (B was a scratch-copy
   preview of base.html only, not committed). Waiting for A or B. Package must use BASE 052c218 (telegram_fixes) once
   that one is confirmed installed.
+- Owner chose A and says `telegram_fixes` is installed (no status report yet -> `main` stays df21ef6 = 5adabad).
+  Package `dashboard_v3` (commit 0b7aca0, BASE 052c218, 2 files: bim-ds.css + command_center.html) given — NOT
+  confirmed. After the report shows 0b7aca0 on 8797/8798: fast-forward `main` to the branch.
