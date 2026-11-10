@@ -151,7 +151,7 @@ async def telegram_webhook(req:Request):
                 if other:
                     send(str(chat),'هذا حساب Telegram مرتبط بموظف آخر. راجع الإدارة.')
                     return {'ok':True}
-                c.execute("UPDATE employees SET telegram_chat_id=?,telegram_linked_at=CURRENT_TIMESTAMP,telegram_link_code=NULL,telegram_link_expires_at=NULL,updated_at=CURRENT_TIMESTAMP WHERE id=?",(str(chat),e['id']))
+                c.execute("UPDATE employees SET telegram_chat_id=?,telegram_enabled=1,telegram_linked_at=CURRENT_TIMESTAMP,telegram_link_code=NULL,telegram_link_expires_at=NULL,updated_at=CURRENT_TIMESTAMP WHERE id=?",(str(chat),e['id']))
                 send(str(chat),f"✅ تم ربط Telegram بنجاح\nالموظف: {e['name']}",reply_markup={'inline_keyboard':[[{'text':'📋 مهامي اليوم','callback_data':'my_tasks'}]]})
                 return {'ok':True}
             e=_tg_employee(c,chat)

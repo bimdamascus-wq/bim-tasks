@@ -71,7 +71,7 @@ async function load(){
       <td class="name-red">${bimEmpLink(e.id,e.name)}</td>
       <td>${bimEsc(e.department||'—')}</td>
       <td>${bimArDigits(e.open_tasks||0)}</td>
-      <td>${e.telegram_chat_id?'✅ مربوط':'غير مربوط'}${e.telegram_chat_id?`<small style="display:block">${bimEsc(e.telegram_chat_id)}</small>`:''}</td>
+      <td>${e.telegram_chat_id?(e.telegram_enabled?'✅ مربوط':'⚠️ مربوط · الإرسال موقوف'):'غير مربوط'}${e.telegram_chat_id?`<small style="display:block">${bimEsc(e.telegram_chat_id)}</small>`:''}</td>
       <td>${bimEsc(e.whatsapp||'—')}</td>
       <td>${bimEsc(e.shift_type||'بدون')}<small style="display:block">${bimEsc(e.shift_start||'—')} → ${bimEsc(e.shift_end||'—')}</small></td>
       <td>${e.is_active?'نشط':'موقوف'}</td>

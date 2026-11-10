@@ -14,7 +14,7 @@ from .main import (
     ROOT, SQL_NOT_AUDIO, _attachment_dir, _is_audio, _notify_admin_comment, _notify_employee,
     _notify_employee_id, _notify_task_attachment, _notify_task_notes_update, _refresh_telegram_task_messages,
     _safe_filename, _save_reminder, _task_accessible, _task_with_reminder, _telegram_task_keyboard,
-    _touch_task_sync, _try_instant_sheet_push, app, ar_when, audit, need, need_work_write
+    _touch_task_sync, _try_instant_sheet_push, app, ar_when, audit, need, need_work_write, telegram_block_reason
 )
 
 # ---------- tasks ----------
@@ -288,8 +288,8 @@ async def remind_task(tid:int, req:Request):
         how='Telegram' if ch=='telegram' else 'واتساب'
         out={'ok':True,'channel':ch,'employee':e['name']}
         if ch=='telegram':
-            if not (e['telegram_enabled'] and e['telegram_chat_id']):
-                raise HTTPException(400,'هذا الموظف غير مربوط على Telegram؛ استخدم واتساب')
+            why=telegram_block_reason(c,e['id'])
+            if why:raise HTTPException(400,why+'. أو استخدم «ذكّر على الواتس».')
             last=c.execute("""SELECT 1 FROM task_events WHERE task_id=? AND event_type='reminded' AND source='telegram'
               AND created_at>=datetime('now',?)""",(tid,f'-{REMIND_GAP} seconds')).fetchone()
             if last:return {**out,'already':True}
@@ -319,6 +319,8 @@ def resend_telegram(tid:int, req:Request):
     u=need(req,'tasks.edit'); c=connect(); old=c.execute('SELECT * FROM tasks WHERE id=?',(tid,)).fetchone()
     if not old: c.close(); raise HTTPException(404,'المهمة غير موجودة')
     if not access.can_manage_task(c,u,old): c.close(); raise HTTPException(403,'هذه المهمة خارج نطاق فريقك')
+    why=telegram_block_reason(c,old['employee_id'],'tasks')
+    if why: c.close(); return {'ok':False,'skipped':True,'error':why}
     r=_notify_employee(c,tid,'إعادة إرسال المهمة'); audit(c,req,u,'telegram_resend','task',tid,after=r); c.close(); return r
 
 @app.patch('/api/tasks/{tid}/status')

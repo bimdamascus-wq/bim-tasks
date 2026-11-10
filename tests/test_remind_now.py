@@ -59,7 +59,7 @@ def test_remind_refusals(env):
     c = m.connect(); c.execute('UPDATE employees SET telegram_enabled=0 WHERE id=?', (ids['عضو فريق'],)); c.close()
     t2 = task(boss, ids['عضو فريق'], title='غير مربوط')
     r = boss.post(f'/api/tasks/{t2}/remind', json={'channel': 'telegram'})
-    assert r.status_code == 400 and 'واتساب' in r.json()['detail']
+    assert r.status_code == 400 and 'موقوف' in r.json()['detail'] and 'الواتس' in r.json()['detail']
     assert client(env, 'samer').post(f'/api/tasks/{t2}/remind', json={'channel': 'whatsapp'}).status_code == 200
     c = m.connect(); c.execute('UPDATE employees SET telegram_enabled=1 WHERE id=?', (ids['عضو فريق'],)); c.close()
     # finished task
@@ -76,3 +76,27 @@ def test_followup_group_shows_reminder(env):
     kind, text = followup._event_message(c, ev, t)
     c.close()
     assert kind == 'reminders' and 'تذكير' in text and 'واتساب' in text
+
+
+def test_block_reason_explains_linked_but_stopped(env):
+    """Owner 2026-11-10: the list said «مربوط» but «ذكّر» said «غير مربوط». Now the reason is named."""
+    m, ids = env['m'], env['ids']
+    boss = client(env, 'boss')
+    emp = ids['موظف آخر']
+    tid = task(boss, emp, title='سبب واضح')
+    c = m.connect(); c.execute('UPDATE employees SET telegram_enabled=0 WHERE id=?', (emp,)); c.close()
+    r = boss.post(f'/api/tasks/{tid}/remind', json={'channel': 'telegram'})
+    assert r.status_code == 400 and 'إرسال Telegram' in r.json()['detail'] and 'موقوف' in r.json()['detail']
+    r = boss.post(f'/api/tasks/{tid}/telegram').json()   # «🔔 تذكير» on /my-team and the profile
+    assert r['ok'] is False and 'موقوف' in r['error']
+    c = m.connect(); c.execute('UPDATE employees SET telegram_enabled=1 WHERE id=?', (emp,))
+    c.execute("INSERT INTO universal_staff_settings(employee_id,channel,capacity_minutes) VALUES(?,'web',480) "
+              "ON CONFLICT(employee_id) DO UPDATE SET channel='web'", (emp,)); c.close()
+    r = boss.post(f'/api/tasks/{tid}/remind', json={'channel': 'telegram'})
+    assert r.status_code == 400 and 'الويب فقط' in r.json()['detail']
+    c = m.connect(); c.execute('DELETE FROM universal_staff_settings WHERE employee_id=?', (emp,))
+    c.execute("UPDATE employees SET telegram_chat_id=NULL WHERE id=?", (emp,)); c.close()
+    r = boss.post(f'/api/tasks/{tid}/remind', json={'channel': 'telegram'})
+    assert r.status_code == 400 and 'غير مربوط' in r.json()['detail']
+    c = m.connect(); c.execute("UPDATE employees SET telegram_chat_id='555' WHERE id=?", (emp,)); c.close()
+    assert boss.post(f'/api/tasks/{tid}/remind', json={'channel': 'telegram'}).status_code == 200

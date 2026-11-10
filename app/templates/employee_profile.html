@@ -47,7 +47,7 @@ const DAYS=['الأحد','الاثنين','الثلاثاء','الأربعاء',
 async function loadProfile(){
   try{const p=await bimRequest('/api/employee-profile/'+EID);const e=p.employee,c=p.counts;
     const chips=[];if(e.jobs.length)chips.push('💼 '+e.jobs.map(bimEsc).join('، '));if(e.department)chips.push('🏢 '+bimEsc(e.department));if(e.role)chips.push('👤 '+bimEsc(e.role));
-    chips.push(e.telegram_linked?'<span class="ep-chip ok">✈️ Telegram مربوط</span>':'<span class="ep-chip bad">✈️ Telegram غير مربوط</span>');
+    chips.push(e.telegram_linked&&!e.telegram_enabled?'<span class="ep-chip bad">✈️ Telegram مربوط · الإرسال موقوف</span>':e.telegram_linked?'<span class="ep-chip ok">✈️ Telegram مربوط</span>':'<span class="ep-chip bad">✈️ Telegram غير مربوط</span>');
     if(e.shift)chips.push('🕘 '+bimEsc(e.shift)+(e.shift_start?' '+bimArDigits(e.shift_start)+' – '+bimArDigits(e.shift_end||''):''));
     if(!e.is_active)chips.push('<span class="ep-chip bad">غير فعال</span>');
     epMeta.innerHTML=chips.map(x=>x.startsWith('<span')?x:`<span class="ep-chip">${x}</span>`).join('');

@@ -291,6 +291,20 @@ def _refresh_telegram_task_messages(c, task_id):
     return updated
 
 
+def telegram_block_reason(c, employee_id, notice_category=None):
+    """Why a task message cannot reach this employee on Telegram, in words the manager can act on; None = it can.
+    The employees list says «✅ مربوط» as soon as a chat id exists, but sending also needs «إرسال Telegram: مفعّل»,
+    a work channel other than «الويب فقط» and (for automatic notices) that kind of notice switched on (owner 2026-11-10)."""
+    e=c.execute('SELECT name,telegram_chat_id,telegram_enabled FROM employees WHERE id=?',(employee_id,)).fetchone() if employee_id else None
+    if not e:return 'المهمة غير مسندة لموظف'
+    if not e['telegram_chat_id']:return f"{e['name']} غير مربوط على Telegram: لازم يفتح رابط الربط ويكبس Start بالبوت"
+    if not e['telegram_enabled']:return f"{e['name']} مربوط، بس «إرسال Telegram» موقوف ببطاقته (الموظفون ← تعديل ← إرسال Telegram: مفعّل)"
+    if channel(c,employee_id)=='web':return f"{e['name']} مربوط، بس «قناة الاستخدام» ببطاقته «الويب فقط» (الموظفون ← تعديل ← قناة الاستخدام)"
+    if notice_category:
+        from .work_settings import notices
+        if not notices(c,employee_id,notice_category):return f"{e['name']} مربوط، بس هالنوع من الإشعارات مسكّر بإعدادات عمله"
+    return None
+
 def _notify_employee(c, task_id: int, kind='مهمة جديدة', notice_category='tasks'):
     row=c.execute("""SELECT t.*,e.id employee_id,e.name,e.telegram_chat_id,e.telegram_enabled
       FROM tasks t LEFT JOIN employees e ON e.id=t.employee_id WHERE t.id=?""",(task_id,)).fetchone()
