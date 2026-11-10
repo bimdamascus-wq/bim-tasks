@@ -361,5 +361,5 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 - 2026-11-10: follow-up group works again (owner: the task list arrived). Owner: dashboard v3 barely changed (as warned),
   still too many pages. Short menu built: `shell_nav.PRIMARY` (/, /my-work, /my-team, /tasks, /recurring, /employees,
   /team-performance) + «الإعدادات» = /settings (`settings_hub.html`, `shell_nav.hub`), all other pages as tiles there.
-  Package `short_menu` given — NOT confirmed (BASE 0b7aca0). Option B (plain line icons) still on the table if he
+  Package `short_menu` (commit 124a711, BASE 0b7aca0, 4 files) given — NOT confirmed. Option B (plain line icons) still on the table if he
   asks for a less playful look; preview recipe: inline <svg><path d="{{ l.icon }}"> instead of the 3D <img> in base.html.
