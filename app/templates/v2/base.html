@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ title }} | {{ company.name }}</title>
+<link rel="stylesheet" href="/static/v2.css?v={{ asset_v }}">
+<link rel="icon" href="/static/bim-logo-trim.png">
+</head>
+<body class="v2">
+<header class="v-top"><div class="v-top-in">
+  <a class="v-brand" href="/v2"><img src="{{ '/company-logo' if company.logo else '/static/bim-logo-trim.png' }}" alt="">{{ company.name }}</a>
+  <nav class="v-nav" aria-label="الصفحات">
+    {% for key, href, label, need in v2_nav %}{% if not need or need in permissions %}
+    <a href="{{ href }}" class="{{ 'on' if key == v2_page }}"{% if key == v2_page %} aria-current="page"{% endif %}>{{ label }}</a>
+    {% endif %}{% endfor %}
+  </nav>
+  <label class="v-search"><span class="sr">بحث</span><input id="vSearch" type="search" placeholder="ابحث عن مهمة أو موظف"></label>
+  <div class="v-user"><span class="v-avatar" aria-hidden="true">{{ (user['full_name'] or user['username'] or 'ب')[:1] }}</span>
+    <span>{{ user['full_name'] or user['username'] }}</span><a href="/logout">خروج</a></div>
+</div></header>
+<main class="v-page">{% block content %}{% endblock %}</main>
+<script src="/static/v2.js?v={{ asset_v }}"></script>
+{% block scripts %}{% endblock %}
+</body></html>

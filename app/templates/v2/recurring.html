@@ -1,0 +1,13 @@
+{% extends "v2/base.html" %}{% block content %}
+<div class="v-head"><div><h1>المهام المتكررة</h1><p>المهام يلي بتنعمل لحالها كل يوم أو أسبوع أو شهر.</p></div>
+  <div class="v-actions"><a class="vb primary" href="/recurring">إضافة وتعديل</a></div></div>
+<section class="v-card" style="overflow:auto"><table class="v-table"><thead><tr><th>المهمة</th><th>الموظف</th><th>التكرار</th><th>الوقت</th><th>الأولوية</th><th>الحالة</th></tr></thead><tbody id="rows"></tbody></table></section>
+{% endblock %}{% block scripts %}
+<script>
+(()=>{const {$,esc,ar,api,toast}=V;const DAYS=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+api('/api/recurring').then(rows=>{$('rows').innerHTML=rows.map(r=>`<tr><td class="t">${esc(r.title)}</td><td class="nw">${esc(r.employee_name)}</td>
+  <td class="nw">${r.recurrence_type==='أسبوعي'?'كل '+(DAYS[r.week_day]||'أسبوع'):r.recurrence_type==='شهري'?'كل شهر يوم '+ar(r.month_day||''):'كل يوم'+(r.workdays_only?' (أيام الدوام)':'')}</td>
+  <td class="nw">${ar(r.run_time||'')}</td><td class="nw">${esc(r.priority)}</td><td>${r.is_active?'<span class="vs done">شغّالة</span>':'<span class="vs">موقوفة</span>'}</td></tr>`).join('')||'<tr><td colspan="6" class="v-empty">ما في مهام متكررة.</td></tr>'}).catch(e=>toast(e.message,true));
+})();
+</script>
+{% endblock %}

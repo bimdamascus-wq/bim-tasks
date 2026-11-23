@@ -1,0 +1,40 @@
+{% extends "v2/base.html" %}{% block content %}
+<div class="v-head"><div><h1>التنبيهات</h1><p>كل ما حدا مسموحله يعمل Reply بكلمة «تنبيه» على رسالة بمجموعة تلغرام، بينسجّل هون.</p></div></div>
+<nav class="v-filters" id="states"></nav>
+<p class="soft" id="facts"></p>
+<div class="v-bar"><label class="v-field"><span>المجموعة</span><select id="fGroup"><option value="">كل المجموعات</option></select></label>
+  <label class="v-field grow"><span>بحث</span><input id="fQ" type="search" placeholder="بنص الرسالة، صاحبها، السبب أو يلي سجّلته"></label></div>
+<section class="v-card" style="overflow:auto"><table class="v-table"><thead><tr><th>التنبيه</th><th>المجموعة وصاحب الرسالة</th><th>الرسالة</th><th>الحالة</th><th>سبب المشكلة</th><th></th></tr></thead><tbody id="rows"></tbody></table></section>
+  <div class="v-side-grid"><section class="v-card"><div class="v-card-h"><h2>أكتر المجموعات</h2></div><ul class="v-mini" id="topG"></ul></section>
+    <section class="v-card"><div class="v-card-h"><h2>أكتر أصحاب الرسائل</h2></div><ul class="v-mini" id="topA"></ul><p class="soft" style="padding:0 20px 12px;margin:0;font-size:14px">صاحب الرسالة مو بالضرورة هو المتسبب.</p></section>
+    <section class="v-card"><div class="v-card-h"><h2>مين بيقدر يسجّل</h2></div><p id="who" style="padding:12px 20px;margin:0"></p></section>
+    <section class="v-card"><div class="v-card-h"><h2>لحتى يشتغل بالمجموعات</h2></div><ol style="margin:0;padding:12px 40px 16px 20px;line-height:2"><li>ضيف البوت تبعنا عالمجموعة.</li><li>من ‎@BotFather اكتب <code dir="ltr">/setprivacy</code> واختار Disable.</li><li>شيل البوت من المجموعة وضيفه من جديد.</li></ol></section></div>
+{% endblock %}{% block scripts %}
+<script>
+(()=>{const {$,esc,ar,utc,full,api,send,act,toast}=V;
+const ST=['مفتوحة','قيد المعالجة','بانتظار رد','تم الحل','مغلقة'],CL={'مفتوحة':'late','قيد المعالجة':'work','بانتظار رد':'wait','تم الحل':'done','مغلقة':''};
+let state='',d=null;
+async function load(){d=await api('/api/alerts?'+new URLSearchParams({status:state,group:$('fGroup').value,q:$('fQ').value.trim()}));const s=d.stats;
+  $('states').innerHTML=`<button class="v-chip ${state===''?'on':''}" data-s="">الكل <b>${ar(s.total)}</b></button>`+ST.map(k=>`<button class="v-chip ${CL[k]==='late'?'late':CL[k]==='done'?'done':''} ${state===k?'on':''}" data-s="${k}">${k} <b>${ar(s[k]||0)}</b></button>`).join('');
+  document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{state=b.dataset.s;load()});
+  $('facts').textContent=`من ${ar(s.groups)} مجموعة، ${s.avg_hours==null?'لسا ما في تنبيه محلول':'متوسط مدة الحل '+ar(s.avg_hours)+' ساعة'}، ${ar(s.reopened)} انفتحوا من جديد بعد الحل.`;
+  const g=$('fGroup'),c=g.value;g.innerHTML='<option value="">كل المجموعات</option>'+d.all_groups.map(x=>`<option ${x===c?'selected':''}>${esc(x)}</option>`).join('');
+  $('rows').innerHTML=d.rows.map(r=>{const acts=r.state==='مغلقة'?'':(r.state==='تم الحل'?`<button class="vb sm" data-a="reopen" data-id="${r.task_id}">إعادة فتح</button>`:
+      [r.state!=='قيد المعالجة'&&`<button class="vb sm" data-a="work" data-id="${r.task_id}">قيد المعالجة</button>`,r.state!=='بانتظار رد'&&`<button class="vb sm" data-a="wait" data-id="${r.task_id}">بانتظار رد</button>`,`<button class="vb sm green" data-a="done" data-id="${r.task_id}">تم الحل</button>`].filter(Boolean).join(' '));
+    const dt=utc(r.created_at);
+    return `<tr><td class="nw"><b>ت-${ar(r.n)}</b><br><span class="soft">${dt?full(dt):''}</span><br><span class="soft">سجّلته: ${esc(r.reporter||'—')}</span></td>
+      <td class="nw"><b>${esc(r.group_title||'—')}</b><br><span class="soft">${esc(r.author_name||'—')}</span></td><td style="min-width:200px;max-width:320px;white-space:pre-wrap">${esc(r.message_text||'')}</td>
+      <td><span class="vs ${CL[r.state]||''}">${esc(r.state)}</span>${r.reopened?'<br><span class="due-t" style="font-size:13px">انفتح من جديد</span>':''}</td>
+      <td style="min-width:150px">${r.reason?esc(r.reason):'<span class="soft">ما انكتب</span>'}</td>
+      <td class="acts" style="white-space:normal;min-width:230px">${acts} <button class="vb sm" data-reason="${r.task_id}">سبب المشكلة</button> ${r.link?`<a class="vb sm" href="${esc(r.link)}" target="_blank" rel="noopener">الرسالة</a>`:''} <a class="vb sm" href="/v2/tasks?t=${r.task_id}">المهمة</a></td></tr>`}).join('')
+    ||`<tr><td colspan="6" class="v-empty">${s.total?'ما في تنبيهات بهالفلتر.':'لسا ما في تنبيهات. أول ما حدا يكتب «تنبيه» كـReply بمجموعة، بيطلع هون.'}</td></tr>`;
+  const top=(el,l)=>$(el).innerHTML=l.map(([k,n])=>`<li><span>${esc(k)}</span><b>${ar(n)}</b></li>`).join('')||'<li class="soft">ما في بعد</li>';top('topG',d.groups);top('topA',d.authors);
+  $('who').textContent=d.reporters.length?d.reporters.join('، '):'المدير والنائب والمسؤولين.';
+  document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>act(b,send(`/api/alerts/${b.dataset.id}/status`,{action:b.dataset.a}),'✓ انحفظت الحالة',load));
+  document.querySelectorAll('[data-reason]').forEach(b=>b.onclick=()=>{const v=prompt('سبب المشكلة:',(d.rows.find(x=>x.task_id==b.dataset.reason)||{}).reason||'');if(v!==null)act(b,send(`/api/alerts/${b.dataset.reason}/reason`,{reason:v}),'✓ انحفظ السبب',load)});
+}
+$('fGroup').onchange=load;let qt;$('fQ').oninput=()=>{clearTimeout(qt);qt=setTimeout(load,250)};
+load().catch(e=>toast(e.message,true));setInterval(()=>{if(!document.hidden&&document.activeElement!==$('fQ'))load().catch(()=>{})},30000);
+})();
+</script>
+{% endblock %}

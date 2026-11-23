@@ -172,7 +172,7 @@ def test_external_admin_login_needs_telegram_code(env):
     assert ext.get('/api/me').status_code == 401
     assert ext.post('/login/verify', data={'code': '000000'}, follow_redirects=False).status_code == 401
     r = ext.post('/login/verify', data={'code': _last_code(env)}, follow_redirects=False)
-    assert r.status_code == 303 and r.headers['location'] == '/'
+    assert r.status_code == 303 and r.headers['location'] == '/v2'
     assert ext.get('/api/me').json()['username'] == 'boss'
     # Inside the company nothing changes.
     assert client(env, 'boss').get('/api/me').status_code == 200

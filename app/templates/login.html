@@ -3,26 +3,24 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{{ company.name }} | تسجيل الدخول</title>
-<link rel="stylesheet" href="/static/bim-ds.css?v={{ asset_v }}">
+<link rel="stylesheet" href="/static/v2.css?v={{ asset_v }}">
 </head>
-<body class="ds ds-login bim-login-page">
-<main class="ds-login-card">
-  <section class="ds-login-side">
-    <div>
-      <span class="ds-brand-logo"><img src="{{ '/company-logo' if company.logo else '/static/bim-logo-trim.png' }}" alt="{{ company.name }}"></span>
-      <h2>{{ company.name }}</h2>
-      <p>منصة {{ company.name }} لإدارة المهام والموظفين والمتابعة التشغيلية.</p>
-    </div>
-    <p>إدارة العمل والمهام</p>
+<body class="v2">
+{# New login (interface v2, owner 2026-11-23). Same form: username, password, POST /login. #}
+<main class="v-login">
+  <section class="v-login-brand">
+    <div><img src="{{ '/company-logo' if company.logo else '/static/bim-logo-trim.png' }}" alt="{{ company.name }}">
+      <h2>{{ company.name }}</h2><p>مهام الفريق ومتابعتها، بمكان واحد.</p></div>
+    <small>البوابة: {{ 'خارجية' if gateway=='external' else 'داخلية' }}</small>
   </section>
-  <form class="ds-login-form login-panel" method="post" action="/login">
-    <h1>تسجيل الدخول</h1>
-    <p>أدخل بيانات حسابك للوصول إلى النظام.</p>
-    {% if error %}<div class="errbox" role="alert">{{ error }}</div>{% endif %}
-    <div class="field"><label for="u">اسم المستخدم</label><input id="u" name="username" autocomplete="username" required autofocus></div>
-    <div class="field"><label for="p">كلمة المرور</label><input id="p" name="password" type="password" autocomplete="current-password" required></div>
-    <button>دخول إلى النظام</button>
-    <div class="ds-login-gate gate">البوابة: {{ 'خارجية' if gateway=='external' else 'داخلية LAN' }}</div>
-  </form>
+  <section class="v-login-form">
+    <form method="post" action="/login">
+      <h1>تسجيل الدخول</h1><p>دخّل اسم المستخدم وكلمة السر.</p>
+      {% if error %}<div class="v-err" role="alert">{{ error }}</div>{% endif %}
+      <label class="v-field"><span>اسم المستخدم</span><input id="u" name="username" autocomplete="username" required autofocus></label>
+      <label class="v-field"><span>كلمة السر</span><input id="p" name="password" type="password" autocomplete="current-password" required></label>
+      <button class="vb primary">دخول</button>
+    </form>
+  </section>
 </main>
 </body></html>

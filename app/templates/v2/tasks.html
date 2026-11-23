@@ -1,0 +1,64 @@
+{% extends "v2/base.html" %}{% block content %}
+<div class="v-head"><div><h1>المهام</h1><p>اختار مهمة من اللائحة، وكل شي بتحتاجه بيطلع جنبها.</p></div>
+  <div class="v-actions"><a class="vb" href="/tasks?view=table">جدول كامل (الواجهة القديمة)</a></div></div>
+<form class="v-add" id="add" autocomplete="off"><input id="newTask" placeholder="مهمة جديدة: «سامر يجرد المستودع بكرا عاجل»" aria-label="مهمة جديدة"><span id="pv"></span><button class="vb primary" disabled>إضافة</button></form>
+<div class="v-bar"><label class="v-field grow"><span>بحث</span><input id="q" type="search" placeholder="مهمة، موظف، رقم…"></label>
+  <label class="v-field"><span>الموظف</span><select id="who"><option value="">كل الفريق</option></select></label></div>
+<nav class="v-filters" id="filters" aria-label="شو بدك تشوف"></nav>
+<div class="v-split">
+  <section class="v-card v-list" id="list" aria-label="المهام"></section>
+  <section class="v-card v-detail" id="detail" aria-live="polite"><p class="v-empty">اختار مهمة من اللائحة.</p></section>
+</div>
+{% endblock %}{% block scripts %}
+<script>
+(()=>{const {$,esc,ar,utc,full,isLate,isToday,isAlert,doneToday,when,status,api,send,act,remindWhatsapp,quickAdd,toast,DONE}=V;
+const P=new URLSearchParams(location.search);
+let tasks=[],emps=[],filter=P.get('f')||'late',person=P.get('p')?+P.get('p'):null,sel=P.get('t')?+P.get('t'):null,sig='';
+$('q').value=P.get('q')||'';if(sel)filter='all';if(P.get('q'))filter='all';
+const F=[['late','متأخرة',isLate,'late'],['today','اليوم',isToday,'due'],['alerts','تنبيهات',isAlert,'alert'],['open','كل المفتوح',t=>!DONE.includes(t.status),''],['done','أُنجزت اليوم',doneToday,'done'],['all','الكل',()=>true,'']];
+function rows(){const f=F.find(x=>x[0]===filter)[2],q=$('q').value.trim();
+  return tasks.filter(t=>f(t)&&(!person||t.employee_id===person)&&(!q||[t.title,t.employee_name,t.task_code,t.notes].some(v=>String(v||'').includes(q))))
+   .sort((a,b)=>(isLate(b)-isLate(a))||((V.parseD(a.due_at)||9e15)-(V.parseD(b.due_at)||9e15)))}
+function draw(){
+  $('filters').innerHTML=F.map(([k,l,f,c])=>`<button type="button" class="v-chip ${c} ${filter===k?'on':''}" data-f="${k}">${l} <b>${ar(tasks.filter(f).filter(t=>!person||t.employee_id===person).length)}</b></button>`).join('');
+  document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{filter=b.dataset.f;draw()});
+  const r=rows();if(!r.some(t=>t.id===sel))sel=r[0]?.id||null;
+  $('list').innerHTML=r.map(t=>`<button type="button" class="v-item ${t.id===sel?'on':''} ${isLate(t)?'is-late':''}" data-id="${t.id}">
+     <b>${t.priority==='عاجلة'?'<span class="tag u">عاجلة</span>':''}${t.source==='telegram_alert'?'<span class="tag a">تنبيه</span>':''}${esc(t.title)}</b>
+     <span><span>${esc(t.employee_name||'بلا موظف')}</span>${when(t)}</span></button>`).join('')||'<p class="v-empty">ما في شي هون.</p>';
+  document.querySelectorAll('.v-item').forEach(b=>b.onclick=()=>{sel=+b.dataset.id;draw();if(innerWidth<1100)$('detail').scrollIntoView({behavior:'smooth'})});
+  sel?detail(sel):($('detail').innerHTML='<p class="v-empty">اختار مهمة من اللائحة.</p>');
+}
+const EV={created:'انعملت المهمة',telegram_sent:'انبعتت عالتلغرام',telegram_notice:'وصل إشعار',reminded:'تذكير',note:'مشكلة / ملاحظة',comment:'تعليق',edited:'تعديل',reassigned:'انتقلت لموظف تاني',delegated:'توزيع',restored:'رجعت من الأرشيف',cancelled:'انلغت'};
+let cur=0;
+async function detail(id){cur=id;let t;try{t=await api('/api/tasks/'+id)}catch(e){$('detail').innerHTML=`<p class="v-empty">${esc(e.message)}</p>`;return}if(cur!==id)return;
+  const alert=t.source==='telegram_alert',link=(String(t.notes||'').match(/الرابط: (\S+)/)||[])[1];
+  const steps=alert?[['work','قيد المعالجة'],['wait','بانتظار رد'],['done','تم الحل ✓']].concat(t.status==='تم'?[['reopen','إعادة فتح']]:[]):[['جديدة','جديدة'],['بدأت','بدأت'],['قيد التنفيذ','قيد التنفيذ'],['بانتظار','بانتظار'],['تم','خلصت ✓']];
+  const now=alert?{'قيد التنفيذ':'work','بانتظار':'wait','تم':'done'}[t.status]:t.status;
+  $('detail').innerHTML=`<span class="soft">${esc(t.task_code||'')}</span><h2>${esc(t.title)}</h2>
+    <p class="v-meta"><span>الموظف: ${t.employee_id?`<b>${esc(t.employee_name||'')}</b>`:'بلا موظف'}</span><span>${when(t)}</span><span>الأولوية: <b>${esc(t.priority)}</b></span><span>${status(t)}</span></p>
+    <div class="v-steps" role="group" aria-label="الحالة">${steps.map(([k,l])=>`<button type="button" class="${k===now?'on':''} ${k==='تم'||k==='done'?'fin':''}" data-st="${k}">${l}</button>`).join('')}</div>
+    <div class="v-row"><button class="vb" data-rt>ذكّر بالتلغرام</button><button class="vb" data-rw>ذكّر بالواتس</button>${alert?'<button class="vb" id="reason">سبب المشكلة</button>':''}${link?`<a class="vb" href="${esc(link)}" target="_blank" rel="noopener">فتح الرسالة</a>`:''}
+      <select class="v-input" id="moveTo" aria-label="نقل لموظف"><option value="">نقل لموظف…</option>${emps.filter(e=>e.id!==t.employee_id).map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('')}</select>
+      <a class="vb" href="/task/${t.id}">تعديل ومرفقات</a></div>
+    ${t.notes?`<div class="v-sec"><h3>التفاصيل</h3><p class="v-notes">${esc(t.notes)}</p></div>`:''}
+    <div class="v-sec"><h3>التعليقات</h3><ul class="v-log">${(t.comments||[]).slice(-6).map(c=>`<li><b>${esc(c.username_snapshot||'النظام')}</b><span>${esc(c.body)}</span></li>`).join('')||'<li class="soft">ما في تعليقات.</li>'}</ul>
+      <form class="v-cmt" id="cmt"><input class="v-input" id="cmtText" placeholder="اكتب تعليق واكبس Enter" aria-label="تعليق"><button class="vb primary">إرسال</button></form></div>
+    <div class="v-sec"><h3>شو صار عليها</h3><ul class="v-log">${(t.events||[]).slice(-8).reverse().map(e=>{const d=utc(e.created_at);return `<li><b>${e.event_type==='status'?'الحالة صارت «'+esc(e.new_status)+'»':esc(EV[e.event_type]||e.event_type)}</b>${e.note&&e.event_type!=='status'?`<span>${esc(e.note)}</span>`:''}<time>${d?full(d):''}</time></li>`}).join('')||'<li class="soft">ما في شي بعد.</li>'}</ul></div>`;
+  const reload=()=>load(true);
+  document.querySelectorAll('[data-st]').forEach(b=>b.onclick=()=>act(b,alert?send(`/api/alerts/${t.id}/status`,{action:b.dataset.st}):send(`/api/tasks/${t.id}/status`,{status:b.dataset.st,completion:{}},'PATCH'),'✓ انحفظت الحالة',reload));
+  document.querySelector('[data-rt]').onclick=e=>act(e.target,send(`/api/tasks/${t.id}/remind`,{channel:'telegram'}).then(x=>x.already?Promise.reject(new Error('انبعت تذكير من أقل من دقيقة')):x),'✓ انبعت التذكير',reload);
+  document.querySelector('[data-rw]').onclick=()=>remindWhatsapp(t.id,reload);
+  $('moveTo').onchange=e=>{if(e.target.value)act(e.target,send(`/api/tasks/${t.id}`,{employee_id:+e.target.value},'PATCH'),'✓ انتقلت المهمة',reload)};
+  $('cmt').onsubmit=e=>{e.preventDefault();const v=$('cmtText').value.trim();if(v)act($('cmtText'),send(`/api/tasks/${t.id}/comments`,{body:v}),'✓ انضاف التعليق',reload)};
+  if($('reason'))$('reason').onclick=()=>{const v=prompt('سبب المشكلة:');if(v!==null)act($('reason'),send(`/api/alerts/${t.id}/reason`,{reason:v}),'✓ انحفظ السبب',reload)};
+}
+async function load(force){const r=await fetch('/api/tasks',{cache:'no-store'});if(r.status===401){location.href='/login';return}const txt=await r.text();if(!force&&txt===sig)return;sig=txt;tasks=JSON.parse(txt);draw()}
+let qt;$('q').oninput=()=>{clearTimeout(qt);qt=setTimeout(()=>{if($('q').value.trim())filter='all';draw()},150)};
+$('who').onchange=e=>{person=e.target.value?+e.target.value:null;draw()};
+quickAdd($('add'),$('newTask'),$('pv'),x=>{sel=x.id;filter='all';load(true)});
+fetch('/api/employees').then(r=>r.ok?r.json():[]).then(x=>{emps=(Array.isArray(x)?x:[]).map(e=>({id:e.id,name:e.name}));$('who').innerHTML='<option value="">كل الفريق</option>'+emps.map(e=>`<option value="${e.id}" ${person===e.id?'selected':''}>${esc(e.name)}</option>`).join('')}).catch(()=>{}).finally(()=>load(true).catch(e=>toast(e.message,true)));
+setInterval(()=>{if(!document.hidden&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))load().catch(()=>{})},30000);
+})();
+</script>
+{% endblock %}

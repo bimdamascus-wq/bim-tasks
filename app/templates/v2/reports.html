@@ -1,0 +1,18 @@
+{% extends "v2/base.html" %}{% block content %}
+<div class="v-head"><div><h1>التقارير</h1><p>شو انعمل بالفترة، لكل موظف.</p></div>
+  <div class="v-actions"><a class="vb" id="csv" href="/api/team-performance.csv">تنزيل Excel (CSV)</a><a class="vb" href="/operations-reports">تقارير تفصيلية</a></div></div>
+<nav class="v-filters" id="period"><button class="v-chip on" data-d="7">آخر ٧ أيام</button><button class="v-chip" data-d="30">آخر ٣٠ يوم</button><button class="v-chip" data-d="90">آخر ٣ أشهر</button></nav>
+<div class="v-stats" id="tot"></div>
+<section class="v-card" style="overflow:auto"><table class="v-table"><thead><tr><th>الموظف</th><th class="num">انعطت</th><th class="num">خلصت</th><th class="num">خلصت متأخرة</th><th class="num">متأخرة هلأ</th><th class="num">متوسط وقت الإنجاز</th></tr></thead><tbody id="rows"></tbody></table></section>
+{% endblock %}{% block scripts %}
+<script>
+(()=>{const {$,esc,ar,api,toast}=V;const iso=d=>d.toISOString().slice(0,10);
+async function load(days){const to=new Date(),from=new Date(Date.now()-(days-1)*864e5);const q=`date_from=${iso(from)}&date_to=${iso(to)}`;$('csv').href='/api/team-performance.csv?'+q;
+  const d=await api('/api/team-performance?'+q),t=d.total;const h=v=>v==null?'–':ar(v)+' ساعة';
+  $('tot').innerHTML=`<div class="v-stat"><span>انعطت</span><b>${ar(t.created)}</b></div><div class="v-stat done"><span>خلصت</span><b>${ar(t.completed)}</b></div><div class="v-stat due"><span>خلصت متأخرة</span><b>${ar(t.completed_late)}</b></div><div class="v-stat late"><span>متأخرة هلأ</span><b>${ar(t.overdue_now)}</b></div>`;
+  $('rows').innerHTML=d.employees.map(r=>`<tr><td class="t">${esc(r.name||r.employee_name||'')}</td><td class="num">${ar(r.created)}</td><td class="num done-t">${ar(r.completed)}</td><td class="num ${r.completed_late?'due-t':'soft'}">${ar(r.completed_late)}</td><td class="num ${r.overdue_now?'late-t':'soft'}">${ar(r.overdue_now)}</td><td class="num">${h(r.avg_hours)}</td></tr>`).join('')||'<tr><td colspan="6" class="v-empty">ما في بيانات.</td></tr>'}
+document.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-d]').forEach(x=>x.classList.toggle('on',x===b));load(+b.dataset.d).catch(e=>toast(e.message,true))});
+load(7).catch(e=>toast(e.message,true));
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,6 @@
+{% extends "v2/base.html" %}{% block content %}
+<div class="v-head"><div><h1>الإعدادات</h1><p>الأشياء يلي ما بتلزم كل يوم. بتنفتح بالواجهة القديمة لحد ما نجددها.</p></div>
+  <div class="v-actions"><a class="vb" href="/">الواجهة القديمة كاملة</a><a class="vb" href="/account">حسابي وكلمة السر</a></div></div>
+{% for group, items in hub %}<p class="v-group">{{ group }}</p>
+<div class="v-tiles">{% for it in items %}<a class="v-tile" href="{{ it.path }}">{{ it.label }}</a>{% endfor %}</div>{% endfor %}
+{% endblock %}

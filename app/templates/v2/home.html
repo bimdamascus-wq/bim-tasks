@@ -1,0 +1,44 @@
+{% extends "v2/base.html" %}{% block content %}
+<div class="v-head"><div><h1 id="hello">أهلاً</h1><p id="today"></p></div>
+  <div class="v-actions"><a class="vb" href="/v2/tasks">كل المهام</a><a class="vb primary" href="#add" onclick="document.getElementById('newTask').focus();return false">+ مهمة جديدة</a></div></div>
+
+<form class="v-add" id="add" autocomplete="off"><input id="newTask" placeholder="اكتب المهمة متل ما بتحكيها: «سامر يجرد المستودع بكرا عاجل»" aria-label="مهمة جديدة"><span id="pv"></span><button class="vb primary" disabled>إضافة</button></form>
+
+<div class="v-stats">
+  <a class="v-stat late" href="/v2/tasks?f=late"><span>متأخرة</span><b id="sLate">٠</b><small>لازم تتابعها هلأ</small></a>
+  <a class="v-stat due" href="/v2/tasks?f=today"><span>مستحقة اليوم</span><b id="sToday">٠</b><small>موعدها قبل آخر النهار</small></a>
+  <a class="v-stat alert" href="/v2/alerts"><span>تنبيهات مفتوحة</span><b id="sAlerts">٠</b><small>من مجموعات تلغرام</small></a>
+  <a class="v-stat done" href="/v2/tasks?f=done"><span>أُنجزت اليوم</span><b id="sDone">٠</b><small id="sOpen"></small></a>
+</div>
+
+<div class="v-grid">
+  <section class="v-card"><div class="v-card-h"><h2>بحاجة متابعة</h2><a href="/v2/tasks?f=late">عرض الكل</a></div>
+    <table class="v-table"><thead><tr><th>المهمة</th><th>الموظف</th><th>الحالة</th><th>الموعد</th><th></th></tr></thead><tbody id="need"></tbody></table></section>
+  <div>
+    <section class="v-card"><div class="v-card-h"><h2>الفريق</h2><a href="/v2/team">الكل</a></div>
+      <table class="v-table"><thead><tr><th>الموظف</th><th class="num">مفتوحة</th><th class="num">متأخرة</th></tr></thead><tbody id="team"></tbody></table></section>
+    <section class="v-card"><div class="v-card-h"><h2>تنبيهات مفتوحة</h2><a href="/v2/alerts">الكل</a></div><ul class="v-mini" id="alerts"></ul></section>
+  </div>
+</div>
+{% endblock %}{% block scripts %}
+<script>
+(()=>{const {$,esc,ar,day,isLate,isToday,isAlert,doneToday,when,status,api,send,act,quickAdd,DONE}=V;
+const h=new Date().getHours();$('hello').textContent=(h<12?'صباح الخير':'مساء الخير')+'، {{ (user['full_name'] or user['username']).split(' ')[0] }}';$('today').textContent=day(new Date());
+let tasks=[];
+async function load(){tasks=await api('/api/tasks');const open=tasks.filter(t=>!DONE.includes(t.status));
+  $('sLate').textContent=ar(tasks.filter(isLate).length);$('sToday').textContent=ar(tasks.filter(isToday).length);$('sAlerts').textContent=ar(tasks.filter(isAlert).length);
+  $('sDone').textContent=ar(tasks.filter(doneToday).length);$('sOpen').textContent=`من أصل ${ar(open.length)} مهمة مفتوحة`;
+  const need=tasks.filter(t=>isLate(t)||isToday(t)).sort((a,b)=>(isLate(b)-isLate(a))||(V.parseD(a.due_at)-V.parseD(b.due_at))).slice(0,12);
+  $('need').innerHTML=need.map(t=>`<tr><td class="t"><a href="/v2/tasks?t=${t.id}">${t.priority==='عاجلة'?'<span class="tag u">عاجلة</span>':''}${t.source==='telegram_alert'?'<span class="tag a">تنبيه</span>':''}${esc(t.title)}</a></td>
+    <td class="nw">${esc(t.employee_name||'بلا موظف')}</td><td>${status(t)}</td><td class="nw">${when(t)}</td>
+    <td class="acts"><button class="vb sm" data-r="${t.id}">ذكّر</button> <button class="vb sm green" data-d="${t.id}">خلصت ✓</button></td></tr>`).join('')||'<tr><td colspan="5" class="v-empty">ما في شي متأخر أو مستحق اليوم.</td></tr>';
+  const team={};open.forEach(t=>{if(!t.employee_id)return;const m=team[t.employee_id]||(team[t.employee_id]={id:t.employee_id,name:t.employee_name,open:0,late:0});m.open++;if(isLate(t))m.late++});
+  $('team').innerHTML=Object.values(team).sort((a,b)=>b.late-a.late||b.open-a.open).slice(0,10).map(m=>`<tr><td class="t"><a href="/v2/tasks?p=${m.id}">${esc(m.name)}</a></td><td class="num">${ar(m.open)}</td><td class="num ${m.late?'late-t':'soft'}">${m.late?ar(m.late):'–'}</td></tr>`).join('')||'<tr><td colspan="3" class="v-empty">ما في مهام مفتوحة.</td></tr>';
+  $('alerts').innerHTML=tasks.filter(isAlert).slice(0,6).map(t=>`<li><a href="/v2/tasks?t=${t.id}">${esc(t.title)}</a>${when(t)}</li>`).join('')||'<li class="soft">ما في تنبيهات مفتوحة.</li>';
+  document.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>act(b,send(`/api/tasks/${b.dataset.d}/status`,{status:'تم',completion:{}},'PATCH'),'✓ انعلّمت كمنجزة',load));
+  document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>act(b,send(`/api/tasks/${b.dataset.r}/remind`,{channel:'telegram'}),'✓ انبعت التذكير'));
+}
+quickAdd($('add'),$('newTask'),$('pv'),load);load().catch(e=>V.toast(e.message,true));setInterval(()=>{if(!document.hidden&&document.activeElement!==$('newTask'))load().catch(()=>{})},30000);
+})();
+</script>
+{% endblock %}

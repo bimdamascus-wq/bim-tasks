@@ -78,7 +78,7 @@ def _open_session(c, req, u, gw):
     c.execute('UPDATE users SET last_login_at=?,last_login_ip=? WHERE id=?', (iso(now()), ip(req), u['id']))
     from .activity_log import auth_event
     auth_event(c,req,{'user_id':u['id'],'username':u['username']},sid,'login',gw,ip(req))
-    resp = RedirectResponse('/' if u['role_code'] in access.MANAGERS else ('/my-work' if u['role_code']=='employee' else '/tasks'), 303)
+    resp = RedirectResponse('/my-work' if u['role_code']=='employee' else '/v2', 303)  # managers and supervisors land on the new interface (2026-11-23)
     resp.set_cookie(COOKIE, sid, httponly=True, secure=_main.COOKIE_SECURE or gw == 'external', samesite='lax', max_age=43200)
     return resp
 

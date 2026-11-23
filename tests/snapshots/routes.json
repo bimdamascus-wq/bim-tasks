@@ -1695,7 +1695,7 @@
   },
   "boss /login": {
    "assets": [
-    "/static/bim-ds.css",
+    "/static/v2.css",
     "/static/bim-logo-trim.png"
    ],
    "ids": [
@@ -2554,6 +2554,144 @@
    ],
    "status": 200,
    "title": "بيم دمشق | المستخدمون",
+   "type": "text/html"
+  },
+  "boss /v2": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "add",
+    "alerts",
+    "hello",
+    "need",
+    "newTask",
+    "pv",
+    "sAlerts",
+    "sDone",
+    "sLate",
+    "sOpen",
+    "sToday",
+    "team",
+    "today",
+    "vSearch"
+   ],
+   "status": 200,
+   "title": "الرئيسية | بيم دمشق",
+   "type": "text/html"
+  },
+  "boss /v2/alerts": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "fGroup",
+    "fQ",
+    "facts",
+    "rows",
+    "states",
+    "topA",
+    "topG",
+    "vSearch",
+    "who"
+   ],
+   "status": 200,
+   "title": "التنبيهات | بيم دمشق",
+   "type": "text/html"
+  },
+  "boss /v2/recurring": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "rows",
+    "vSearch"
+   ],
+   "status": 200,
+   "title": "المتكررة | بيم دمشق",
+   "type": "text/html"
+  },
+  "boss /v2/reports": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "csv",
+    "period",
+    "rows",
+    "tot",
+    "vSearch"
+   ],
+   "status": 200,
+   "title": "التقارير | بيم دمشق",
+   "type": "text/html"
+  },
+  "boss /v2/settings": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "vSearch"
+   ],
+   "status": 200,
+   "title": "الإعدادات | بيم دمشق",
+   "type": "text/html"
+  },
+  "boss /v2/tasks": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "add",
+    "cmt",
+    "cmtText",
+    "detail",
+    "filters",
+    "list",
+    "moveTo",
+    "newTask",
+    "pv",
+    "q",
+    "reason",
+    "vSearch",
+    "who"
+   ],
+   "status": 200,
+   "title": "المهام | بيم دمشق",
+   "type": "text/html"
+  },
+  "boss /v2/team": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "q",
+    "rows",
+    "vSearch"
+   ],
+   "status": 200,
+   "title": "الفريق | بيم دمشق",
    "type": "text/html"
   },
   "boss /workload": {
@@ -4287,7 +4425,7 @@
   },
   "dep /login": {
    "assets": [
-    "/static/bim-ds.css",
+    "/static/v2.css",
     "/static/bim-logo-trim.png"
    ],
    "ids": [
@@ -5148,6 +5286,144 @@
    "title": "بيم دمشق | المستخدمون",
    "type": "text/html"
   },
+  "dep /v2": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "add",
+    "alerts",
+    "hello",
+    "need",
+    "newTask",
+    "pv",
+    "sAlerts",
+    "sDone",
+    "sLate",
+    "sOpen",
+    "sToday",
+    "team",
+    "today",
+    "vSearch"
+   ],
+   "status": 200,
+   "title": "الرئيسية | بيم دمشق",
+   "type": "text/html"
+  },
+  "dep /v2/alerts": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "fGroup",
+    "fQ",
+    "facts",
+    "rows",
+    "states",
+    "topA",
+    "topG",
+    "vSearch",
+    "who"
+   ],
+   "status": 200,
+   "title": "التنبيهات | بيم دمشق",
+   "type": "text/html"
+  },
+  "dep /v2/recurring": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "rows",
+    "vSearch"
+   ],
+   "status": 200,
+   "title": "المتكررة | بيم دمشق",
+   "type": "text/html"
+  },
+  "dep /v2/reports": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "csv",
+    "period",
+    "rows",
+    "tot",
+    "vSearch"
+   ],
+   "status": 200,
+   "title": "التقارير | بيم دمشق",
+   "type": "text/html"
+  },
+  "dep /v2/settings": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "vSearch"
+   ],
+   "status": 200,
+   "title": "الإعدادات | بيم دمشق",
+   "type": "text/html"
+  },
+  "dep /v2/tasks": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "add",
+    "cmt",
+    "cmtText",
+    "detail",
+    "filters",
+    "list",
+    "moveTo",
+    "newTask",
+    "pv",
+    "q",
+    "reason",
+    "vSearch",
+    "who"
+   ],
+   "status": 200,
+   "title": "المهام | بيم دمشق",
+   "type": "text/html"
+  },
+  "dep /v2/team": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "q",
+    "rows",
+    "vSearch"
+   ],
+   "status": 200,
+   "title": "الفريق | بيم دمشق",
+   "type": "text/html"
+  },
   "dep /workload": {
    "assets": [
     "/static/bim-ds.css",
@@ -5961,7 +6237,7 @@
   },
   "member /login": {
    "assets": [
-    "/static/bim-ds.css",
+    "/static/v2.css",
     "/static/bim-logo-trim.png"
    ],
    "ids": [
@@ -6247,6 +6523,62 @@
    "type": "application/json"
   },
   "member /users": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /v2": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /v2/alerts": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /v2/recurring": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /v2/reports": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /v2/settings": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "vSearch"
+   ],
+   "status": 200,
+   "title": "الإعدادات | بيم دمشق",
+   "type": "text/html"
+  },
+  "member /v2/tasks": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
+  "member /v2/team": {
    "shape": {
     "detail": "str"
    },
@@ -7284,7 +7616,7 @@
   },
   "samer /login": {
    "assets": [
-    "/static/bim-ds.css",
+    "/static/v2.css",
     "/static/bim-logo-trim.png"
    ],
    "ids": [
@@ -7674,6 +8006,144 @@
    "status": 403,
    "type": "application/json"
   },
+  "samer /v2": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "add",
+    "alerts",
+    "hello",
+    "need",
+    "newTask",
+    "pv",
+    "sAlerts",
+    "sDone",
+    "sLate",
+    "sOpen",
+    "sToday",
+    "team",
+    "today",
+    "vSearch"
+   ],
+   "status": 200,
+   "title": "الرئيسية | بيم دمشق",
+   "type": "text/html"
+  },
+  "samer /v2/alerts": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "fGroup",
+    "fQ",
+    "facts",
+    "rows",
+    "states",
+    "topA",
+    "topG",
+    "vSearch",
+    "who"
+   ],
+   "status": 200,
+   "title": "التنبيهات | بيم دمشق",
+   "type": "text/html"
+  },
+  "samer /v2/recurring": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "rows",
+    "vSearch"
+   ],
+   "status": 200,
+   "title": "المتكررة | بيم دمشق",
+   "type": "text/html"
+  },
+  "samer /v2/reports": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "csv",
+    "period",
+    "rows",
+    "tot",
+    "vSearch"
+   ],
+   "status": 200,
+   "title": "التقارير | بيم دمشق",
+   "type": "text/html"
+  },
+  "samer /v2/settings": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "vSearch"
+   ],
+   "status": 200,
+   "title": "الإعدادات | بيم دمشق",
+   "type": "text/html"
+  },
+  "samer /v2/tasks": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "add",
+    "cmt",
+    "cmtText",
+    "detail",
+    "filters",
+    "list",
+    "moveTo",
+    "newTask",
+    "pv",
+    "q",
+    "reason",
+    "vSearch",
+    "who"
+   ],
+   "status": 200,
+   "title": "المهام | بيم دمشق",
+   "type": "text/html"
+  },
+  "samer /v2/team": {
+   "assets": [
+    "/static/v2.css",
+    "/static/bim-logo-trim.png",
+    "/static/bim-logo-trim.png",
+    "/static/v2.js"
+   ],
+   "ids": [
+    "q",
+    "rows",
+    "vSearch"
+   ],
+   "status": 200,
+   "title": "الفريق | بيم دمشق",
+   "type": "text/html"
+  },
   "samer /workload": {
    "shape": {
     "detail": "str"
@@ -7808,6 +8278,13 @@
   "GET /telegram-groups telegram_groups_page",
   "GET /template-library library_page",
   "GET /users users_page",
+  "GET /v2 v2_home",
+  "GET /v2/alerts v2_alerts",
+  "GET /v2/recurring v2_recurring",
+  "GET /v2/reports v2_reports",
+  "GET /v2/settings v2_settings",
+  "GET /v2/tasks v2_tasks",
+  "GET /v2/team v2_team",
   "GET /workload workload_page",
   "HEAD /docs swagger_ui_html",
   "HEAD /docs/oauth2-redirect swagger_ui_redirect",

@@ -695,6 +695,7 @@ from .routes_sync import (  # noqa: E402,F401
     sync_conflicts, sync_page, sync_pull, sync_push_employee, sync_push_task, sync_retry_dirty, sync_settings,
     sync_snapshot, sync_status, sync_tasks_page, sync_test_webapp
 )
+from . import routes_v2  # noqa: E402,F401  the new interface (/v2), owner 2026-11-23
 
 
 from . import universal

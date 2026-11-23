@@ -1,0 +1,18 @@
+{% extends "v2/base.html" %}{% block content %}
+<div class="v-head"><div><h1>الفريق</h1><p>كل موظف وشو عنده. اكبس على الاسم لتشوف مهامه.</p></div>
+  <div class="v-actions"><a class="vb" href="/employees">إضافة وتعديل الموظفين</a><a class="vb" href="/telegram-center">ربط تلغرام</a></div></div>
+<div class="v-bar"><label class="v-field grow"><span>بحث</span><input id="q" type="search" placeholder="اسم أو قسم"></label></div>
+<section class="v-card" style="overflow:auto"><table class="v-table"><thead><tr><th>الموظف</th><th>القسم</th><th>تلغرام</th><th class="num">مفتوحة</th><th class="num">متأخرة</th><th class="num">مستحقة اليوم</th><th></th></tr></thead><tbody id="rows"></tbody></table></section>
+{% endblock %}{% block scripts %}
+<script>
+(()=>{const {$,esc,ar,isLate,isToday,api,toast,DONE}=V;let emps=[],tasks=[];
+function draw(){const q=$('q').value.trim();const by={};tasks.filter(t=>!DONE.includes(t.status)&&t.employee_id).forEach(t=>{const m=by[t.employee_id]||(by[t.employee_id]={open:0,late:0,today:0});m.open++;if(isLate(t))m.late++;if(isToday(t))m.today++});
+  $('rows').innerHTML=emps.filter(e=>!q||[e.name,e.department].some(v=>String(v||'').includes(q))).map(e=>({...e,...(by[e.id]||{open:0,late:0,today:0})})).sort((a,b)=>b.late-a.late||b.open-a.open)
+   .map(e=>`<tr><td class="t"><a href="/v2/tasks?p=${e.id}&f=open">${esc(e.name)}</a></td><td class="nw">${esc(e.department||'—')}</td>
+     <td class="nw">${e.telegram_chat_id?(e.telegram_enabled?'<span class="done-t">مربوط</span>':'<span class="due-t">مربوط، الإرسال موقوف</span>'):'<span class="late-t">مو مربوط</span>'}</td>
+     <td class="num">${e.open?ar(e.open):'–'}</td><td class="num ${e.late?'late-t':'soft'}">${e.late?ar(e.late):'–'}</td><td class="num ${e.today?'due-t':'soft'}">${e.today?ar(e.today):'–'}</td>
+     <td class="acts"><a class="vb sm" href="/v2/tasks?p=${e.id}&f=open">مهامه</a> <a class="vb sm" href="/employee/${e.id}">الملف</a></td></tr>`).join('')||'<tr><td colspan="7" class="v-empty">ما في موظفين.</td></tr>'}
+Promise.all([api('/api/employees'),api('/api/tasks')]).then(([e,t])=>{emps=e;tasks=t;draw()}).catch(e=>toast(e.message,true));$('q').oninput=draw;
+})();
+</script>
+{% endblock %}
