@@ -397,3 +397,7 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   07574ec (status report page usage), f77dc69 (new home: `#bd` block in bim-ds.css, old `#dx` deleted; written
   briefing instead of tiles, one queue with 3 collapsible sections, team/mix/chart/activity on the side). Screens:
   scratchpad v4_desk.png / v4_phone.png (demo data). Shell 3D icons untouched (owner chose A on 11-10).
+- 2026-11-23: owner installed `home_v4`, first saw the new home UNSTYLED, then after a refresh: «تحدث، تمام».
+  ROOT CAUSE: main._asset_version globbed '*.[cj]s' (= .js only), so CSS-only updates (dashboard_v3, home_v4) kept the
+  same ?v= and browsers kept the cached old bim-ds.css. Fixed in 2536fd1 (css+js hashed, tests/test_asset_version.py),
+  NOT shipped yet: goes with the next package. Owner also asked for EVERYTHING new from the login page to every page.
