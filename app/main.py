@@ -29,7 +29,9 @@ def _asset_version():
     # service worker never keep an old design after an install. Owner saw a stale design on 2026-11-01.
     import hashlib
     h = hashlib.sha1()
-    for f in sorted((ROOT / 'app' / 'static').glob('*.[cj]s')):
+    # '*.[cj]s' matched only .js (and .cs), never .css: a CSS-only update kept the old version and browsers kept the old
+    # design (owner 2026-11-23 saw the new home without its styles).
+    for f in sorted([*(ROOT / 'app' / 'static').glob('*.css'), *(ROOT / 'app' / 'static').glob('*.js')]):
         try: h.update(f.read_bytes())
         except OSError: pass
     return h.hexdigest()[:10]
