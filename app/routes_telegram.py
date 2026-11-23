@@ -135,6 +135,8 @@ async def telegram_webhook(req:Request):
                 send(str(chat),f"✅ تم ربط المجموعة بنظام BIM Tasks\nالاسم: {g['name']}")
                 return {'ok':True}
             if chat_type in ('group','supergroup'):
+                from . import alerts
+                if alerts.handle(c,msg,_main): return {'ok':True}  # «تنبيه» reply in any group (owner 2026-11-23)
                 from .followup import handle_group_message
                 handle_group_message(c,msg)  # reply to a task message in the follow-up group = comment on that task
                 return {'ok':True}
