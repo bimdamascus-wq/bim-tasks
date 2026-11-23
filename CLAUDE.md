@@ -377,3 +377,14 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   next package. Proposed order: 1) speed package (polling 30 s, redraw only on change, my-work = open + done last 7 days,
   one health ping, page-only scripts) 2) delete/merge pages from the usage numbers 3) 3 concrete complaints each from
   2 employees + the follow-up person, then rework /my-work and /my-team. Waiting for his go.
+- Report 13:38 (2026-11-23): `short_menu` installed 11/10 20:55; 8797 lan+workers on 124a711. 8798 EXTERNAL DOWN: task
+  "BIM Tasks External 8798" Ready, Last Result 267014 (= terminated), last start 11/18 15:55 (both tasks restarted then,
+  probably a reboot); no 8798 process. If the tunnel points to 8798, task.bimdamascus.com and maybe the Telegram webhook
+  are down (tunnel config is not in the repo; the example points to 8797 — ask). Owner told to run START_BIM_NOW.cmd.
+  130 failed Telegram rows = 11/15 12:30-13:00 no internet/DNS (getaddrinfo) + the old 11/10 supergroup rows.
+- USAGE (30 days): only 2 admins + 3 deputies open the website; supervisors and employees: 0 page views. Employees act on
+  Telegram (status changes: telegram 44, dashboard 1). So employee complaints are about the TELEGRAM flow, not /my-work
+  (the /my-work 3 s polling hurts nobody). Top pages: /tasks 293, / 186, /task 91, /employee 76, /my-team 76, /employees 72,
+  /archive 56, /recurring 50. Never opened: /telegram-health, /telegram-dashboard, /page-visibility, /my-work
+  (/settings not logged before 07574ec). Low (<=10): workload, operations-reports, audit, notification-center,
+  automation-center, integrations, handover, job-profiles, iphone-setup, system-health, sync, backup, permissions.
