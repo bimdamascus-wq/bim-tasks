@@ -2559,7 +2559,8 @@
   "boss /v2": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -2586,7 +2587,8 @@
   "boss /v2/alerts": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -2608,7 +2610,8 @@
   "boss /v2/recurring": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -2623,7 +2626,8 @@
   "boss /v2/reports": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -2641,7 +2645,8 @@
   "boss /v2/settings": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -2655,7 +2660,8 @@
   "boss /v2/tasks": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -2681,7 +2687,8 @@
   "boss /v2/team": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -5289,7 +5296,8 @@
   "dep /v2": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -5316,7 +5324,8 @@
   "dep /v2/alerts": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -5338,7 +5347,8 @@
   "dep /v2/recurring": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -5353,7 +5363,8 @@
   "dep /v2/reports": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -5371,7 +5382,8 @@
   "dep /v2/settings": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -5385,7 +5397,8 @@
   "dep /v2/tasks": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -5411,7 +5424,8 @@
   "dep /v2/team": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -6530,11 +6544,9 @@
    "type": "application/json"
   },
   "member /v2": {
-   "shape": {
-    "detail": "str"
-   },
-   "status": 403,
-   "type": "application/json"
+   "location": "/my-work",
+   "status": 303,
+   "type": ""
   },
   "member /v2/alerts": {
    "shape": {
@@ -6560,7 +6572,8 @@
   "member /v2/settings": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -8009,7 +8022,8 @@
   "samer /v2": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -8036,7 +8050,8 @@
   "samer /v2/alerts": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -8058,7 +8073,8 @@
   "samer /v2/recurring": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -8073,7 +8089,8 @@
   "samer /v2/reports": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -8091,7 +8108,8 @@
   "samer /v2/settings": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -8105,7 +8123,8 @@
   "samer /v2/tasks": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],
@@ -8131,7 +8150,8 @@
   "samer /v2/team": {
    "assets": [
     "/static/v2.css",
-    "/static/bim-logo-trim.png",
+    "/static/icon-192.png",
+    "/static/icon-192.png",
     "/static/bim-logo-trim.png",
     "/static/v2.js"
    ],

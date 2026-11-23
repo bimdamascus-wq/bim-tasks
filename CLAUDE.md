@@ -440,3 +440,8 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   Old interface reachable from /v2/settings («الواجهة القديمة كاملة» = /). Rare admin pages still old.
   Package `new_interface` (BASE f77dc69, also 818e6d6/3e59d83/12d86ab, cumulative) given — NOT confirmed.
   Next (after his feedback): rebuild the rare pages he still opens inside v2, then retire the old shell.
+- 2026-11-23: owner wants Chrome's «install» button. Manifest icons were the 355x408 logo declared as 192/512 (Chrome
+  refuses) and v2 pages had no manifest link / service-worker registration. Added square app/static/icon-192.png and
+  icon-512.png, new manifest (name «بيم دمشق - المهام», start_url /v2, standalone), v2/base.html links it and registers
+  /service-worker.js; /v2 sends employees to /my-work. CDP Page.getInstallabilityErrors on localhost: none.
+  Works only over HTTPS (task.bimdamascus.com) or localhost, NOT on http://<LAN-IP>:8797 (browser rule).

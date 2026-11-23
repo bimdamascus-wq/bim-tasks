@@ -26,7 +26,11 @@ def _page(req: Request, key: str, extra=None):
 
 
 @app.get('/v2', response_class=HTMLResponse)
-def v2_home(req: Request): return _page(req, 'home')
+def v2_home(req: Request):
+    u = session(req)
+    if u and u['role_code'] == 'employee':  # the installed app starts at /v2 for everyone
+        return RedirectResponse('/my-work', status_code=303)
+    return _page(req, 'home')
 
 
 @app.get('/v2/tasks', response_class=HTMLResponse)
