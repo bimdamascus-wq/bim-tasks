@@ -425,3 +425,11 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   summary cells, SHEET TABS at the bottom for المهام/التنبيهات/الموظفون/...); x2 = green header, rows GROUPED by employee
   with subtotal rows, side menu; x3 = navy header, KPI as bordered cells, big table + "ملخص حسب الموظف" pivot. Cairo/Plex
   600-800, 17px, conditional colours on status cells. Waiting for his pick.
+- 2026-11-23: owner: "we stopped opening the site because we hate it" (so low usage = aversion, not lack of need).
+  His three complaints: «بضيع وما بلاقي وين الشي», «بدي كبسات كتير», «الشاشة مليانة». Root cause admitted: every
+  redesign restyled the ~40 old pages; their structure stayed. New direction: small NEW screens beside the old ones,
+  tried in use. Step 1 built: «المتابعة» /follow (follow.html + #fw block in bim-ds.css; existing APIs only): search,
+  5 filters, team chips, list + detail with one-click status/remind/move/comment, alerts' own steps, quick add.
+  Next screens (only after he uses this one): new task, team, alerts, settings.
+- Installer now supports `also_base` (build_update.py --also-base): package `follow_screen` (commit 12d86ab, BASE
+  f77dc69, also 818e6d6 / 3e59d83, cumulative: group_alerts + new_identity + follow) given — NOT confirmed.
