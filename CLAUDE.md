@@ -433,3 +433,10 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   Next screens (only after he uses this one): new task, team, alerts, settings.
 - Installer now supports `also_base` (build_update.py --also-base): package `follow_screen` (commit 12d86ab, BASE
   f77dc69, also 818e6d6 / 3e59d83, cumulative: group_alerts + new_identity + follow) given — NOT confirmed.
+- 2026-11-23: owner: "build it new from scratch, 100% different, professional; you have the whole system". Built
+  INTERFACE v2 (d2e0ff3): `app/routes_v2.py` (NAV list, `_page`), `templates/v2/{base,home,tasks,alerts,team,recurring,
+  reports,settings}.html`, `static/v2.css` + `static/v2.js` (window.V helpers). Own top-nav frame, no bim-ds.css. Existing
+  APIs only. Login page rebuilt on v2.css; `_open_session` sends managers + supervisors to /v2 (employees /my-work).
+  Old interface reachable from /v2/settings («الواجهة القديمة كاملة» = /). Rare admin pages still old.
+  Package `new_interface` (BASE f77dc69, also 818e6d6/3e59d83/12d86ab, cumulative) given — NOT confirmed.
+  Next (after his feedback): rebuild the rare pages he still opens inside v2, then retire the old shell.
