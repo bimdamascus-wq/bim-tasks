@@ -129,8 +129,8 @@ def main():
 MENU_PAGES = ['/', '/my-work', '/my-team', '/tasks', '/recurring', '/archive', '/employees', '/users', '/access-control',
               '/job-profiles', '/workload', '/handover', '/shift-center', '/team-performance', '/operations-reports',
               '/activity-log', '/audit', '/record-management', '/template-library', '/automation-center',
-              '/notification-center', '/telegram-center', '/telegram-groups', '/telegram-health', '/telegram-dashboard',
-              '/iphone-setup', '/integrations', '/security', '/permissions', '/company', '/page-visibility',
+              '/notification-center', '/telegram-center', '/telegram-groups',
+              '/iphone-setup', '/integrations', '/security', '/permissions', '/company',
               '/system-health', '/sync', '/backup', '/settings', '/account']
 
 

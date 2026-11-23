@@ -644,13 +644,13 @@ from .routes_auth import (  # noqa: E402,F401
     _open_session, health, login, login_page, logout, manifest, sw
 )
 from .routes_pages import (  # noqa: E402,F401
-    _hidden_pages, api_dashboard, api_me, archive_page, audit_page, client_status, dashboard, employees_page,
+    api_dashboard, api_me, archive_page, audit_page, client_status, dashboard, employees_page,
     health_page, integrations_page, manage_page, my_work, recurring_page, release_health, task_detail_page,
     tasks_page, tasks_table_page, users_page
 )
 from .routes_telegram import (  # noqa: E402,F401
-    _guard_manager_telegram, api_telegram_dashboard, api_telegram_health, employee_telegram_link,
-    employee_telegram_unlink, telegram_center_page, telegram_dashboard_page, telegram_health_page,
+    _guard_manager_telegram, employee_telegram_link,
+    employee_telegram_unlink, telegram_center_page,
     telegram_queue_list, telegram_queue_retry, telegram_queue_retry_failed, telegram_report_csv,
     telegram_setup_webhook, telegram_status_api, telegram_webhook
 )

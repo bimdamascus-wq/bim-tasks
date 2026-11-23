@@ -1,31 +1,9 @@
-"""V6.3 manager command center (new home dashboard) and page-visibility settings."""
+"""Manager home dashboard data (/api/v2/dashboard) and the quick-add parser."""
 import json
 from fastapi import HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from .db import connect
 from .delegation import decorate
-
-# Every page that can be shown or hidden from the menu. The home page and this settings page are always visible.
-PAGES=[
- ('العمل اليومي',[('/tasks','المهام (بطاقات، جدول، تعديل سريع، لوحة)'),('/my-team','متابعة الفريق'),('/my-work','مهامي'),('/archive','الأرشيف')]),
- ('الفريق',[('/employees','الموظفون'),('/users','المستخدمون'),('/access-control','الصلاحيات والقنوات'),('/job-profiles','المسميات الوظيفية'),('/workload','عبء العمل'),('/handover','تسليم الأعمال'),('/shift-center','الشيفتات')]),
- ('الأتمتة',[('/recurring','المهام المتكررة'),('/template-library','قوالب العمل'),('/automation-center','مركز الأتمتة'),('/notification-center','مركز الإشعارات')]),
- ('Telegram والهاتف',[('/telegram-center','Telegram (المركز، المجموعات، الصحة، التقارير)'),('/iphone-setup','إعداد الهاتف'),('/integrations','الربط والتكامل')]),
- ('التقارير والسجلات',[('/team-performance','التقارير (أداء الفريق، التشغيلية)'),('/activity-log','السجلات (الشامل، التغييرات)'),('/record-management','إدارة السجلات')]),
- ('النظام',[('/security','الأمان والحماية'),('/permissions','جدول الصلاحيات'),('/company','إعداد الشركة'),('/system-health','صحة النظام'),('/sync','مزامنة Google Sheet'),('/backup','النسخ الاحتياطي')]),
-]
-ALL_PATHS={p for _,items in PAGES for p,_ in items}
-# Merged pages (big_update): '/telegram-center', '/activity-log' and '/team-performance' stand for their whole tab group;
-# the old tab paths in a saved setting are simply ignored (filtered by ALL_PATHS).
-DEFAULT_HIDDEN=['/job-profiles','/template-library','/workload','/handover','/automation-center',
-                '/integrations','/record-management','/company']
-SETTING='ui.hidden_pages'
-
-def hidden_pages(c):
-    r=c.execute('SELECT value FROM settings WHERE key=?',(SETTING,)).fetchone()
-    if not r:return list(DEFAULT_HIDDEN)
-    try:return [p for p in json.loads(r[0]) if p in ALL_PATHS]
-    except Exception:return list(DEFAULT_HIDDEN)
 
 OPEN="t.archived_at IS NULL AND t.status NOT IN ('تم','ملغاة')"
 LATE=OPEN+" AND t.due_at IS NOT NULL AND datetime(t.due_at)<datetime('now','localtime')"
@@ -123,28 +101,3 @@ def register(app, m):
             return {'employee_id':emp['id'] if emp else None,'employee':emp['name'] if emp else None,'title':title,'priority':priority}
         finally:c.close()
 
-    @app.get('/api/page-visibility')
-    def get_visibility(req:Request):
-        m.need(req,'users.manage'); c=connect()
-        try:
-            h=set(hidden_pages(c))
-            return {'groups':[{'label':g,'pages':[{'path':p,'label':l,'hidden':p in h} for p,l in items]} for g,items in PAGES],
-                    'defaults':DEFAULT_HIDDEN}
-        finally:c.close()
-
-    @app.put('/api/page-visibility')
-    async def put_visibility(req:Request):
-        u=m.need(req,'users.manage'); d=await req.json()
-        hidden=[p for p in (d.get('hidden') or []) if p in ALL_PATHS]
-        c=connect()
-        try:
-            c.execute('INSERT INTO settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value',(SETTING,json.dumps(hidden)))
-            m.audit(c,req,u,'page_visibility','system',None,after={'hidden':hidden})
-            return {'ok':True,'hidden':hidden}
-        finally:c.close()
-
-    @app.get('/page-visibility', response_class=HTMLResponse)
-    def visibility_page(req:Request):
-        if not m.session(req):return RedirectResponse('/login',status_code=303)
-        m.need(req,'users.manage')
-        return m.templates.TemplateResponse(request=req,name='page_visibility.html',context=m.ctx(req,'الصفحات الظاهرة'))

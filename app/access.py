@@ -177,13 +177,13 @@ PAGE_PERMS={
  '/manage':'tasks.edit','/my-team':'tasks.edit',
  '/employees':'employees.view',
  '/recurring':'recurring.view',
- '/telegram-center':'employees.edit','/telegram-groups':'employees.edit','/telegram-health':'employees.edit',
- '/telegram-dashboard':'employees.edit','/shift-center':'employees.edit','/automation-center':'employees.edit',
+ '/telegram-center':'employees.edit','/telegram-groups':'employees.edit',
+ '/shift-center':'employees.edit','/automation-center':'employees.edit',
  '/audit':'audit.view','/activity-log':'audit.view',
  '/team-performance':'reports.team',
  '/users':'users.manage','/job-profiles':'users.manage','/iphone-setup':'users.manage','/notification-center':'users.manage',
  '/record-management':'users.manage','/company':'users.manage','/template-library':'users.manage','/access-control':'users.manage',
- '/handover':'users.manage','/page-visibility':'users.manage','/security':'users.manage','/permissions':'users.manage',
+ '/handover':'users.manage','/security':'users.manage','/permissions':'users.manage',
 }
 # Reachable without a login session. Each one authenticates in its own way
 # (Telegram secret header, iPhone key, Google Sheet secret, or none for static/public assets).

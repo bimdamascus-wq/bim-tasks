@@ -41,5 +41,5 @@ async function finishMine(id,btn,status="تم"){
 }
 reloadMine();
 document.addEventListener('bim:delegated',()=>reloadMine());
-setInterval(()=>{if(!document.hidden&&!window.workBusy)reloadMine(true)},3000);
+setInterval(()=>{if(!document.hidden&&!window.workBusy)reloadMine(true)},30000);
 </script>{% endblock %}

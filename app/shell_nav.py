@@ -2,17 +2,16 @@
 
 Built on the server from access.py, so a link shows exactly when the server would open the page for this account.
 Every page that the old menus offered (the JS-built sidebar of bim-ui-v510.js, the old top links in base.html and
-the admin home menu) is listed here; pages hidden by the admin on /page-visibility stay hidden, as before.
+the admin home menu) is listed here.
 """
 from . import access
-from .db import connect
 
 # (group, [(path, label, icon)])
 GROUPS = [
     ('الرئيسية', [('/', 'لوحة المدير', 'home'), ('/my-work', 'مهامي', 'check'), ('/my-team', 'متابعة الفريق', 'team')]),
     ('المهام', [('/tasks', 'المهام', 'list'), ('/recurring', 'المهام المتكررة', 'repeat'), ('/archive', 'الأرشيف', 'archive')]),
     ('الفريق', [('/employees', 'الموظفون', 'team'), ('/users', 'المستخدمون', 'user'), ('/access-control', 'الصلاحيات والقنوات', 'key'),
-                ('/job-profiles', 'المسميات الوظيفية', 'badge'), ('/workload', 'عبء العمل', 'gauge'), ('/handover', 'تسليم الأعمال', 'swap'),
+                ('/job-profiles', 'المسميات الوظيفية', 'badge'), ('/handover', 'تسليم الأعمال', 'swap'),
                 ('/shift-center', 'الشيفتات', 'clock')]),
     ('التقارير والسجلات', [('/team-performance', 'التقارير', 'chart'), ('/activity-log', 'السجلات', 'history'),
                            ('/record-management', 'إدارة السجلات والحذف', 'archive')]),
@@ -20,7 +19,7 @@ GROUPS = [
                         ('/notification-center', 'مركز الإشعارات', 'bell'), ('/telegram-center', 'Telegram', 'send'),
                         ('/iphone-setup', 'إعداد الهاتف', 'phone'), ('/integrations', 'الربط والتكامل', 'link')]),
     ('النظام', [('/security', 'الأمان والحماية', 'shield'), ('/permissions', 'جدول الصلاحيات', 'key'), ('/company', 'إعداد الشركة', 'building'),
-                ('/page-visibility', 'الصفحات الظاهرة', 'eye'), ('/system-health', 'صحة النظام', 'pulse'), ('/sync', 'مزامنة Google Sheet', 'sync'),
+                ('/system-health', 'صحة النظام', 'pulse'), ('/sync', 'مزامنة Google Sheet', 'sync'),
                 ('/backup', 'النسخ الاحتياطي', 'shield')]),
 ]
 
@@ -31,10 +30,10 @@ GROUPS = [
 TABS = {
     'tasks': [('cards', 'بطاقات', '/tasks?view=cards', 'tasks.view'), ('table', 'جدول', '/tasks?view=table', 'tasks.view'),
               ('quick', 'تعديل سريع', '/tasks?view=quick', 'tasks.edit'), ('board', 'لوحة', '/tasks?view=board', 'tasks.view')],
-    'telegram': [('/telegram-center', 'المركز وربط الموظفين', '/telegram-center', None), ('/telegram-groups', 'المجموعات', '/telegram-groups', None),
-                 ('/telegram-health', 'الصحة والطابور', '/telegram-health', None), ('/telegram-dashboard', 'التقارير', '/telegram-dashboard', None)],
+    'telegram': [('/telegram-center', 'المركز وربط الموظفين', '/telegram-center', None), ('/telegram-groups', 'المجموعات', '/telegram-groups', None)],
     'logs': [('/activity-log', 'السجل الشامل', '/activity-log', None), ('/audit', 'سجل التغييرات', '/audit', None)],
-    'reports': [('/team-performance', 'أداء الفريق', '/team-performance', None), ('/operations-reports', 'التقارير التشغيلية', '/operations-reports', None)],
+    'reports': [('/team-performance', 'أداء الفريق', '/team-performance', None), ('/operations-reports', 'التقارير التشغيلية', '/operations-reports', None),
+                ('/workload', 'عبء العمل', '/workload', None)],  # workload merged here (owner 2026-11-23)
 }
 # menu entry -> its tab group
 MERGED = {'/tasks': 'tasks', '/telegram-center': 'telegram', '/activity-log': 'logs', '/team-performance': 'reports'}
@@ -84,9 +83,9 @@ COLORS = {
     '/team-performance': 'green', '/operations-reports': 'blue', '/activity-log': 'slate', '/audit': 'slate',
     '/record-management': 'red',
     '/template-library': 'pink', '/automation-center': 'amber', '/notification-center': 'red', '/telegram-center': 'sky',
-    '/telegram-groups': 'sky', '/telegram-health': 'green', '/telegram-dashboard': 'sky', '/iphone-setup': 'slate',
+    '/telegram-groups': 'sky', '/iphone-setup': 'slate',
     '/integrations': 'purple',
-    '/security': 'red', '/permissions': 'amber', '/company': 'indigo', '/page-visibility': 'teal', '/system-health': 'green',
+    '/security': 'red', '/permissions': 'amber', '/company': 'indigo', '/system-health': 'green',
     '/sync': 'blue', '/backup': 'purple', '/account': 'indigo',
 }
 
@@ -100,9 +99,9 @@ ICON3D = {
     '/team-performance': 'chartup', '/operations-reports': 'barchart', '/activity-log': 'scroll', '/audit': 'ledger',
     '/record-management': 'trash',
     '/template-library': 'folder', '/automation-center': 'bolt', '/notification-center': 'bell', '/telegram-center': 'envelope',
-    '/telegram-groups': 'speech', '/telegram-health': 'stethoscope', '/telegram-dashboard': 'antenna', '/iphone-setup': 'phone',
+    '/telegram-groups': 'speech', '/iphone-setup': 'phone',
     '/integrations': 'link',
-    '/security': 'shield', '/permissions': 'lock', '/company': 'building', '/page-visibility': 'eye', '/system-health': 'heart',
+    '/security': 'shield', '/permissions': 'lock', '/company': 'building', '/system-health': 'heart',
     '/sync': 'sync', '/backup': 'floppy', '/account': 'gear',
 }
 
@@ -112,23 +111,11 @@ PAGE_ICON['/account'] = 'account'
 PAGE_ICON['/settings'] = 'gear'
 ICON3D['/settings'] = 'gear'
 COLORS['/settings'] = 'slate'
-TITLES.update({'/settings': 'الإعدادات وباقي الصفحات', '/account': 'حسابي', '/telegram-center': 'Telegram', '/telegram-groups': 'Telegram', '/telegram-health': 'Telegram',
-               '/telegram-dashboard': 'Telegram', '/activity-log': 'السجلات', '/audit': 'السجلات',
+TITLES.update({'/settings': 'الإعدادات وباقي الصفحات', '/account': 'حسابي', '/telegram-center': 'Telegram', '/telegram-groups': 'Telegram', 
+               '/activity-log': 'السجلات', '/audit': 'السجلات',
                '/team-performance': 'التقارير', '/operations-reports': 'التقارير'})
-for _p in ('/telegram-groups', '/telegram-health', '/telegram-dashboard'): PAGE_ICON[_p] = 'send'
+for _p in ('/telegram-groups',): PAGE_ICON[_p] = 'send'
 PAGE_ICON.update({'/audit': 'history', '/operations-reports': 'chart'})
-
-
-def _hidden():
-    try:
-        from .command_center import hidden_pages
-        c = connect()
-        try:
-            return set(hidden_pages(c))
-        finally:
-            c.close()
-    except Exception:
-        return set()
 
 
 # Short menu (owner 2026-11-10: "too many pages, people get lost"): only the pages used every day stay in the side
@@ -139,10 +126,9 @@ SETTINGS = '/settings'
 
 
 def _items(user, permissions, path):
-    """Every page this account may open: [(group, path key, item)] in menu order; hidden pages flagged."""
+    """Every page this account may open: [(group, path key, item)] in menu order."""
     perms = set(permissions or ())
     role = user['role_code']
-    hidden = _hidden()
     out = []
     for group, items in GROUPS:
         for p, label, icon in items:
@@ -166,43 +152,39 @@ def _items(user, permissions, path):
                 href = p
                 active = path == p or (p != '/' and path.startswith(p + '/'))
             item = {'path': href, 'label': label, 'icon': ICONS[icon], 'active': active, 'color': COLORS.get(p, 'blue'),
-                    'img': ICON3D.get(p, 'clipboard'), 'hidden': p in hidden and p not in ('/', '/my-work', '/my-team')}
+                    'img': ICON3D.get(p, 'clipboard')}
             out.append((group, p, item))
     return out
 
 
 def nav(user, permissions, path='/'):
     """[(group, [{'path','label','icon','active'}])] for the side menu: the daily pages, then «الإعدادات» when this
-    account may open any other page. Pages the admin hid on /page-visibility leave the menu but stay on /settings."""
+    account may open any other page."""
     if not user:
         return []
     all_items = _items(user, permissions, path)
-    main = sorted([(PRIMARY.index(p), it) for _, p, it in all_items if p in PRIMARY and not it['hidden']], key=lambda x: x[0])
+    main = sorted([(PRIMARY.index(p), it) for _, p, it in all_items if p in PRIMARY], key=lambda x: x[0])
     links = [it for _, it in main]
-    rest = [it for _, p, it in all_items if not (p in PRIMARY and not it['hidden'])]
+    rest = [it for _, p, it in all_items if p not in PRIMARY]
     if rest:
         on_rest = path == SETTINGS or any(it['active'] for it in rest)
         links.append({'path': SETTINGS, 'label': 'الإعدادات', 'icon': ICONS['gear'], 'active': on_rest, 'color': 'slate',
-                      'img': 'gear', 'hidden': False})
+                      'img': 'gear'})
     return [('الصفحات', links)] if links else []
 
 
 def hub(user, permissions):
-    """/settings: [(group, [item])] of every page not in the short menu, in the old menu groups; hidden ones last."""
+    """/settings: [(group, [item])] of every page not in the short menu, in the old menu groups."""
     if not user:
         return []
-    out, more = [], []
+    out = []
     for group, p, it in _items(user, permissions, SETTINGS):
-        if p in PRIMARY and not it['hidden']:
+        if p in PRIMARY:
             continue
-        if it['hidden']:
-            more.append(it)
-        elif out and out[-1][0] == group:
+        if out and out[-1][0] == group:
             out[-1][1].append(it)
         else:
             out.append((group, [it]))
-    if more:
-        out.append(('صفحات أخرى', more))
     return out
 
 

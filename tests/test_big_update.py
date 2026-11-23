@@ -35,8 +35,8 @@ def test_menu_is_merged(env):
     hub = client(env, 'boss').get('/settings').text  # short menu (2026-11-10): the rest lives on /settings
     for kept in ('href="/telegram-center"', 'href="/activity-log"'):
         assert kept in hub[hub.index('hub-group'):], kept
-    tg = client(env, 'boss').get('/telegram-health').text
-    assert 'href="/telegram-groups"' in tg[tg.index('ds-tabs'):]
+    tg = client(env, 'boss').get('/telegram-groups').text
+    assert 'href="/telegram-center"' in tg[tg.index('ds-tabs'):]
 
 
 def test_supervisor_reports_tab_hidden(env):

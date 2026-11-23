@@ -17,14 +17,7 @@ def dashboard(req: Request):
         return RedirectResponse('/login', status_code=303)
     admin=need(req,'dashboard.view')
     if admin['role_code'] not in ('admin','deputy'): raise HTTPException(403,'لوحة الإدارة للمدير ونائب المدير فقط')
-    from .command_center import PAGES, hidden_pages
-    c=connect()
-    try:hidden=set(hidden_pages(c))
-    finally:c.close()
-    nav=[(g,[(p,l) for p,l in items if p not in hidden and p!='/my-work']) for g,items in PAGES]
-    nav=[(g,items) for g,items in nav if items]
-    if 'users.manage' in perms(admin['user_id']):nav.append(('الإعدادات',[('/page-visibility','الصفحات الظاهرة')]))
-    return templates.TemplateResponse(request=req,name='command_center.html',context={**ctx(req,'الرئيسية'),'cc_nav':nav})
+    return templates.TemplateResponse(request=req,name='command_center.html',context=ctx(req,'الرئيسية'))
 @app.get('/settings', response_class=HTMLResponse)
 def settings_hub(req: Request):
     """«الإعدادات»: every page that left the short side menu (owner 2026-11-10), as tiles. Login only; each tile is
@@ -94,13 +87,7 @@ def api_me(req: Request):
     if not u: raise HTTPException(401)
     return {'id': u['user_id'], 'username': u['username'], 'full_name': u['full_name'], 'role': u['role_name'],
             'role_code': u['role_code'], 'employee_id': u['employee_id'], 'permissions': sorted(perms(u['user_id'])),
-            'gateway': _main.GATEWAY, 'public_url': _main.PUBLIC_URL, 'hidden_pages': _hidden_pages()}
-
-def _hidden_pages():
-    from .command_center import hidden_pages
-    c=connect()
-    try:return hidden_pages(c)
-    finally:c.close()
+            'gateway': _main.GATEWAY, 'public_url': _main.PUBLIC_URL}
 
 @app.get('/api/release-health')
 def release_health(req: Request):

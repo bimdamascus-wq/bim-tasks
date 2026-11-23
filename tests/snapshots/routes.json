@@ -340,9 +340,7 @@
      "/tasks-table": "str",
      "/team-performance": "str",
      "/telegram-center": "str",
-     "/telegram-dashboard": "str",
      "/telegram-groups": "str",
-     "/telegram-health": "str",
      "/template-library": "str",
      "/users": "str",
      "/workload": "str"
@@ -641,9 +639,6 @@
     "employee_id": "int",
     "full_name": "str",
     "gateway": "str",
-    "hidden_pages": [
-     "str"
-    ],
     "id": "int",
     "permissions": [
      "str"
@@ -697,18 +692,6 @@
     "next_offset": "int",
     "total": "int",
     "truncated": "bool"
-   },
-   "status": 200,
-   "type": "application/json"
-  },
-  "boss /api/page-visibility": {
-   "shape": {
-    "defaults": [
-     "str"
-    ],
-    "groups": [
-     "dict"
-    ]
    },
    "status": 200,
    "type": "application/json"
@@ -1055,92 +1038,8 @@
    "status": 200,
    "type": "text/csv"
   },
-  "boss /api/telegram-dashboard": {
-   "shape": {
-    "active_group_reminders": "int",
-    "bot": {
-     "error": "str",
-     "ok": "bool"
-    },
-    "bot_identity": {},
-    "daily": [
-     "dict"
-    ],
-    "days": "int",
-    "employees": [
-     "dict"
-    ],
-    "failures": [],
-    "group_dispatch": {},
-    "groups": [],
-    "linked_employees": "int",
-    "linked_groups": "int",
-    "notifications": {
-     "sent": "int"
-    },
-    "queue": {
-     "failed": "int",
-     "pending": "int",
-     "retrying": "int",
-     "sent": "int"
-    },
-    "today_status": {
-     "completed": "int",
-     "groups_today": "int",
-     "in_progress": "int",
-     "overdue": "int",
-     "problems": "int",
-     "started": "int"
-    },
-    "unlinked_employees": "int",
-    "webhook": {
-     "error": "str",
-     "ok": "bool"
-    }
-   },
-   "status": 200,
-   "type": "application/json"
-  },
   "boss /api/telegram-groups": {
    "shape": [],
-   "status": 200,
-   "type": "application/json"
-  },
-  "boss /api/telegram-health": {
-   "shape": {
-    "bot": {
-     "error": "str",
-     "ok": "bool"
-    },
-    "bot_identity": {},
-    "last_error": "NoneType",
-    "last_success": {
-     "at": "str",
-     "employee_id": "int",
-     "kind": "str"
-    },
-    "linked_employee_rows": [
-     "dict"
-    ],
-    "linked_employees": "int",
-    "linked_groups": "int",
-    "notifications_today": {
-     "sent": "int"
-    },
-    "queue": {
-     "failed": "int",
-     "pending": "int",
-     "retrying": "int",
-     "sent": "int",
-     "sent_today": "int"
-    },
-    "recent": [],
-    "unlinked_employees": "int",
-    "webhook": {
-     "error": "str",
-     "ok": "bool"
-    }
-   },
    "status": 200,
    "type": "application/json"
   },
@@ -2058,55 +1957,6 @@
    "title": "بيم دمشق | التقارير التشغيلية",
    "type": "text/html"
   },
-  "boss /page-visibility": {
-   "assets": [
-    "/static/bim-ds.css",
-    "/static/bim-ui-v510.js",
-    "/static/bim-reminder.js",
-    "/static/bim-delegate.js",
-    "/static/bim-v81-center-ar.js",
-    "/static/bim-arabic-date-labels-v1.js",
-    "/static/bim-activity.js",
-    "/static/bim-excel-filter-v2.js",
-    "/static/bim-shell.js",
-    "/static/bim-logo-trim.png",
-    "/static/icons3d/home.png",
-    "/static/icons3d/team.png",
-    "/static/icons3d/clipboard.png",
-    "/static/icons3d/repeat.png",
-    "/static/icons3d/briefcase.png",
-    "/static/icons3d/chartup.png",
-    "/static/icons3d/gear.png",
-    "/static/icons3d/gear.png",
-    "/static/icons3d/door.png",
-    "/static/icons3d/eye.png",
-    "/static/icons3d/search.png",
-    "/static/icons3d/bell.png",
-    "/static/record-management.js"
-   ],
-   "ids": [
-    "dsBell",
-    "dsBellAll",
-    "dsBellBtn",
-    "dsBellCount",
-    "dsBellList",
-    "dsBellPanel",
-    "dsMain",
-    "dsMenu",
-    "dsSearch",
-    "dsShade",
-    "dsSide",
-    "dsState",
-    "dsToday",
-    "pvAll",
-    "pvDefault",
-    "pvGroups",
-    "pvSave"
-   ],
-   "status": 200,
-   "title": "بيم دمشق | الصفحات الظاهرة",
-   "type": "text/html"
-  },
   "boss /permissions": {
    "assets": [
     "/static/bim-ds.css",
@@ -2351,25 +2201,23 @@
     "/static/icons3d/archive.png",
     "/static/icons3d/user.png",
     "/static/icons3d/key.png",
+    "/static/icons3d/bookmark.png",
+    "/static/icons3d/handover.png",
     "/static/icons3d/alarm.png",
     "/static/icons3d/scroll.png",
-    "/static/icons3d/bell.png",
-    "/static/icons3d/envelope.png",
-    "/static/icons3d/phone.png",
-    "/static/icons3d/shield.png",
-    "/static/icons3d/lock.png",
-    "/static/icons3d/eye.png",
-    "/static/icons3d/heart.png",
-    "/static/icons3d/sync.png",
-    "/static/icons3d/floppy.png",
-    "/static/icons3d/bookmark.png",
-    "/static/icons3d/hourglass.png",
-    "/static/icons3d/handover.png",
     "/static/icons3d/trash.png",
     "/static/icons3d/folder.png",
     "/static/icons3d/bolt.png",
+    "/static/icons3d/bell.png",
+    "/static/icons3d/envelope.png",
+    "/static/icons3d/phone.png",
     "/static/icons3d/link.png",
+    "/static/icons3d/shield.png",
+    "/static/icons3d/lock.png",
     "/static/icons3d/building.png",
+    "/static/icons3d/heart.png",
+    "/static/icons3d/sync.png",
+    "/static/icons3d/floppy.png",
     "/static/record-management.js"
    ],
    "ids": [
@@ -2391,7 +2239,6 @@
     "hg3",
     "hg4",
     "hg5",
-    "hg6",
     "hubTitle"
    ],
    "status": 200,
@@ -2818,76 +2665,6 @@
    "title": "بيم دمشق | مركز Telegram",
    "type": "text/html"
   },
-  "boss /telegram-dashboard": {
-   "assets": [
-    "/static/bim-ds.css",
-    "/static/bim-ui-v510.js",
-    "/static/bim-reminder.js",
-    "/static/bim-delegate.js",
-    "/static/bim-v81-center-ar.js",
-    "/static/bim-arabic-date-labels-v1.js",
-    "/static/bim-activity.js",
-    "/static/bim-excel-filter-v2.js",
-    "/static/bim-shell.js",
-    "/static/bim-logo-trim.png",
-    "/static/icons3d/home.png",
-    "/static/icons3d/team.png",
-    "/static/icons3d/clipboard.png",
-    "/static/icons3d/repeat.png",
-    "/static/icons3d/briefcase.png",
-    "/static/icons3d/chartup.png",
-    "/static/icons3d/gear.png",
-    "/static/icons3d/gear.png",
-    "/static/icons3d/door.png",
-    "/static/icons3d/antenna.png",
-    "/static/icons3d/search.png",
-    "/static/icons3d/bell.png",
-    "/static/record-management.js"
-   ],
-   "ids": [
-    "dailyRows",
-    "days",
-    "dsBell",
-    "dsBellAll",
-    "dsBellBtn",
-    "dsBellCount",
-    "dsBellList",
-    "dsBellPanel",
-    "dsMain",
-    "dsMenu",
-    "dsSearch",
-    "dsShade",
-    "dsSide",
-    "dsState",
-    "dsToday",
-    "empSearch",
-    "employeeRows",
-    "failureRows",
-    "gFailed",
-    "gSent",
-    "groupRows",
-    "kBot",
-    "kDone",
-    "kEmpLinked",
-    "kEmpUnlinked",
-    "kFailed",
-    "kGroups",
-    "kGroupsToday",
-    "kOverdue",
-    "kProblems",
-    "kProgress",
-    "kQueue",
-    "kReminders",
-    "kStarted",
-    "kWebhook",
-    "nFailed",
-    "nSent",
-    "periodText"
-   ],
-   "status": 200,
-   "title": "بيم دمشق | Telegram Dashboard",
-   "type": "text/html"
-  },
   "boss /telegram-groups": {
    "assets": [
     "/static/bim-ds.css",
@@ -2971,62 +2748,6 @@
    ],
    "status": 200,
    "title": "بيم دمشق | مجموعات Telegram",
-   "type": "text/html"
-  },
-  "boss /telegram-health": {
-   "assets": [
-    "/static/bim-ds.css",
-    "/static/bim-ui-v510.js",
-    "/static/bim-reminder.js",
-    "/static/bim-delegate.js",
-    "/static/bim-v81-center-ar.js",
-    "/static/bim-arabic-date-labels-v1.js",
-    "/static/bim-activity.js",
-    "/static/bim-excel-filter-v2.js",
-    "/static/bim-shell.js",
-    "/static/bim-logo-trim.png",
-    "/static/icons3d/home.png",
-    "/static/icons3d/team.png",
-    "/static/icons3d/clipboard.png",
-    "/static/icons3d/repeat.png",
-    "/static/icons3d/briefcase.png",
-    "/static/icons3d/chartup.png",
-    "/static/icons3d/gear.png",
-    "/static/icons3d/gear.png",
-    "/static/icons3d/door.png",
-    "/static/icons3d/stethoscope.png",
-    "/static/icons3d/search.png",
-    "/static/icons3d/bell.png",
-    "/static/record-management.js"
-   ],
-   "ids": [
-    "botName",
-    "botState",
-    "botUser",
-    "dsBell",
-    "dsBellAll",
-    "dsBellBtn",
-    "dsBellCount",
-    "dsBellList",
-    "dsBellPanel",
-    "dsMain",
-    "dsMenu",
-    "dsSearch",
-    "dsShade",
-    "dsSide",
-    "dsState",
-    "dsToday",
-    "empRows",
-    "failedCount",
-    "lastState",
-    "linkedEmployees",
-    "linkedGroups",
-    "pendingCount",
-    "queueRows",
-    "webhookState"
-   ],
-   "status": 200,
-   "title": "بيم دمشق | Telegram Health",
    "type": "text/html"
   },
   "boss /template-library": {
@@ -3158,7 +2879,7 @@
     "/static/icons3d/gear.png",
     "/static/icons3d/gear.png",
     "/static/icons3d/door.png",
-    "/static/icons3d/hourglass.png",
+    "/static/icons3d/clipboard.png",
     "/static/icons3d/search.png",
     "/static/icons3d/bell.png",
     "/static/record-management.js",
@@ -3525,9 +3246,7 @@
      "/tasks-table": "str",
      "/team-performance": "str",
      "/telegram-center": "str",
-     "/telegram-dashboard": "str",
      "/telegram-groups": "str",
-     "/telegram-health": "str",
      "/template-library": "str",
      "/users": "str",
      "/workload": "str"
@@ -3826,9 +3545,6 @@
     "employee_id": "int",
     "full_name": "str",
     "gateway": "str",
-    "hidden_pages": [
-     "str"
-    ],
     "id": "int",
     "permissions": [
      "str"
@@ -3882,18 +3598,6 @@
     "next_offset": "int",
     "total": "int",
     "truncated": "bool"
-   },
-   "status": 200,
-   "type": "application/json"
-  },
-  "dep /api/page-visibility": {
-   "shape": {
-    "defaults": [
-     "str"
-    ],
-    "groups": [
-     "dict"
-    ]
    },
    "status": 200,
    "type": "application/json"
@@ -4240,92 +3944,8 @@
    "status": 200,
    "type": "text/csv"
   },
-  "dep /api/telegram-dashboard": {
-   "shape": {
-    "active_group_reminders": "int",
-    "bot": {
-     "error": "str",
-     "ok": "bool"
-    },
-    "bot_identity": {},
-    "daily": [
-     "dict"
-    ],
-    "days": "int",
-    "employees": [
-     "dict"
-    ],
-    "failures": [],
-    "group_dispatch": {},
-    "groups": [],
-    "linked_employees": "int",
-    "linked_groups": "int",
-    "notifications": {
-     "sent": "int"
-    },
-    "queue": {
-     "failed": "int",
-     "pending": "int",
-     "retrying": "int",
-     "sent": "int"
-    },
-    "today_status": {
-     "completed": "int",
-     "groups_today": "int",
-     "in_progress": "int",
-     "overdue": "int",
-     "problems": "int",
-     "started": "int"
-    },
-    "unlinked_employees": "int",
-    "webhook": {
-     "error": "str",
-     "ok": "bool"
-    }
-   },
-   "status": 200,
-   "type": "application/json"
-  },
   "dep /api/telegram-groups": {
    "shape": [],
-   "status": 200,
-   "type": "application/json"
-  },
-  "dep /api/telegram-health": {
-   "shape": {
-    "bot": {
-     "error": "str",
-     "ok": "bool"
-    },
-    "bot_identity": {},
-    "last_error": "NoneType",
-    "last_success": {
-     "at": "str",
-     "employee_id": "int",
-     "kind": "str"
-    },
-    "linked_employee_rows": [
-     "dict"
-    ],
-    "linked_employees": "int",
-    "linked_groups": "int",
-    "notifications_today": {
-     "sent": "int"
-    },
-    "queue": {
-     "failed": "int",
-     "pending": "int",
-     "retrying": "int",
-     "sent": "int",
-     "sent_today": "int"
-    },
-    "recent": [],
-    "unlinked_employees": "int",
-    "webhook": {
-     "error": "str",
-     "ok": "bool"
-    }
-   },
    "status": 200,
    "type": "application/json"
   },
@@ -5243,55 +4863,6 @@
    "title": "بيم دمشق | التقارير التشغيلية",
    "type": "text/html"
   },
-  "dep /page-visibility": {
-   "assets": [
-    "/static/bim-ds.css",
-    "/static/bim-ui-v510.js",
-    "/static/bim-reminder.js",
-    "/static/bim-delegate.js",
-    "/static/bim-v81-center-ar.js",
-    "/static/bim-arabic-date-labels-v1.js",
-    "/static/bim-activity.js",
-    "/static/bim-excel-filter-v2.js",
-    "/static/bim-shell.js",
-    "/static/bim-logo-trim.png",
-    "/static/icons3d/home.png",
-    "/static/icons3d/team.png",
-    "/static/icons3d/clipboard.png",
-    "/static/icons3d/repeat.png",
-    "/static/icons3d/briefcase.png",
-    "/static/icons3d/chartup.png",
-    "/static/icons3d/gear.png",
-    "/static/icons3d/gear.png",
-    "/static/icons3d/door.png",
-    "/static/icons3d/eye.png",
-    "/static/icons3d/search.png",
-    "/static/icons3d/bell.png",
-    "/static/record-management.js"
-   ],
-   "ids": [
-    "dsBell",
-    "dsBellAll",
-    "dsBellBtn",
-    "dsBellCount",
-    "dsBellList",
-    "dsBellPanel",
-    "dsMain",
-    "dsMenu",
-    "dsSearch",
-    "dsShade",
-    "dsSide",
-    "dsState",
-    "dsToday",
-    "pvAll",
-    "pvDefault",
-    "pvGroups",
-    "pvSave"
-   ],
-   "status": 200,
-   "title": "بيم دمشق | الصفحات الظاهرة",
-   "type": "text/html"
-  },
   "dep /permissions": {
    "assets": [
     "/static/bim-ds.css",
@@ -5536,25 +5107,23 @@
     "/static/icons3d/archive.png",
     "/static/icons3d/user.png",
     "/static/icons3d/key.png",
+    "/static/icons3d/bookmark.png",
+    "/static/icons3d/handover.png",
     "/static/icons3d/alarm.png",
     "/static/icons3d/scroll.png",
-    "/static/icons3d/bell.png",
-    "/static/icons3d/envelope.png",
-    "/static/icons3d/phone.png",
-    "/static/icons3d/shield.png",
-    "/static/icons3d/lock.png",
-    "/static/icons3d/eye.png",
-    "/static/icons3d/heart.png",
-    "/static/icons3d/sync.png",
-    "/static/icons3d/floppy.png",
-    "/static/icons3d/bookmark.png",
-    "/static/icons3d/hourglass.png",
-    "/static/icons3d/handover.png",
     "/static/icons3d/trash.png",
     "/static/icons3d/folder.png",
     "/static/icons3d/bolt.png",
+    "/static/icons3d/bell.png",
+    "/static/icons3d/envelope.png",
+    "/static/icons3d/phone.png",
     "/static/icons3d/link.png",
+    "/static/icons3d/shield.png",
+    "/static/icons3d/lock.png",
     "/static/icons3d/building.png",
+    "/static/icons3d/heart.png",
+    "/static/icons3d/sync.png",
+    "/static/icons3d/floppy.png",
     "/static/record-management.js"
    ],
    "ids": [
@@ -5576,7 +5145,6 @@
     "hg3",
     "hg4",
     "hg5",
-    "hg6",
     "hubTitle"
    ],
    "status": 200,
@@ -6003,76 +5571,6 @@
    "title": "بيم دمشق | مركز Telegram",
    "type": "text/html"
   },
-  "dep /telegram-dashboard": {
-   "assets": [
-    "/static/bim-ds.css",
-    "/static/bim-ui-v510.js",
-    "/static/bim-reminder.js",
-    "/static/bim-delegate.js",
-    "/static/bim-v81-center-ar.js",
-    "/static/bim-arabic-date-labels-v1.js",
-    "/static/bim-activity.js",
-    "/static/bim-excel-filter-v2.js",
-    "/static/bim-shell.js",
-    "/static/bim-logo-trim.png",
-    "/static/icons3d/home.png",
-    "/static/icons3d/team.png",
-    "/static/icons3d/clipboard.png",
-    "/static/icons3d/repeat.png",
-    "/static/icons3d/briefcase.png",
-    "/static/icons3d/chartup.png",
-    "/static/icons3d/gear.png",
-    "/static/icons3d/gear.png",
-    "/static/icons3d/door.png",
-    "/static/icons3d/antenna.png",
-    "/static/icons3d/search.png",
-    "/static/icons3d/bell.png",
-    "/static/record-management.js"
-   ],
-   "ids": [
-    "dailyRows",
-    "days",
-    "dsBell",
-    "dsBellAll",
-    "dsBellBtn",
-    "dsBellCount",
-    "dsBellList",
-    "dsBellPanel",
-    "dsMain",
-    "dsMenu",
-    "dsSearch",
-    "dsShade",
-    "dsSide",
-    "dsState",
-    "dsToday",
-    "empSearch",
-    "employeeRows",
-    "failureRows",
-    "gFailed",
-    "gSent",
-    "groupRows",
-    "kBot",
-    "kDone",
-    "kEmpLinked",
-    "kEmpUnlinked",
-    "kFailed",
-    "kGroups",
-    "kGroupsToday",
-    "kOverdue",
-    "kProblems",
-    "kProgress",
-    "kQueue",
-    "kReminders",
-    "kStarted",
-    "kWebhook",
-    "nFailed",
-    "nSent",
-    "periodText"
-   ],
-   "status": 200,
-   "title": "بيم دمشق | Telegram Dashboard",
-   "type": "text/html"
-  },
   "dep /telegram-groups": {
    "assets": [
     "/static/bim-ds.css",
@@ -6156,62 +5654,6 @@
    ],
    "status": 200,
    "title": "بيم دمشق | مجموعات Telegram",
-   "type": "text/html"
-  },
-  "dep /telegram-health": {
-   "assets": [
-    "/static/bim-ds.css",
-    "/static/bim-ui-v510.js",
-    "/static/bim-reminder.js",
-    "/static/bim-delegate.js",
-    "/static/bim-v81-center-ar.js",
-    "/static/bim-arabic-date-labels-v1.js",
-    "/static/bim-activity.js",
-    "/static/bim-excel-filter-v2.js",
-    "/static/bim-shell.js",
-    "/static/bim-logo-trim.png",
-    "/static/icons3d/home.png",
-    "/static/icons3d/team.png",
-    "/static/icons3d/clipboard.png",
-    "/static/icons3d/repeat.png",
-    "/static/icons3d/briefcase.png",
-    "/static/icons3d/chartup.png",
-    "/static/icons3d/gear.png",
-    "/static/icons3d/gear.png",
-    "/static/icons3d/door.png",
-    "/static/icons3d/stethoscope.png",
-    "/static/icons3d/search.png",
-    "/static/icons3d/bell.png",
-    "/static/record-management.js"
-   ],
-   "ids": [
-    "botName",
-    "botState",
-    "botUser",
-    "dsBell",
-    "dsBellAll",
-    "dsBellBtn",
-    "dsBellCount",
-    "dsBellList",
-    "dsBellPanel",
-    "dsMain",
-    "dsMenu",
-    "dsSearch",
-    "dsShade",
-    "dsSide",
-    "dsState",
-    "dsToday",
-    "empRows",
-    "failedCount",
-    "lastState",
-    "linkedEmployees",
-    "linkedGroups",
-    "pendingCount",
-    "queueRows",
-    "webhookState"
-   ],
-   "status": 200,
-   "title": "بيم دمشق | Telegram Health",
    "type": "text/html"
   },
   "dep /template-library": {
@@ -6343,7 +5785,7 @@
     "/static/icons3d/gear.png",
     "/static/icons3d/gear.png",
     "/static/icons3d/door.png",
-    "/static/icons3d/hourglass.png",
+    "/static/icons3d/clipboard.png",
     "/static/icons3d/search.png",
     "/static/icons3d/bell.png",
     "/static/record-management.js",
@@ -6620,9 +6062,6 @@
     "employee_id": "int",
     "full_name": "str",
     "gateway": "str",
-    "hidden_pages": [
-     "str"
-    ],
     "id": "int",
     "permissions": [
      "str"
@@ -6654,13 +6093,6 @@
    "type": "application/json"
   },
   "member /api/operations-report/tasks": {
-   "shape": {
-    "detail": "str"
-   },
-   "status": 403,
-   "type": "application/json"
-  },
-  "member /api/page-visibility": {
    "shape": {
     "detail": "str"
    },
@@ -6948,21 +6380,7 @@
    "status": 403,
    "type": "application/json"
   },
-  "member /api/telegram-dashboard": {
-   "shape": {
-    "detail": "str"
-   },
-   "status": 403,
-   "type": "application/json"
-  },
   "member /api/telegram-groups": {
-   "shape": {
-    "detail": "str"
-   },
-   "status": 403,
-   "type": "application/json"
-  },
-  "member /api/telegram-health": {
    "shape": {
     "detail": "str"
    },
@@ -7251,13 +6669,6 @@
    "status": 403,
    "type": "application/json"
   },
-  "member /page-visibility": {
-   "shape": {
-    "detail": "str"
-   },
-   "status": 403,
-   "type": "application/json"
-  },
   "member /permissions": {
    "shape": {
     "detail": "str"
@@ -7471,21 +6882,7 @@
    "status": 403,
    "type": "application/json"
   },
-  "member /telegram-dashboard": {
-   "shape": {
-    "detail": "str"
-   },
-   "status": 403,
-   "type": "application/json"
-  },
   "member /telegram-groups": {
-   "shape": {
-    "detail": "str"
-   },
-   "status": 403,
-   "type": "application/json"
-  },
-  "member /telegram-health": {
    "shape": {
     "detail": "str"
    },
@@ -7811,9 +7208,6 @@
     "employee_id": "int",
     "full_name": "str",
     "gateway": "str",
-    "hidden_pages": [
-     "str"
-    ],
     "id": "int",
     "permissions": [
      "str"
@@ -7845,13 +7239,6 @@
    "type": "application/json"
   },
   "samer /api/operations-report/tasks": {
-   "shape": {
-    "detail": "str"
-   },
-   "status": 403,
-   "type": "application/json"
-  },
-  "samer /api/page-visibility": {
    "shape": {
     "detail": "str"
    },
@@ -8148,21 +7535,7 @@
    "status": 200,
    "type": "text/csv"
   },
-  "samer /api/telegram-dashboard": {
-   "shape": {
-    "detail": "str"
-   },
-   "status": 403,
-   "type": "application/json"
-  },
   "samer /api/telegram-groups": {
-   "shape": {
-    "detail": "str"
-   },
-   "status": 403,
-   "type": "application/json"
-  },
-  "samer /api/telegram-health": {
    "shape": {
     "detail": "str"
    },
@@ -8583,13 +7956,6 @@
    "status": 403,
    "type": "application/json"
   },
-  "samer /page-visibility": {
-   "shape": {
-    "detail": "str"
-   },
-   "status": 403,
-   "type": "application/json"
-  },
   "samer /permissions": {
    "shape": {
     "detail": "str"
@@ -8930,21 +8296,7 @@
    "status": 403,
    "type": "application/json"
   },
-  "samer /telegram-dashboard": {
-   "shape": {
-    "detail": "str"
-   },
-   "status": 403,
-   "type": "application/json"
-  },
   "samer /telegram-groups": {
-   "shape": {
-    "detail": "str"
-   },
-   "status": 403,
-   "type": "application/json"
-  },
-  "samer /telegram-health": {
    "shape": {
     "detail": "str"
    },
@@ -9016,7 +8368,6 @@
   "GET /api/me/security my_security",
   "GET /api/operations-report operations_report",
   "GET /api/operations-report/tasks operations_report_tasks",
-  "GET /api/page-visibility get_visibility",
   "GET /api/records records",
   "GET /api/recurring api_recurring",
   "GET /api/release-health release_health",
@@ -9043,9 +8394,7 @@
   "GET /api/tasks/{tid}/work-profile task_work_profile",
   "GET /api/team-performance team_performance",
   "GET /api/team-performance.csv team_performance_csv",
-  "GET /api/telegram-dashboard api_telegram_dashboard",
   "GET /api/telegram-groups api_telegram_groups",
-  "GET /api/telegram-health api_telegram_health",
   "GET /api/telegram-queue telegram_queue_list",
   "GET /api/telegram-report.csv telegram_report_csv",
   "GET /api/telegram/status telegram_status_api",
@@ -9081,7 +8430,6 @@
   "GET /notification-center notification_center",
   "GET /openapi.json openapi",
   "GET /operations-reports operations_reports_page",
-  "GET /page-visibility visibility_page",
   "GET /permissions permissions_page",
   "GET /record-management page",
   "GET /recurring recurring_page",
@@ -9097,9 +8445,7 @@
   "GET /tasks-table tasks_table_page",
   "GET /team-performance team_performance_page",
   "GET /telegram-center telegram_center_page",
-  "GET /telegram-dashboard telegram_dashboard_page",
   "GET /telegram-groups telegram_groups_page",
-  "GET /telegram-health telegram_health_page",
   "GET /template-library library_page",
   "GET /users users_page",
   "GET /workload workload_page",
@@ -9178,7 +8524,6 @@
   "PUT /api/company put_company",
   "PUT /api/followup put_followup",
   "PUT /api/iphone/legacy-owner owner",
-  "PUT /api/page-visibility put_visibility",
   "PUT /api/security/backup-settings backup_settings",
   "PUT /api/security/backup-telegram backup_telegram",
   "PUT /api/staff/{eid}/settings set_staff",
