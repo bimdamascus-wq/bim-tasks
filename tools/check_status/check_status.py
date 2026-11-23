@@ -120,8 +120,40 @@ def main():
     for r in q(c, """SELECT action,source,COUNT(*) FROM sync_events
         WHERE created_at>datetime('now','-1 day') GROUP BY action,source ORDER BY COUNT(*) DESC LIMIT 8"""):
         print(f'  sync_events  {r[0]} / {r[1]}: {r[2]}')
+    usage_report(c)
     c.close()
     full_sync_report()
+
+
+# Every menu page (shell_nav.GROUPS + the merged tabs), to list the ones nobody opened.
+MENU_PAGES = ['/', '/my-work', '/my-team', '/tasks', '/recurring', '/archive', '/employees', '/users', '/access-control',
+              '/job-profiles', '/workload', '/handover', '/shift-center', '/team-performance', '/operations-reports',
+              '/activity-log', '/audit', '/record-management', '/template-library', '/automation-center',
+              '/notification-center', '/telegram-center', '/telegram-groups', '/telegram-health', '/telegram-dashboard',
+              '/iphone-setup', '/integrations', '/security', '/permissions', '/company', '/page-visibility',
+              '/system-health', '/sync', '/backup', '/settings', '/account']
+
+
+def usage_report(c):
+    """Which pages people really open (owner 2026-11-23: what can we delete?). Counts only, no names."""
+    print('\n[pages opened, last 30 days] (views / people, by role)')
+    rows = q(c, """SELECT CASE WHEN a.page LIKE '/task/%' THEN '/task/<id>' WHEN a.page LIKE '/employee/%' THEN '/employee/<id>'
+        ELSE a.page END pg, COALESCE(r.code,'?') role, COUNT(*), COUNT(DISTINCT a.user_id)
+        FROM user_activity a LEFT JOIN users u ON u.id=a.user_id LEFT JOIN roles r ON r.id=u.role_id
+        WHERE a.kind='page' AND a.created_at>strftime('%Y-%m-%dT%H:%M:%fZ','now','-30 days') GROUP BY pg, role""")
+    pages = {}
+    for pg, role, n, people in rows:
+        pages.setdefault(pg, []).append((role, n, people))
+    for pg, parts in sorted(pages.items(), key=lambda x: -sum(n for _, n, _ in x[1])):
+        print(f'  {pg:22} {sum(n for _, n, _ in parts):5}  ' + '  '.join(f'{r}={n}/{pp}' for r, n, pp in sorted(parts, key=lambda x: -x[1])))
+    print('  never opened:', ', '.join(p for p in MENU_PAGES if p not in pages) or 'none')
+    print('\n[where employees act, last 30 days] (task status changes by source)')
+    for r in q(c, """SELECT COALESCE(source,'-'),COUNT(*) FROM task_events WHERE event_type='status'
+        AND created_at>datetime('now','-30 days') GROUP BY source ORDER BY COUNT(*) DESC"""):
+        print(f'  {r[0]}: {r[1]}')
+    for r in q(c, """SELECT COUNT(*), SUM(status IN ('تم','ملغاة')), MAX(cnt) FROM (SELECT t.status, COUNT(*) OVER (PARTITION BY t.employee_id) cnt
+        FROM tasks t WHERE t.archived_at IS NULL)"""):
+        print(f'  tasks not archived: {r[0]}, of them done/cancelled: {r[1]}, most on one employee: {r[2]}')
 
 
 def full_sync_report():

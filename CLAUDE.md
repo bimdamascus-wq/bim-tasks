@@ -363,3 +363,17 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   /team-performance) + «الإعدادات» = /settings (`settings_hub.html`, `shell_nav.hub`), all other pages as tiles there.
   Package `short_menu` (commit 124a711, BASE 0b7aca0, 4 files) given — NOT confirmed. Option B (plain line icons) still on the table if he
   asks for a less playful look; preview recipe: inline <svg><path d="{{ l.icon }}"> instead of the 3D <img> in base.html.
+
+## Session 10, 2026-11-23: owner asks for a full review (employees + the follow-up person say "not smooth")
+- Facts found in code: /my-work polls /api/tasks every 3 s and that returns ALL non-archived tasks incl. every done one;
+  /task/{id} reloads every 3 s and redraws buttons/participant selects/comments unconditionally (lost clicks, flicker);
+  every page also pings health twice (bim-ui-v510 12 s + bim-shell 15 s) and the bell (60 s) = ~30 req/min per open tab.
+  base.html loads 9 scripts on every page, 3 blocking (record-management.js is for one page only); bim-ds.css 90 KB of
+  stacked layers. Overlapping pages: reports (team-performance/operations-reports/workload/telegram-dashboard), logs
+  (activity-log/audit/record-management), access (users/access-control/permissions/page-visibility/security), 4 task views.
+- Usage data exists: user_activity kind='page'. check_status.py now prints "[pages opened, last 30 days]" (views/people by
+  role, never-opened list) and "[where employees act]" (status changes by source). /settings added to activity_log.PAGES
+  (was not logged). Given as dist/BIM_Check_Status.zip (extract, run CHECK_STATUS.cmd as admin); also ships with the
+  next package. Proposed order: 1) speed package (polling 30 s, redraw only on change, my-work = open + done last 7 days,
+  one health ping, page-only scripts) 2) delete/merge pages from the usage numbers 3) 3 concrete complaints each from
+  2 employees + the follow-up person, then rework /my-work and /my-team. Waiting for his go.
