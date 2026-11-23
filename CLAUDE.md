@@ -408,3 +408,10 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   (deliberately): storing all group messages, members/memberships, a separate «إعادة فتح» button, importing old P-alerts.
   Needs on Telegram: bot in every group + privacy mode OFF in BotFather (/setprivacy -> Disable), then re-add the bot.
   Package `group_alerts` (BASE f77dc69 = home_v4, includes 2536fd1 css cache fix) given — NOT confirmed.
+- 2026-11-23: owner asked "where are the alerts" -> wants ONE page for everything about them with the old options, and
+  again EVERY page new (threatened to leave for ChatGPT). Built (3e59d83): /alerts page + APIs (alerts.page_data,
+  set_status incl. reopen, reason), alert private card = old buttons (alert:ID:work|wait|done|reopen + note=reason),
+  menu item «التنبيهات»; IDENTITY v5 = last layer in bim-ds.css (`html body.ds ...`; `:not(#_)` used where the old tiles
+  rules with long button:not() chains would win), base.html/settings_hub/profile use line icons (shell_nav.ICONS) instead
+  of icons3d. Package `new_identity` (BASE 818e6d6 = group_alerts) given with screenshots — NOT confirmed. If the
+  installer refuses (group_alerts not installed), rebuild with BASE f77dc69.
