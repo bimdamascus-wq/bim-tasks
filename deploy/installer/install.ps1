@@ -30,7 +30,10 @@ $Rel = "$Root\app\release.json"
 if ($U.base -and (Test-Path $Rel)) {
     $Cur = ''
     try { $Cur = [string](Get-Content $Rel -Raw -Encoding UTF8 | ConvertFrom-Json).commit } catch { $Cur = '' }
-    if ($Cur -and -not ($Cur.StartsWith($U.base) -or $U.base.StartsWith($Cur))) {
+    # also_base: newer installed versions this cumulative package may also go on (owner unsure which update is installed).
+    $Ok = $false
+    foreach ($B in (@($U.base) + @($U.also_base | Where-Object { $_ }))) { if ($Cur.StartsWith($B) -or $B.StartsWith($Cur)) { $Ok = $true } }
+    if ($Cur -and -not $Ok) {
         Write-Host 'هالتحديث لازم ينزل فوق نسخة تانية. ما تغيّر شي.' -ForegroundColor Red
         Write-Host "النسخة يلي عالنظام هلق: $Cur   والنسخة المطلوبة: $($U.base)" -ForegroundColor Yellow
         Write-Host 'نزّل التحديث الأقدم أول، أو ابعت هالرسالة.' -ForegroundColor Yellow

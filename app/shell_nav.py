@@ -8,7 +8,7 @@ from . import access
 
 # (group, [(path, label, icon)])
 GROUPS = [
-    ('الرئيسية', [('/', 'لوحة المدير', 'home'), ('/my-work', 'مهامي', 'check'), ('/my-team', 'متابعة الفريق', 'team')]),
+    ('الرئيسية', [('/follow', 'المتابعة', 'check'), ('/', 'لوحة المدير', 'home'), ('/my-work', 'مهامي', 'check'), ('/my-team', 'متابعة الفريق', 'team')]),
     ('المهام', [('/tasks', 'المهام', 'list'), ('/alerts', 'التنبيهات', 'bell'), ('/recurring', 'المهام المتكررة', 'repeat'), ('/archive', 'الأرشيف', 'archive')]),
     ('الفريق', [('/employees', 'الموظفون', 'team'), ('/users', 'المستخدمون', 'user'), ('/access-control', 'الصلاحيات والقنوات', 'key'),
                 ('/job-profiles', 'المسميات الوظيفية', 'badge'), ('/handover', 'تسليم الأعمال', 'swap'),
@@ -77,7 +77,7 @@ ICONS = {
 # Colour of each page's 3D icon (bim-ds.css .c-<name>): related pages share a colour family.
 COLORS = {
     '/': 'indigo', '/my-work': 'green', '/my-team': 'teal',
-    '/tasks': 'blue', '/alerts': 'red', '/tasks-table': 'blue', '/manage': 'orange', '/recurring': 'purple', '/archive': 'slate',
+    '/tasks': 'blue', '/alerts': 'red', '/follow': 'teal', '/tasks-table': 'blue', '/manage': 'orange', '/recurring': 'purple', '/archive': 'slate',
     '/employees': 'teal', '/users': 'indigo', '/access-control': 'amber', '/job-profiles': 'pink', '/workload': 'orange',
     '/handover': 'purple', '/shift-center': 'amber',
     '/team-performance': 'green', '/operations-reports': 'blue', '/activity-log': 'slate', '/audit': 'slate',
@@ -93,7 +93,7 @@ COLORS = {
 # the icons of the owner's financial report.
 ICON3D = {
     '/': 'home', '/my-work': 'check', '/my-team': 'team',
-    '/tasks': 'clipboard', '/alerts': 'alarm', '/tasks-table': 'table', '/manage': 'memo', '/recurring': 'repeat', '/archive': 'archive',
+    '/tasks': 'clipboard', '/alerts': 'alarm', '/follow': 'check', '/tasks-table': 'table', '/manage': 'memo', '/recurring': 'repeat', '/archive': 'archive',
     '/employees': 'briefcase', '/users': 'user', '/access-control': 'key', '/job-profiles': 'bookmark', '/workload': 'hourglass',
     '/handover': 'handover', '/shift-center': 'alarm',
     '/team-performance': 'chartup', '/operations-reports': 'barchart', '/activity-log': 'scroll', '/audit': 'ledger',
@@ -121,7 +121,7 @@ PAGE_ICON.update({'/audit': 'history', '/operations-reports': 'chart'})
 # Short menu (owner 2026-11-10: "too many pages, people get lost"): only the pages used every day stay in the side
 # menu; every other page the account may open is one click away on /settings («الإعدادات»), grouped as before.
 # Nothing is removed and every address still works.
-PRIMARY = ('/', '/my-work', '/my-team', '/tasks', '/alerts', '/recurring', '/employees', '/team-performance')
+PRIMARY = ('/follow', '/', '/my-work', '/my-team', '/tasks', '/alerts', '/recurring', '/employees', '/team-performance')
 SETTINGS = '/settings'
 
 

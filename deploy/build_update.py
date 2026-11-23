@@ -28,6 +28,7 @@ def main():
     ap.add_argument('--pip', action='append', default=[])
     ap.add_argument('--wheels')
     ap.add_argument('--after', action='append', default=[])
+    ap.add_argument('--also-base', action='append', default=[], help='newer commits the package may also go on (base must be the oldest)')
     a = ap.parse_args()
     if git('status', '--porcelain').strip():
         sys.exit('Commit your changes first: the package must match a commit.')
@@ -59,7 +60,8 @@ def main():
         shutil.copytree(a.wheels, out / 'wheels')
     update = {'name': a.name, 'title': a.title, 'check_path': a.check, 'pip': a.pip,
               'delete': [p.replace('/', '\\') for p in deleted], 'after': a.after,
-              'commit': commit, 'base': git('rev-parse', '--short', a.base).strip()}
+              'commit': commit, 'base': git('rev-parse', '--short', a.base).strip(),
+              'also_base': [git('rev-parse', '--short', b).strip() for b in a.also_base]}
     (out / 'update.json').write_text(json.dumps(update, ensure_ascii=False, indent=1), encoding='utf-8')
     (out / 'اقرأني.txt').write_text(
         f'BIM Tasks — {a.title}\r\n\r\n'

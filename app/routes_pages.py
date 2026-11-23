@@ -18,6 +18,13 @@ def dashboard(req: Request):
     admin=need(req,'dashboard.view')
     if admin['role_code'] not in ('admin','deputy'): raise HTTPException(403,'لوحة الإدارة للمدير ونائب المدير فقط')
     return templates.TemplateResponse(request=req,name='command_center.html',context=ctx(req,'الرئيسية'))
+@app.get('/follow', response_class=HTMLResponse)
+def follow_page(req: Request):
+    """«المتابعة»: one-screen follow-up (owner 2026-11-23), beside the old pages until the team settles on it."""
+    need(req, 'tasks.edit')
+    return templates.TemplateResponse(request=req, name='follow.html', context=ctx(req, 'المتابعة'))
+
+
 @app.get('/settings', response_class=HTMLResponse)
 def settings_hub(req: Request):
     """«الإعدادات»: every page that left the short side menu (owner 2026-11-10), as tiles. Login only; each tile is

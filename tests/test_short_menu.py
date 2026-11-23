@@ -28,5 +28,6 @@ def test_every_page_is_in_menu_or_settings(env):
                 assert cl.get(h, follow_redirects=False).status_code in (200, 303), (user, h)
         if user == 'boss':
             menu = [h for h in _hrefs(page.text, 'ds-nav', 'ds-user') if h not in ('/account', '/logout')]
-            assert len(menu) <= 8 and '/settings' in menu and '/users' not in menu
+            # 9 while «المتابعة» runs beside the old home (owner trial, 2026-11-23); back to 8 when one of them goes
+            assert len(menu) <= 9 and '/settings' in menu and '/users' not in menu
             assert 'is-active' in page.text[page.text.index('href="/settings"') - 120:page.text.index('href="/settings"') + 80]

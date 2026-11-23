@@ -313,6 +313,7 @@
      "/backup": "str",
      "/company": "str",
      "/employees": "str",
+     "/follow": "str",
      "/handover": "str",
      "/integrations": "str",
      "/iphone-setup": "str",
@@ -1472,6 +1473,55 @@
    ],
    "status": 200,
    "title": "بيم دمشق | الموظفون",
+   "type": "text/html"
+  },
+  "boss /follow": {
+   "assets": [
+    "/static/bim-ds.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-activity.js",
+    "/static/bim-excel-filter-v2.js",
+    "/static/bim-shell.js",
+    "/static/bim-logo-trim.png",
+    "/static/record-management.js"
+   ],
+   "ids": [
+    "add",
+    "addBtn",
+    "cmt",
+    "cmtText",
+    "detail",
+    "dsBell",
+    "dsBellAll",
+    "dsBellBtn",
+    "dsBellCount",
+    "dsBellList",
+    "dsBellPanel",
+    "dsMain",
+    "dsMenu",
+    "dsSearch",
+    "dsShade",
+    "dsSide",
+    "dsState",
+    "dsToday",
+    "filters",
+    "fw",
+    "fwTitle",
+    "list",
+    "moveTo",
+    "newTask",
+    "pv",
+    "q",
+    "reason",
+    "team",
+    "toast"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | المتابعة",
    "type": "text/html"
   },
   "boss /handover": {
@@ -2855,6 +2905,7 @@
      "/backup": "str",
      "/company": "str",
      "/employees": "str",
+     "/follow": "str",
      "/handover": "str",
      "/integrations": "str",
      "/iphone-setup": "str",
@@ -4014,6 +4065,55 @@
    ],
    "status": 200,
    "title": "بيم دمشق | الموظفون",
+   "type": "text/html"
+  },
+  "dep /follow": {
+   "assets": [
+    "/static/bim-ds.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-activity.js",
+    "/static/bim-excel-filter-v2.js",
+    "/static/bim-shell.js",
+    "/static/bim-logo-trim.png",
+    "/static/record-management.js"
+   ],
+   "ids": [
+    "add",
+    "addBtn",
+    "cmt",
+    "cmtText",
+    "detail",
+    "dsBell",
+    "dsBellAll",
+    "dsBellBtn",
+    "dsBellCount",
+    "dsBellList",
+    "dsBellPanel",
+    "dsMain",
+    "dsMenu",
+    "dsSearch",
+    "dsShade",
+    "dsSide",
+    "dsState",
+    "dsToday",
+    "filters",
+    "fw",
+    "fwTitle",
+    "list",
+    "moveTo",
+    "newTask",
+    "pv",
+    "q",
+    "reason",
+    "team",
+    "toast"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | المتابعة",
    "type": "text/html"
   },
   "dep /handover": {
@@ -5811,6 +5911,13 @@
    "status": 403,
    "type": "application/json"
   },
+  "member /follow": {
+   "shape": {
+    "detail": "str"
+   },
+   "status": 403,
+   "type": "application/json"
+  },
   "member /handover": {
    "shape": {
     "detail": "str"
@@ -7085,6 +7192,55 @@
    "title": "بيم دمشق | الموظفون",
    "type": "text/html"
   },
+  "samer /follow": {
+   "assets": [
+    "/static/bim-ds.css",
+    "/static/bim-ui-v510.js",
+    "/static/bim-reminder.js",
+    "/static/bim-delegate.js",
+    "/static/bim-v81-center-ar.js",
+    "/static/bim-arabic-date-labels-v1.js",
+    "/static/bim-activity.js",
+    "/static/bim-excel-filter-v2.js",
+    "/static/bim-shell.js",
+    "/static/bim-logo-trim.png",
+    "/static/record-management.js"
+   ],
+   "ids": [
+    "add",
+    "addBtn",
+    "cmt",
+    "cmtText",
+    "detail",
+    "dsBell",
+    "dsBellAll",
+    "dsBellBtn",
+    "dsBellCount",
+    "dsBellList",
+    "dsBellPanel",
+    "dsMain",
+    "dsMenu",
+    "dsSearch",
+    "dsShade",
+    "dsSide",
+    "dsState",
+    "dsToday",
+    "filters",
+    "fw",
+    "fwTitle",
+    "list",
+    "moveTo",
+    "newTask",
+    "pv",
+    "q",
+    "reason",
+    "team",
+    "toast"
+   ],
+   "status": 200,
+   "title": "بيم دمشق | المتابعة",
+   "type": "text/html"
+  },
   "samer /handover": {
    "shape": {
     "detail": "str"
@@ -7618,6 +7774,7 @@
   "GET /docs/oauth2-redirect swagger_ui_redirect",
   "GET /employee/{eid} employee_page",
   "GET /employees employees_page",
+  "GET /follow follow_page",
   "GET /handover handover_page",
   "GET /health health",
   "GET /integrations integrations_page",

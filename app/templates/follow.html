@@ -1,0 +1,130 @@
+{% extends "base.html" %}{% block content %}
+{# «المتابعة» (owner 2026-11-23): one screen to follow up, built on his three complaints: «بضيع وما بلاقي وين الشي»,
+   «بدي كبسات كتير لأعمل شغلة بسيطة», «الشاشة مليانة أشياء». One search, four big filters, the team as chips, a list and
+   the chosen task beside it with every daily action one click away. Uses the existing APIs only; the old pages stay. #}
+<main class="fw" id="fw" aria-labelledby="fwTitle">
+  <header class="fw-top">
+    <h1 id="fwTitle">المتابعة</h1>
+    <label class="fw-search"><span class="sr">بحث</span><input id="q" type="search" placeholder="ابحث: مهمة، موظف، رقم…  (اختصار: /)"></label>
+    <form class="fw-add" id="add" autocomplete="off"><input id="newTask" placeholder="مهمة جديدة: «سامر يجرد المستودع بكرا عاجل»" aria-label="مهمة جديدة"><span id="pv"></span><button id="addBtn" disabled>إضافة</button></form>
+  </header>
+
+  <nav class="fw-filters" id="filters" aria-label="شو بدك تشوف"></nav>
+  <div class="fw-team" id="team" aria-label="الفريق"></div>
+
+  <div class="fw-body">
+    <section class="fw-list" aria-label="المهام"><div id="list" role="listbox" tabindex="0" aria-label="المهام"></div></section>
+    <section class="fw-detail" id="detail" aria-live="polite"><p class="fw-empty">اختار مهمة من اللائحة.</p></section>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</main>
+{% endblock %}{% block scripts %}
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ar=v=>String(v??'').replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+const DONE=['تم','ملغاة'];
+const parseD=v=>{if(!v)return null;const d=new Date(String(v).replace(' ','T'));return isNaN(d)?null:d};
+const utc=v=>parseD(String(v||'').includes('T')?v:String(v||'').replace(' ','T')+'Z');
+const fmt=d=>new Intl.DateTimeFormat('ar-SY',{weekday:'long',day:'numeric',month:'long',hour:'numeric',minute:'2-digit'}).format(d);
+const time=d=>new Intl.DateTimeFormat('ar-SY',{hour:'numeric',minute:'2-digit'}).format(d);
+const sameDay=(a,b)=>a.toDateString()===b.toDateString();
+function ago(ms){const m=Math.max(1,Math.round(ms/60000));if(m<60)return ar(m)+' دقيقة';const h=Math.round(m/60);if(h<24)return ar(h)+' ساعة';return ar(Math.round(h/24))+' يوم'}
+function toast(msg,err){const t=$('toast');t.textContent=msg;t.className='toast show'+(err?' err':'');clearTimeout(t._h);t._h=setTimeout(()=>t.className='toast',3000)}
+async function api(url,opt){const r=await fetch(url,opt);const x=await r.json().catch(()=>({}));if(r.status===401){location.href='/login';throw new Error('')}if(!r.ok)throw new Error(x.detail||'ما زبطت العملية');return x}
+const post=(url,body,method='POST')=>api(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+
+let tasks=[],employees=[],filter='late',person=null,sel=null,lastSig='';
+const isLate=t=>!DONE.includes(t.status)&&parseD(t.due_at)&&parseD(t.due_at)<new Date();
+const isToday=t=>!DONE.includes(t.status)&&!isLate(t)&&parseD(t.due_at)&&sameDay(parseD(t.due_at),new Date());
+const isAlert=t=>t.source==='telegram_alert'&&!DONE.includes(t.status);
+const doneToday=t=>t.status==='تم'&&utc(t.completed_at)&&sameDay(utc(t.completed_at),new Date());
+const FILTERS=[['late','متأخرة',isLate],['today','اليوم',isToday],['alerts','تنبيهات',isAlert],['open','كل المفتوح',t=>!DONE.includes(t.status)],['done','أُنجزت اليوم',doneToday]];
+function when(t){
+  if(t.status==='تم'){const d=utc(t.completed_at);return d?`<span class="ok">خلصت ${time(d)}</span>`:'<span class="ok">خلصت</span>'}
+  const d=parseD(t.due_at);if(!d)return '<span class="soft">بلا موعد</span>';
+  if(d<new Date())return `<span class="late">متأخرة ${ago(Date.now()-d)}</span>`;
+  return sameDay(d,new Date())?`<span class="due">اليوم ${time(d)}</span>`:`<span class="soft">${fmt(d)}</span>`;
+}
+function visible(){
+  const f=FILTERS.find(x=>x[0]===filter)[2],q=$('q').value.trim();
+  return tasks.filter(t=>(q?true:f(t))&&(!person||t.employee_id===person)&&(!q||[t.title,t.employee_name,t.task_code,t.notes].some(v=>String(v||'').includes(q))))
+    .sort((a,b)=>(isLate(b)-isLate(a))||((parseD(a.due_at)||9e15)-(parseD(b.due_at)||9e15)));
+}
+function drawTop(){
+  $('filters').innerHTML=FILTERS.map(([k,l,f])=>{const n=tasks.filter(f).length;return `<button type="button" class="fw-f ${k} ${filter===k&&!$('q').value.trim()?'on':''}" data-f="${k}"><span>${l}</span><b>${ar(n)}</b></button>`}).join('');
+  document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{filter=b.dataset.f;$('q').value='';draw()});
+  const team={};tasks.filter(t=>t.employee_id&&!DONE.includes(t.status)).forEach(t=>{const m=team[t.employee_id]||(team[t.employee_id]={id:t.employee_id,name:t.employee_name,open:0,late:0});m.open++;if(isLate(t))m.late++});
+  const list=Object.values(team).sort((a,b)=>b.late-a.late||b.open-a.open);
+  $('team').innerHTML=`<button type="button" class="fw-p ${!person?'on':''}" data-p="">كل الفريق</button>`+list.map(m=>`<button type="button" class="fw-p ${person===m.id?'on':''}" data-p="${m.id}" title="${ar(m.open)} مفتوحة">${esc(m.name)}${m.late?` <b>${ar(m.late)}</b>`:''}</button>`).join('');
+  document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{person=b.dataset.p?+b.dataset.p:null;draw()});
+}
+function draw(){
+  drawTop();const rows=visible();
+  if(sel&&!rows.some(t=>t.id===sel))sel=rows[0]?.id||null;
+  if(!sel&&rows[0])sel=rows[0].id;
+  $('list').innerHTML=rows.map(t=>`<button type="button" role="option" class="fw-row ${t.id===sel?'on':''} ${isLate(t)?'is-late':''}" aria-selected="${t.id===sel}" data-id="${t.id}">
+      <b>${t.source==='telegram_alert'?'<i class="al">تنبيه</i>':''}${t.priority==='عاجلة'?'<i class="u">عاجلة</i>':''}${esc(t.title)}</b>
+      <span><span>${esc(t.employee_name||'بلا موظف')}</span>${when(t)}</span></button>`).join('')
+    ||`<p class="fw-empty">${$('q').value.trim()?'ما لقيت شي بهالبحث.':'ما في شي هون.'}</p>`;
+  document.querySelectorAll('.fw-row').forEach(b=>b.onclick=()=>{sel=+b.dataset.id;draw();if(innerWidth<1000)$('detail').scrollIntoView({behavior:'smooth'})});
+  sel?detail(sel):($('detail').innerHTML='<p class="fw-empty">اختار مهمة من اللائحة.</p>');
+}
+const EV={created:'انعملت المهمة',telegram_sent:'انبعتت عالتلغرام',telegram_notice:'وصل إشعار عالتلغرام',reminded:'تذكير',note:'مشكلة / ملاحظة',comment:'تعليق',edited:'تعديل',reassigned:'انتقلت لموظف تاني',delegated:'توزيع',restored:'رجعت من الأرشيف',cancelled:'انلغت'};
+let detailFor=0;
+async function detail(id){
+  detailFor=id;let t;
+  try{t=await api('/api/tasks/'+id)}catch(e){$('detail').innerHTML=`<p class="fw-empty">${esc(e.message)}</p>`;return}
+  if(detailFor!==id)return;
+  const alert=t.source==='telegram_alert',link=(String(t.notes||'').match(/الرابط: (\S+)/)||[])[1];
+  const steps=alert?[['work','قيد المعالجة'],['wait','بانتظار رد'],['done','✓ تم الحل']].concat(t.status==='تم'?[['reopen','إعادة فتح']]:[])
+                   :[['جديدة','جديدة'],['بدأت','بدأت'],['قيد التنفيذ','قيد التنفيذ'],['بانتظار','بانتظار'],['تم','✓ خلصت']];
+  const cur=alert?{'قيد التنفيذ':'work','بانتظار':'wait','تم':'done'}[t.status]:t.status;
+  const timeline=(t.events||[]).slice(-8).reverse().map(e=>{const d=utc(e.created_at);return `<li><b>${e.event_type==='status'?'الحالة صارت «'+esc(e.new_status)+'»':esc(EV[e.event_type]||e.event_type)}</b>${e.note&&e.event_type!=='status'?`<span>${esc(e.note)}</span>`:''}<time>${d?fmt(d):''}</time></li>`}).join('');
+  const comments=(t.comments||[]).slice(-5).map(c=>`<li><b>${esc(c.username_snapshot||'النظام')}</b><span>${esc(c.body)}</span></li>`).join('');
+  $('detail').innerHTML=`
+    <div class="fw-h"><span class="fw-code">${esc(t.task_code||'')}</span><h2>${esc(t.title)}</h2>
+      <p class="fw-meta"><span>👤 ${t.employee_id?`<a href="/employee/${t.employee_id}">${esc(t.employee_name||'')}</a>`:'بلا موظف'}</span><span>${when(t)}</span><span>الأولوية: ${esc(t.priority)}</span></p></div>
+    <div class="fw-steps" role="group" aria-label="الحالة">${steps.map(([k,l])=>`<button type="button" class="${k===cur?'on':''} ${k==='تم'||k==='done'?'done':''}" data-st="${k}">${l}</button>`).join('')}</div>
+    <div class="fw-acts">
+      <button type="button" data-remind="telegram">🔔 ذكّر بالتلغرام</button><button type="button" data-remind="whatsapp">💬 ذكّر بالواتس</button>
+      ${alert?'<button type="button" id="reason">📝 سبب المشكلة</button>':''}${link?`<a href="${esc(link)}" target="_blank" rel="noopener">فتح الرسالة</a>`:''}
+      <label class="fw-move"><span>نقل لـ</span><select id="moveTo"><option value="">اختار موظف</option>${employees.filter(e=>e.id!==t.employee_id).map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('')}</select></label>
+      <a href="/task/${t.id}" class="fw-full">الصفحة الكاملة</a></div>
+    ${t.notes?`<div class="fw-box"><h3>التفاصيل</h3><p class="fw-notes">${esc(t.notes)}</p></div>`:''}
+    <div class="fw-box"><h3>التعليقات</h3><ul class="fw-cm">${comments||'<li class="soft">ما في تعليقات.</li>'}</ul>
+      <form id="cmt" class="fw-cmt"><input id="cmtText" placeholder="اكتب تعليق واكبس Enter" aria-label="تعليق"><button>إرسال</button></form></div>
+    <div class="fw-box"><h3>شو صار عليها</h3><ul class="fw-tl">${timeline||'<li class="soft">ما في شي بعد.</li>'}</ul></div>`;
+  document.querySelectorAll('[data-st]').forEach(b=>b.onclick=()=>run(b,alert?post(`/api/alerts/${t.id}/status`,{action:b.dataset.st}):post(`/api/tasks/${t.id}/status`,{status:b.dataset.st,completion:{}},'PATCH'),'✓ انحفظت الحالة'));
+  document.querySelectorAll('[data-remind]').forEach(b=>b.onclick=()=>{
+    if(b.dataset.remind==='whatsapp'){const w=window.open('','_blank');post(`/api/tasks/${t.id}/remind`,{channel:'whatsapp'}).then(x=>{if(w)w.location=x.url;else location.href=x.url;load()}).catch(e=>{if(w)w.close();toast(e.message,true)});return}
+    run(b,post(`/api/tasks/${t.id}/remind`,{channel:'telegram'}).then(x=>x.already?Promise.reject(new Error('انبعت تذكير من أقل من دقيقة')):x),'✓ انبعت التذكير')});
+  $('moveTo').onchange=e=>{if(e.target.value)run(e.target,post(`/api/tasks/${t.id}`,{employee_id:+e.target.value},'PATCH'),'✓ انتقلت المهمة')};
+  $('cmt').onsubmit=e=>{e.preventDefault();const v=$('cmtText').value.trim();if(v)run($('cmtText'),post(`/api/tasks/${t.id}/comments`,{body:v}),'✓ انضاف التعليق')};
+  if($('reason'))$('reason').onclick=()=>{const v=prompt('سبب المشكلة:',(String(t.notes||'').match(/سبب المشكلة: (.*)/)||[])[1]||'');if(v!==null)run($('reason'),post(`/api/alerts/${t.id}/reason`,{reason:v}),'✓ انحفظ السبب')};
+}
+async function run(el,p,ok){el.disabled=true;try{await p;toast(ok);await load(true)}catch(e){toast(e.message,true)}finally{el.disabled=false}}
+async function load(force){
+  try{const r=await fetch('/api/tasks',{cache:'no-store'});if(r.status===401){location.href='/login';return}
+    const txt=await r.text();if(!force&&txt===lastSig)return;lastSig=txt;tasks=JSON.parse(txt);draw()}catch(e){toast('ما قدرنا نحمّل المهام',true)}
+}
+// quick add
+let parsed=null,pt;
+$('newTask').oninput=()=>{const v=$('newTask').value.trim();$('addBtn').disabled=!v;clearTimeout(pt);if(!v){$('pv').textContent='';return}
+  pt=setTimeout(async()=>{try{parsed=await api('/api/v2/parse-task?text='+encodeURIComponent(v));parsed._for=v;$('pv').textContent=parsed.employee?'إلى '+parsed.employee:'بلا موظف'}catch{}},250)};
+$('add').onsubmit=async e=>{e.preventDefault();const v=$('newTask').value.trim();if(!v)return;$('addBtn').disabled=true;
+  try{if(!parsed||parsed._for!==v)parsed=await api('/api/v2/parse-task?text='+encodeURIComponent(v));
+    const x=await post('/api/tasks',{employee_id:parsed.employee_id,title:parsed.title||v,priority:parsed.priority||'عادي',reminder:{type:'بدون'}});
+    $('newTask').value='';$('pv').textContent='';sel=x.id;filter='open';toast('✓ انضافت المهمة');load(true)}catch(err){toast(err.message,true);$('addBtn').disabled=false}};
+// search and keys
+let qt;$('q').oninput=()=>{clearTimeout(qt);qt=setTimeout(draw,150)};
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){e.preventDefault();$('q').focus();return}
+  if((e.key==='ArrowDown'||e.key==='ArrowUp')&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){const rows=visible(),i=rows.findIndex(t=>t.id===sel);
+    const n=rows[Math.min(rows.length-1,Math.max(0,i+(e.key==='ArrowDown'?1:-1)))];if(n){e.preventDefault();sel=n.id;draw();document.querySelector('.fw-row.on')?.scrollIntoView({block:'nearest'})}}});
+fetch('/api/employees').then(r=>r.ok?r.json():[]).then(x=>{employees=(Array.isArray(x)?x:x.employees||[]).filter(e=>e.is_active!==0).map(e=>({id:e.id,name:e.name}))}).catch(()=>{}).finally(()=>load(true));
+setInterval(()=>{if(!document.hidden&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))load()},30000);
+})();
+</script>
+{% endblock %}
