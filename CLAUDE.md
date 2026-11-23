@@ -388,3 +388,12 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   /archive 56, /recurring 50. Never opened: /telegram-health, /telegram-dashboard, /page-visibility, /my-work
   (/settings not logged before 07574ec). Low (<=10): workload, operations-reports, audit, notification-center,
   automation-center, integrations, handover, job-profiles, iphone-setup, system-health, sync, backup, permissions.
+- 2026-11-23: owner: "works from outside via the domain" -> tunnel most likely points to 8797 (main.gateway_of treats
+  Cloudflare headers as external, so external rules still apply). 8798 is then unused; confirm in the next report and
+  consider removing it. Owner approved: cleanup + calmer task page + a RADICAL new dashboard keeping every option.
+- Package `home_v4` (commit f77dc69, BASE 124a711, 12 files + 3 deleted templates) given — NOT confirmed:
+  feba1e0 (removed /telegram-health, /telegram-dashboard, /page-visibility + their page-only APIs and the page-hiding
+  feature; «عبء العمل» is a tab of «التقارير»; /task/{id} and /my-work refresh every 30 s and redraw only on change),
+  07574ec (status report page usage), f77dc69 (new home: `#bd` block in bim-ds.css, old `#dx` deleted; written
+  briefing instead of tiles, one queue with 3 collapsible sections, team/mix/chart/activity on the side). Screens:
+  scratchpad v4_desk.png / v4_phone.png (demo data). Shell 3D icons untouched (owner chose A on 11-10).
