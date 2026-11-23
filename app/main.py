@@ -227,6 +227,8 @@ def _attachment_dir(tid:int):
     return p
 
 def _telegram_task_keyboard(task_id:int, status:str='جديدة'):
+    from . import alerts
+    if alerts.is_alert(task_id): return alerts.keyboard(task_id,status)  # alert cards keep the old bot's buttons
     # Only the next steps: after "بدأت" the start button is gone, after "قيد التنفيذ" only "تم" is left (owner 2026-11-03).
     rows=[]
     if status not in ('تم','ملغاة'):

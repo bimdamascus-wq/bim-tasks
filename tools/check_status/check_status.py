@@ -126,7 +126,7 @@ def main():
 
 
 # Every menu page (shell_nav.GROUPS + the merged tabs), to list the ones nobody opened.
-MENU_PAGES = ['/', '/my-work', '/my-team', '/tasks', '/recurring', '/archive', '/employees', '/users', '/access-control',
+MENU_PAGES = ['/', '/my-work', '/my-team', '/tasks', '/alerts', '/recurring', '/archive', '/employees', '/users', '/access-control',
               '/job-profiles', '/workload', '/handover', '/shift-center', '/team-performance', '/operations-reports',
               '/activity-log', '/audit', '/record-management', '/template-library', '/automation-center',
               '/notification-center', '/telegram-center', '/telegram-groups',

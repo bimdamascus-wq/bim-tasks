@@ -1,0 +1,103 @@
+{% extends "base.html" %}{% block content %}
+{# «التنبيهات» (owner 2026-11-23): everything about the Telegram «تنبيه» alerts on one page, with the old bot's options:
+   قيد المعالجة، بانتظار رد، تم الحل، إعادة فتح، سبب المشكلة; counts, groups, message authors, time to solve. #}
+<main class="al" id="al" aria-labelledby="alTitle">
+  <header class="al-head">
+    <div>
+      <h1 id="alTitle">التنبيهات</h1>
+      <p>كل ما حدا مسموحله يعمل Reply بكلمة «تنبيه» على رسالة بمجموعة تلغرام، بينسجّل هون.</p>
+    </div>
+  </header>
+
+  <nav class="al-states" id="states" aria-label="فلترة حسب الحالة"></nav>
+  <p class="al-facts" id="facts"></p>
+
+  <div class="al-filters">
+    <label><span>المجموعة</span><select id="fGroup"><option value="">كل المجموعات</option></select></label>
+    <label class="grow"><span>بحث</span><input id="fQ" type="search" placeholder="بنص الرسالة، صاحبها، السبب أو يلي سجّلته"></label>
+  </div>
+
+  <div class="al-grid">
+    <section class="al-panel" aria-label="لائحة التنبيهات">
+      <div class="al-table-wrap">
+        <table class="al-table">
+          <thead><tr><th>التنبيه</th><th>المجموعة وصاحب الرسالة</th><th>الرسالة</th><th>الحالة</th><th>سبب المشكلة</th><th>الإجراءات</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <aside class="al-side">
+      <section class="al-panel"><h2>أكتر المجموعات تنبيهات</h2><ol class="al-top" id="topGroups"></ol></section>
+      <section class="al-panel"><h2>أكتر أصحاب رسائل عليها تنبيه</h2><ol class="al-top" id="topAuthors"></ol>
+        <p class="al-note">صاحب الرسالة مو بالضرورة هو المتسبب. المتسبب الحقيقي بيتكتب بـ«سبب المشكلة».</p></section>
+      <section class="al-panel"><h2>مين بيقدر يسجّل تنبيه</h2><p id="who" class="al-note"></p>
+        <a class="al-link" href="/telegram-groups">تغيير الأسماء من إعدادات مجموعة المتابعة</a></section>
+      <section class="al-panel"><h2>لحتى يشتغل بالمجموعات</h2>
+        <ol class="al-steps"><li>ضيف البوت تبعنا عالمجموعة.</li><li>من @BotFather اكتب <code dir="ltr">/setprivacy</code> واختار <b>Disable</b>.</li><li>شيل البوت من المجموعة وضيفه من جديد.</li></ol></section>
+    </aside>
+  </div>
+
+  <dialog id="reasonDlg" class="al-dlg"><form method="dialog">
+    <h2>سبب المشكلة</h2><p id="reasonFor"></p>
+    <textarea id="reasonText" rows="4" placeholder="شو صار، ومين المتسبب إذا انعرف"></textarea>
+    <div class="al-dlg-actions"><button value="cancel" class="btn-light">إلغاء</button><button id="reasonSave" value="save">حفظ السبب</button></div>
+  </form></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</main>
+{% endblock %}{% block scripts %}
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ar=v=>String(v??'').replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+const STATES=['مفتوحة','قيد المعالجة','بانتظار رد','تم الحل','مغلقة'];
+const CLS={'مفتوحة':'open','قيد المعالجة':'work','بانتظار رد':'wait','تم الحل':'done','مغلقة':'closed'};
+const day=v=>{const d=new Date(String(v).replace(' ','T')+'Z');return isNaN(d)?'':new Intl.DateTimeFormat('ar-SY',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}).format(d)};
+function toast(msg,err){const t=$('toast');t.textContent=msg;t.className='toast show'+(err?' err':'');clearTimeout(t._h);t._h=setTimeout(()=>t.className='toast',3000)}
+let state='',data=null,reasonTask=null;
+function actions(r){
+  if(r.state==='مغلقة')return '';
+  const b=(a,l)=>`<button type="button" data-act="${a}" data-id="${r.task_id}">${l}</button>`;
+  const steps=r.state==='تم الحل'?b('reopen','إعادة فتح'):[r.state!=='قيد المعالجة'&&b('work','قيد المعالجة'),r.state!=='بانتظار رد'&&b('wait','بانتظار رد'),b('done','تم الحل')].filter(Boolean).join('');
+  return `<div class="al-acts">${steps}<button type="button" class="ghost" data-reason="${r.task_id}">سبب المشكلة</button>${r.link?`<a href="${esc(r.link)}" target="_blank" rel="noopener">فتح الرسالة</a>`:''}<a href="/task/${r.task_id}">المهمة</a></div>`;
+}
+function render(){
+  const s=data.stats;
+  $('states').innerHTML=`<button type="button" data-s="" class="ghost ${state===''?'on':''}">الكل <b>${ar(s.total)}</b></button>`+STATES.map(k=>`<button type="button" data-s="${k}" class="ghost ${CLS[k]} ${state===k?'on':''}">${k} <b>${ar(s[k]||0)}</b></button>`).join('');
+  document.querySelectorAll('#states button').forEach(b=>b.onclick=()=>{state=b.dataset.s;load()});
+  const bits=[`من ${ar(s.groups)} ${s.groups===1?'مجموعة':'مجموعات'}`,s.avg_hours==null?'لسا ما في تنبيه محلول لنحسب مدة الحل':`متوسط مدة الحل ${ar(s.avg_hours)} ساعة`,`${ar(s.reopened)} انفتحوا من جديد بعد الحل`];
+  $('facts').textContent=bits.join('، ')+'.';
+  const g=$('fGroup'),cur=g.value;g.innerHTML='<option value="">كل المجموعات</option>'+data.all_groups.map(x=>`<option ${x===cur?'selected':''}>${esc(x)}</option>`).join('');
+  $('rows').innerHTML=data.rows.map(r=>`<tr>
+    <td class="nowrap"><b>ت-${ar(r.n)}</b><small>${day(r.created_at)}</small><small>سجّلته: ${esc(r.reporter||'—')}</small></td>
+    <td class="nowrap">${esc(r.group_title||'—')}<small>${esc(r.author_name||'—')}</small></td><td class="msg">${esc(r.message_text||'')}</td>
+    <td><span class="al-badge ${CLS[r.state]||''}">${esc(r.state)}</span>${r.reopened?'<small class="re">انفتح من جديد</small>':''}</td>
+    <td class="msg">${r.reason?esc(r.reason):'<span class="soft">ما انكتب بعد</span>'}</td><td>${actions(r)}</td></tr>`).join('')
+    ||`<tr><td colspan="6" class="al-empty">${data.stats.total?'ما في تنبيهات بهالفلتر.':'لسا ما في تنبيهات. أول ما حدا يكتب «تنبيه» كـReply بمجموعة، بيطلع هون.'}</td></tr>`;
+  const top=(el,list)=>$(el).innerHTML=list.map(([k,n])=>`<li><span>${esc(k)}</span><b>${ar(n)}</b></li>`).join('')||'<li class="soft">ما في بعد</li>';
+  top('topGroups',data.groups);top('topAuthors',data.authors);
+  $('who').textContent=data.reporters.length?data.reporters.join('، '):'المدير والنائب والمسؤولين (ما في أسماء محددة بإعدادات مجموعة المتابعة).';
+  document.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>setStatus(+b.dataset.id,b.dataset.act,b));
+  document.querySelectorAll('[data-reason]').forEach(b=>b.onclick=()=>openReason(+b.dataset.reason));
+}
+async function load(){
+  const p=new URLSearchParams({status:state,group:$('fGroup').value,q:$('fQ').value.trim()});
+  try{const r=await fetch('/api/alerts?'+p,{cache:'no-store'});if(r.status===401){location.href='/login';return}
+    if(!r.ok)throw new Error('ما قدرنا نحمّل التنبيهات');data=await r.json();render()}catch(e){toast(e.message,true)}
+}
+async function setStatus(id,action,btn){
+  btn.disabled=true;
+  try{const r=await fetch(`/api/alerts/${id}/status`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action})});
+    const x=await r.json().catch(()=>({}));if(!r.ok)throw new Error(x.detail||'ما قدرنا نغيّر الحالة');toast('✓ انحفظت الحالة');load()}
+  catch(e){btn.disabled=false;toast(e.message,true)}
+}
+function openReason(id){const r=data.rows.find(x=>x.task_id===id);reasonTask=id;$('reasonFor').textContent='ت-'+ar(r.n)+': '+(r.message_text||'').slice(0,120);$('reasonText').value=r.reason||'';$('reasonDlg').showModal()}
+$('reasonSave').onclick=async e=>{e.preventDefault();
+  try{const r=await fetch(`/api/alerts/${reasonTask}/reason`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reason:$('reasonText').value})});
+    if(!r.ok)throw new Error('ما قدرنا نحفظ السبب');$('reasonDlg').close();toast('✓ انحفظ السبب');load()}catch(err){toast(err.message,true)}};
+$('fGroup').onchange=load;let qt;$('fQ').oninput=()=>{clearTimeout(qt);qt=setTimeout(load,250)};
+load();setInterval(()=>{if(!document.hidden&&!$('reasonDlg').open&&document.activeElement!==$('fQ'))load()},30000);
+})();
+</script>
+{% endblock %}

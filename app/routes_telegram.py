@@ -12,11 +12,12 @@ from .telegram_queue import send_resilient as send
 from .telegram_service import answer_callback, get_me, get_webhook_info, set_webhook
 from .universal import company, task_form
 from .work_settings import permits, profile
+from . import access
 from . import main as _main  # settings that tests or plugins may change at run time are read from main
 from .main import (
     _is_audio, _refresh_telegram_task_messages, _remember_telegram_task_message, _tg_employee,
-    _tg_send_instructions, _tg_send_my_tasks, _tg_send_task_card, _tg_set_status, _tg_task_for_employee, app, audit, ctx, need,
-    perms, templates
+    _tg_send_instructions, _tg_send_my_tasks, _tg_send_task_card, _tg_set_status, _tg_task_for_employee, _touch_task_sync, app, audit,
+    ctx, need, perms, templates
 )
 
 # ---------- Telegram Phase 1 ----------
@@ -188,6 +189,8 @@ async def telegram_webhook(req:Request):
                     c.execute('DELETE FROM telegram_pending_actions WHERE chat_id=?',(str(chat),));send(str(chat),'تم حفظ بيانات الإنجاز. المهمة مكتملة مسبقاً.');return {'ok':True}
                 c.execute('INSERT INTO task_comments(task_id,user_id,username_snapshot,body) VALUES(?,NULL,?,?)',(task['id'],e['name'],text))
                 c.execute("INSERT INTO task_events(task_id,employee_id,event_type,note,source) VALUES(?,?,'note',?,'telegram')",(task['id'],e['id'],text))
+                from .alerts import save_reason
+                save_reason(c,task['id'],text)  # on an alert this is «سبب المشكلة»; no row for other tasks
                 c.execute('DELETE FROM telegram_pending_actions WHERE chat_id=?',(str(chat),)); send(str(chat),'✅ تم حفظ المشكلة / الملاحظة على المهمة.')
                 return {'ok':True}
             if text in ('تعليمات عملي','/instructions'):
@@ -215,6 +218,9 @@ async def telegram_webhook(req:Request):
                 if not _tg_task_for_employee(c,int(mo.group(1)),e['id']):
                     answer_callback(cbid,'هذه المهمة لم تعد مفتوحة لك',True); return {'ok':True}
                 answer_callback(cbid,'جاري فتح المهمة'); _tg_send_task_card(c,int(mo.group(1)),e); return {'ok':True}
+            if data.startswith('alert:'):
+                from . import alerts
+                alerts.callback(c,cb,e,_main); return {'ok':True}
             m=re.match(r'^task:(\d+):(started|progress|done|note)$',data)
             if not m:
                 answer_callback(cbid,'أمر غير معروف'); return {'ok':True}
@@ -337,3 +343,48 @@ def telegram_queue_retry_failed(req:Request):
     audit(c,req,u,'telegram_queue_retry_failed','telegram_outbox',None,after={'count':count})
     c.close(); return {'ok':True,'count':count}
 
+
+
+# ---------- «التنبيهات» page (owner 2026-11-23: everything about the Telegram alerts on one page) ----------
+@app.get('/alerts', response_class=HTMLResponse)
+def alerts_page(req:Request):
+    need(req,'tasks.edit')
+    return templates.TemplateResponse(request=req,name='alerts.html',context=ctx(req,'التنبيهات'))
+
+@app.get('/api/alerts')
+def api_alerts(req:Request, status:str='', group:str='', q:str=''):
+    need(req,'tasks.edit'); c=connect()
+    try:
+        from .alerts import page_data
+        return page_data(c,status,group,q)
+    finally:c.close()
+
+@app.post('/api/alerts/{tid}/status')
+async def api_alert_status(tid:int, req:Request):
+    u=need(req,'tasks.edit'); d=await req.json(); c=connect()
+    try:
+        from . import alerts
+        t=c.execute("SELECT * FROM tasks WHERE id=? AND source='telegram_alert'",(tid,)).fetchone()
+        if not t:raise HTTPException(404,'التنبيه غير موجود')
+        if not access.can_manage_task(c,u,t):raise HTTPException(403,'هذا التنبيه خارج نطاق فريقك')
+        new=alerts.set_status(c,tid,str(d.get('action') or ''),u['employee_id'],'dashboard')
+        if new:
+            audit(c,req,u,'alert_status','task',tid,after={'status':new})
+            _refresh_telegram_task_messages(c,tid); _touch_task_sync(c,tid,'server','status')
+        return {'ok':True,'status':new}
+    finally:c.close()
+
+@app.post('/api/alerts/{tid}/reason')
+async def api_alert_reason(tid:int, req:Request):
+    u=need(req,'tasks.edit'); d=await req.json(); c=connect()
+    try:
+        t=c.execute("SELECT * FROM tasks WHERE id=? AND source='telegram_alert'",(tid,)).fetchone()
+        if not t:raise HTTPException(404,'التنبيه غير موجود')
+        if not access.can_manage_task(c,u,t):raise HTTPException(403,'هذا التنبيه خارج نطاق فريقك')
+        reason=str(d.get('reason') or '').strip()[:2000]
+        from .alerts import save_reason
+        save_reason(c,tid,reason)
+        c.execute('INSERT INTO task_comments(task_id,user_id,username_snapshot,body) VALUES(?,?,?,?)',(tid,u['user_id'],u['full_name'] or u['username'],'سبب المشكلة: '+reason))
+        audit(c,req,u,'alert_reason','task',tid,after={'reason':reason})
+        return {'ok':True}
+    finally:c.close()

@@ -35,3 +35,34 @@ def test_alert_creates_one_task_and_answers(env):
     assert c.execute("SELECT COUNT(*) FROM tasks WHERE source='telegram_alert'").fetchone()[0] == 1
     c.close()
     assert any('مسجّل من قبل' in tx for _, tx in sent)
+
+
+def test_alert_page_and_old_options(env):
+    """/alerts page data + the old bot's options: قيد المعالجة، بانتظار رد، تم الحل، إعادة فتح، سبب المشكلة."""
+    import app.telegram_queue as tq, app.telegram_service as ts
+    tq.low_level_send = lambda chat, text, **kw: {'ok': True, 'message_id': 1, 'result': {'message_id': 1}}
+    answers = []
+    ts.answer_callback = lambda cbid, text='', show_alert=False: answers.append(text) or {'ok': True}
+    m = env['m']; boss = client(env, 'boss'); hook = client(env)
+    c = m.connect(); c.execute("UPDATE employees SET telegram_enabled=1"); c.close()
+    hook.post('/api/telegram/webhook', headers=HOOK, json=_upd(880101, 333, 70))
+    d = boss.get('/api/alerts').json()
+    row = next(r for r in d['rows'] if 'الرف فاضي' in (r['message_text'] or ''))
+    tid = row['task_id']
+    assert row['state'] == 'مفتوحة' and d['stats']['total'] >= 1 and row['group_title'] == 'مجموعة الصالة'
+    # private card buttons are the alert ones
+    from app.main import _telegram_task_keyboard
+    assert 'alert:%d:wait' % tid in str(_telegram_task_keyboard(tid, 'جديدة'))
+    # Telegram: بانتظار رد then تم الحل by the reporter (samer, chat 333)
+    for i, act in enumerate(('wait', 'done')):
+        hook.post('/api/telegram/webhook', headers=HOOK, json={'update_id': 880110 + i, 'callback_query': {
+            'id': f'cb{i}', 'from': {'id': 333}, 'data': f'alert:{tid}:{act}', 'message': {'message_id': 5}}})
+    assert boss.get('/api/alerts?status=تم الحل').json()['rows'][0]['task_id'] == tid
+    # web: reopen + reason
+    assert boss.post(f'/api/alerts/{tid}/status', json={'action': 'reopen'}).json()['status'] == 'جديدة'
+    assert boss.post(f'/api/alerts/{tid}/reason', json={'reason': 'المورد ما بعت'}).status_code == 200
+    r = next(x for x in boss.get('/api/alerts').json()['rows'] if x['task_id'] == tid)
+    assert r['state'] == 'مفتوحة' and r['reopened'] == 1 and r['reason'] == 'المورد ما بعت'
+    # employees cannot open the page
+    assert client(env, 'member').get('/api/alerts').status_code == 403
+    assert boss.get('/alerts').status_code == 200

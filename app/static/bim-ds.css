@@ -805,7 +805,7 @@ body.ds:has(#bd),body.ds:has(#bd) .ds-body,body.ds:has(#bd) .ds-top,body.ds:has(
 #bd .bd-sec-h:hover{background:#F6F8F7!important}
 #bd .bd-tm .tm{background:transparent!important;border:0!important;box-shadow:none!important;height:auto!important;min-height:0!important;padding:0!important;color:var(--bd-ink)!important}
 #bd .bd-lead a.n{color:var(--bd-act)}
-#bd .bd-lead .n.late{color:var(--bd-late)}#bd .bd-lead .n.due{color:var(--bd-due)}#bd .bd-lead .n.done{color:var(--bd-done)}
+#bd .bd-lead .n.late{color:var(--bd-late)!important}#bd .bd-lead .n.due{color:var(--bd-due)!important}#bd .bd-lead .n.done{color:var(--bd-done)!important}
 #bd .bd-lead span.n{cursor:default;border-bottom:0}
 #bd .bd-lead .n:hover{border-bottom-width:3px}
 #bd .bd-sub{margin:6px 0 0;color:var(--bd-soft);font-size:15.5px;line-height:1.8}
@@ -911,3 +911,149 @@ body.ds:has(#bd),body.ds:has(#bd) .ds-body,body.ds:has(#bd) .ds-top,body.ds:has(
   #bd .bd-row .who{grid-column:2}#bd .bd-row .due{grid-column:3;grid-row:1;min-width:0}
   #bd .bd-team-cols,#bd .bd-tm{grid-template-columns:minmax(100px,1fr) 40px 40px 48px 40px;padding:0 14px}#bd .bd-tm .bar,#bd .bd-team-cols span:nth-child(2){display:none}}
 @media (prefers-reduced-motion:reduce){#bd .bd-sec-h::before{transition:none}}
+
+/* =====================================================================================================
+   IDENTITY v5 — "clear" (owner 2026-11-23: every page new, from the login page on, easy to read; nothing like before).
+   One last layer over everything above. `html body.ds` outranks the older `body.ds ... !important` rules.
+   Cool mist page, white surfaces with one hairline border, IBM Plex Sans Arabic (BIMSans) everywhere, dark teal for
+   actions, line icons in a white side menu with labels beside them. Colour only where it means something.
+   ===================================================================================================== */
+html body.ds{--v-bg:#EDF1EF;--v-paper:#FFFFFF;--v-ink:#1E2B2F;--v-ink2:#3E4B4F;--v-soft:#5B686C;--v-line:#DCE3E0;--v-line2:#E9EEEC;
+  --v-act:#1F5560;--v-act-bg:#E2EEEC;--v-late:#B4322A;--v-late-bg:#FBEDEB;--v-due:#9A5F0E;--v-due-bg:#FBF2E3;--v-done:#2E7A57;--v-done-bg:#E8F3ED;
+  background:var(--v-bg)!important;font-family:BIMSans,Tahoma,sans-serif!important;color:var(--v-ink);font-size:16px}
+html body.ds *:not(svg):not(path){font-family:BIMSans,Tahoma,sans-serif!important}
+html body.ds :is(p,li,td,label,summary,small,span,div){color:inherit}
+html body.ds :focus-visible{outline:2px solid var(--v-act)!important;outline-offset:2px}
+/* side menu: white, line icons, label beside the icon */
+html body.ds .ds-side{width:212px!important;background:var(--v-paper)!important;border:0!important;border-inline-end:1px solid var(--v-line)!important;box-shadow:none!important}
+html body.ds .ds-brand{justify-content:flex-start!important;padding:18px 18px 14px!important;gap:10px}
+html body.ds .ds-brand-text{display:flex!important;flex-direction:column}
+html body.ds .ds-brand-text b{font-size:16px;color:var(--v-ink)}html body.ds .ds-brand-text small{font-size:12.5px;color:var(--v-soft)}
+html body.ds .ds-brand-logo img{max-width:40px!important;max-height:40px!important}
+html body.ds .ds-nav{padding:4px 10px!important}
+html body.ds .ds-nav-group{border:0!important;margin:0!important;padding:0!important}
+html body.ds .ds-nav-label{display:none!important}
+html body.ds .ds-nav-link{flex-direction:row!important;justify-content:flex-start!important;text-align:start!important;gap:12px!important;min-height:44px!important;
+  padding:0 12px!important;margin:2px 0!important;border-radius:10px!important;font-size:15.5px!important;font-weight:500!important;color:var(--v-ink2)!important;background:transparent!important}
+html body.ds .ds-nav-link:hover{background:#F2F5F4!important;color:var(--v-ink)!important}
+html body.ds .ds-nav-link.is-active{background:var(--v-act-bg)!important;color:var(--v-act)!important;font-weight:700!important}
+html body.ds .ds-line{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+html body.ds .ds-user{flex-direction:row!important;align-items:center;gap:8px;padding:12px 14px!important;border-top:1px solid var(--v-line)!important}
+html body.ds .ds-user-text{display:flex!important;flex-direction:column;min-width:0;flex:1}
+html body.ds .ds-user-text b{font-size:14px;color:var(--v-ink)}html body.ds .ds-user-text small{font-size:12.5px;color:var(--v-soft)}
+html body.ds .ds-avatar{background:var(--v-act-bg)!important;color:var(--v-act)!important}
+html body.ds .ds-user-link{color:var(--v-soft)!important;background:transparent!important}
+/* top bar */
+html body.ds .ds-top{background:var(--v-paper)!important;border-bottom:1px solid var(--v-line)!important;box-shadow:none!important;min-height:60px}
+html body.ds .ds-top-title{gap:10px;color:var(--v-ink)!important;font-size:18px!important;font-weight:700!important}
+html body.ds .ds-top-title .ds-line{color:var(--v-act)}
+html body.ds .ds-search{background:var(--v-bg)!important;border:1px solid transparent!important;border-radius:10px!important;color:var(--v-soft)}
+html body.ds .ds-search:focus-within{background:var(--v-paper)!important;border-color:var(--v-act)!important}
+html body.ds .ds-bell-btn{background:transparent!important;border:0!important;color:var(--v-ink2)!important;box-shadow:none!important}
+/* headings and page title */
+html body.ds h1{font-size:24px!important;font-weight:700!important;color:var(--v-ink)!important;letter-spacing:0!important}
+html body.ds h2{font-size:18px!important;font-weight:700!important;color:var(--v-ink)!important}
+html body.ds h3{font-size:16px!important;font-weight:700!important;color:var(--v-ink)!important}
+html body.ds .page-title{background:transparent!important;border:0!important;box-shadow:none!important;padding:4px 0 8px!important}
+html body.ds .page-title p{color:var(--v-soft)!important}
+/* surfaces: one look for every card/panel */
+html body.ds :is(.panel,details.bim-section,.detail-card,.ds-card,.employee-card,.team-card,.modal-card,.scroll-box,.ds-quick){
+  background:var(--v-paper)!important;border:1px solid var(--v-line)!important;border-radius:14px!important;box-shadow:none!important}
+html body.ds :is(.ds-card-head,.panel>.section-head,.employee-card-head,.bim-section-head,.modal-head){background:transparent!important;
+  border:0!important;border-bottom:1px solid var(--v-line2)!important;color:var(--v-ink)!important}
+html body.ds :is(.ds-card-head,.panel>.section-head,.employee-card-head) :is(h2,h3,small,p,b,button){color:var(--v-ink)!important;background:transparent!important}
+html body.ds details.bim-section>summary{color:var(--v-ink)!important;font-weight:700}
+html body.ds .team-card h3{background:transparent!important;border-bottom:1px solid var(--v-line2)!important}
+html body.ds .team-card .row{background:#F7F9F8!important;border-top:1px solid var(--v-line2)!important}
+html body.ds :is(.ds-count,.employee-count){background:var(--v-line2)!important;color:var(--v-ink2)!important}
+/* number tiles: white with a thin coloured top line instead of solid colour blocks */
+html body.ds .kpi{background:var(--v-paper)!important;border:1px solid var(--v-line)!important;border-top:3px solid var(--b,var(--v-act))!important;border-radius:14px!important;box-shadow:none!important;color:var(--v-ink)!important;padding:16px 18px!important}
+html body.ds .kpi :is(span,small,label){color:var(--v-soft)!important;font-size:14px!important}
+html body.ds .kpi :is(b,strong,.num){color:var(--v-ink)!important;font-size:28px!important;font-weight:700!important}
+/* tables: light header, no zebra, readable rows */
+html body.ds th{background:#F4F7F6!important;color:var(--v-ink2)!important;font-weight:700!important;font-size:14px!important;border-color:var(--v-line)!important}
+html body.ds td{border-color:var(--v-line2)!important;font-size:15px}
+html body.ds tbody tr:nth-child(even) td{background:transparent!important}
+html body.ds tbody tr:hover td{background:#F6F8F7!important}
+/* forms */
+html body.ds input:not([type=checkbox]):not([type=radio]),html body.ds select,html body.ds textarea{border-radius:10px!important;border:1px solid var(--v-line)!important;
+  background:var(--v-paper)!important;color:var(--v-ink)!important;font-size:15px!important}
+html body.ds input:focus,html body.ds select:focus,html body.ds textarea:focus{border-color:var(--v-act)!important;box-shadow:0 0 0 3px rgba(31,85,96,.12)!important}
+html body.ds label{color:var(--v-ink2)}
+/* buttons: dark teal primary, white secondary, red only for deleting */
+html body.ds button:not(.btn-light):not(.btn-danger):not(.ds-menu):not(.ck):not(.tm):not(.mem):not(.bim-filter-toggle):not(.xbtn):not(.ds-bell-btn):not(.ghost),
+html body.ds .btn:not(.btn-light){background:var(--v-act)!important;border:1px solid var(--v-act)!important;color:#fff!important;border-radius:10px!important;box-shadow:none!important;font-weight:600!important}
+html body.ds:not(#_) :is(.btn-light,button.btn-light,a.btn-light,button.ghost){  /* :not(#_) outweighs the old long button:not() chains */
+background:var(--v-paper)!important;border:1px solid var(--v-line)!important;color:var(--v-ink)!important;border-radius:10px!important;box-shadow:none!important}
+html body.ds:not(#_) :is(.btn-light,button.ghost):hover{border-color:var(--v-soft)!important}
+html body.ds:not(#_) .btn-danger{background:var(--v-paper)!important;border:1px solid #E7B9B4!important;color:var(--v-late)!important;border-radius:10px!important}
+html body.ds .page-title .toolbar>button:not(.btn-light):not(.btn-danger):last-child,html body.ds .ds-quick .go{background:var(--v-act)!important;border-color:var(--v-act)!important}
+html body.ds .ds-quick{border-radius:12px!important}
+html body.ds .seg,html body.ds .ds-tabs{background:#E1E8E5!important;border-radius:12px!important;padding:3px!important;border:0!important}
+html body.ds .seg button,html body.ds #seg button{background:transparent!important;color:var(--v-ink2)!important;border:0!important;border-radius:9px!important}
+html body.ds .seg button.on,html body.ds #seg button.on{background:var(--v-paper)!important;color:var(--v-ink)!important;box-shadow:0 1px 2px rgba(30,43,47,.12)!important}
+html body.ds .team-filter button:not(.on){background:var(--v-paper)!important;color:var(--v-ink)!important;border:1px solid var(--v-line)!important}
+html body.ds .team-filter button.on{background:var(--v-act)!important;border-color:var(--v-act)!important;color:#fff!important}
+html body.ds .ds-tabs a,html body.ds .ds-tab{border-radius:9px!important;color:var(--v-ink2)!important;background:transparent!important;border:0!important}
+html body.ds .ds-tabs a.is-active,html body.ds .ds-tab.is-active,html body.ds .ds-tabs [aria-current]{background:var(--v-paper)!important;color:var(--v-ink)!important;font-weight:700!important;box-shadow:0 1px 2px rgba(30,43,47,.12)!important}
+html body.ds .notice{background:#F4F7F6!important;border:1px solid var(--v-line)!important;color:var(--v-ink2)!important;border-radius:12px!important}
+html body.ds a{color:var(--v-act)}
+/* settings hub tiles with line icons */
+html body.ds .hub-tile{border-radius:12px!important;border-color:var(--v-line)!important}
+html body.ds .hub-tile .ds-line{width:24px;height:24px;color:var(--v-act)}
+html body.ds .ep-avatar{background:var(--v-act-bg)!important;color:var(--v-act)!important;display:grid;place-items:center}
+html body.ds .ep-avatar .ds-line{width:34px;height:34px}
+/* login */
+html body.ds.ds-login{background:var(--v-bg)!important}
+html body.ds .ds-login-card{border-radius:18px!important;box-shadow:none!important;border:1px solid var(--v-line)!important;background:var(--v-paper)!important;overflow:hidden}
+html body.ds .ds-login-side{background:var(--v-act-bg)!important;color:var(--v-ink)!important}
+html body.ds .ds-login-side :is(h1,h2,p,b,small,span){color:var(--v-ink)!important}
+html body.ds .ds-login-form button{background:var(--v-act)!important;border-color:var(--v-act)!important;border-radius:10px!important;min-height:46px;font-size:16px!important}
+html body.ds .ds-login-gate{color:var(--v-soft)!important}
+@media (max-width:1000px){html body.ds .ds-side{width:min(290px,86vw)!important}}
+
+/* ===== «التنبيهات» page ===== */
+.al{max-width:1600px;margin:0 auto;padding:24px 28px 48px;display:flex;flex-direction:column;gap:16px}
+.al-head p{margin:4px 0 0;color:var(--v-soft)}
+.al-states{display:flex;flex-wrap:wrap;gap:8px}
+html body.ds:not(#_) .al-states button.ghost{background:var(--v-paper)!important;border:1px solid var(--v-line)!important;color:var(--v-ink)!important;border-radius:999px!important;
+  height:40px;min-height:40px;padding:0 16px!important;font-weight:600!important;display:inline-flex;align-items:center;gap:8px}
+html body.ds .al-states button b{font-weight:700}
+html body.ds:not(#_) .al-states button.ghost.on{background:var(--v-ink)!important;border-color:var(--v-ink)!important;color:#fff!important}
+html body.ds:not(#_) .al-states button.open:not(.on) b{color:var(--v-late)}html body.ds:not(#_) .al-states button.work:not(.on) b{color:var(--v-act)}
+html body.ds:not(#_) .al-states button.wait:not(.on) b{color:var(--v-due)}html body.ds:not(#_) .al-states button.done:not(.on) b{color:var(--v-done)}
+.al-facts{margin:0;color:var(--v-soft)}
+.al-filters{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.al-filters label{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--v-soft)}
+.al-filters .grow{flex:1;min-width:240px}
+.al-filters select{min-width:220px;height:42px}.al-filters input{height:42px}
+.al-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:start}
+.al-panel{background:var(--v-paper);border:1px solid var(--v-line);border-radius:14px;padding:16px 18px}
+.al-panel:has(.al-table-wrap){padding:0;overflow:hidden}
+.al-side{display:flex;flex-direction:column;gap:16px}
+.al-table-wrap{overflow:auto}
+.al-table{border-collapse:collapse;width:auto;min-width:100%}
+.al-table th,.al-table td{padding:10px 12px;text-align:start;vertical-align:top;border-bottom:1px solid var(--v-line2)}
+.al-table .nowrap,.al-table .num{white-space:nowrap}
+.al-table .msg{min-width:180px;max-width:280px;white-space:pre-wrap;line-height:1.6}
+.al-table td small{display:block;color:var(--v-soft);font-size:13px;margin-top:2px}
+.al-badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:13.5px;font-weight:700;white-space:nowrap;background:var(--v-line2);color:var(--v-ink2)}
+.al-badge.open{background:var(--v-late-bg);color:var(--v-late)}.al-badge.work{background:var(--v-act-bg);color:var(--v-act)}
+.al-badge.wait{background:var(--v-due-bg);color:var(--v-due)}.al-badge.done{background:var(--v-done-bg);color:var(--v-done)}
+.al-table .re{display:block;color:var(--v-due);font-size:12.5px;margin-top:4px}
+.al-acts{display:flex;flex-wrap:wrap;gap:6px;width:250px}
+html body.ds .al-acts button{height:32px!important;min-height:32px!important;padding:0 10px!important;font-size:13.5px!important}
+.al-acts a{font-size:13.5px;align-self:center}
+.al-empty{padding:28px!important;text-align:center;color:var(--v-soft)}
+.al-top{margin:8px 0 0;padding:0;list-style:none}
+.al-top li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-top:1px solid var(--v-line2)}
+.al-top li:first-child{border-top:0}
+.al-note{color:var(--v-soft);font-size:14px;margin:8px 0 0}
+.al-link{display:inline-block;margin-top:8px;font-size:14px}
+.al-steps{margin:8px 0 0;padding-inline-start:20px;line-height:1.9}
+.al .soft{color:var(--v-soft)}
+.al-dlg{border:1px solid var(--v-line);border-radius:14px;padding:20px;width:min(520px,92vw)}
+.al-dlg textarea{width:100%;box-sizing:border-box;margin:8px 0}
+.al-dlg-actions{display:flex;gap:8px;justify-content:flex-end}
+@media (max-width:1100px){.al-grid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:700px){.al{padding:14px 12px 32px}}

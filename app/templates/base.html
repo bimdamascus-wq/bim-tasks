@@ -31,7 +31,7 @@
         <div class="ds-nav-label">{{ group }}</div>
         {% for l in links %}
         <a href="{{ l.path }}" class="ds-nav-link{% if l.active %} is-active{% endif %}"{% if l.active %} aria-current="page"{% endif %}>
-          <img class="ds-i3d" src="/static/icons3d/{{ l.img }}.png" alt="" aria-hidden="true"><span>{{ l.label }}</span>
+          <svg class="ds-line" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ l.icon }}"></path></svg><span>{{ l.label }}</span>
         </a>
         {% endfor %}
       </div>
@@ -40,20 +40,20 @@
     <div class="ds-user">
       <span class="ds-avatar" aria-hidden="true">{{ (user['full_name'] or user['username'] or 'ب')[:1] }}</span>
       <span class="ds-user-text"><b>{{ user['full_name'] or user['username'] }}</b><small>{{ {'admin':'المدير','deputy':'نائب المدير','supervisor':'المسؤول','employee':'الموظف'}.get(user['role_code'], '') }}</small></span>
-      <a class="ds-user-link{% if request.url.path == '/account' %} is-active{% endif %}" href="/account" title="حسابي" aria-label="حسابي"><img class="ds-i3d ds-i3d-sm" src="/static/icons3d/gear.png" alt=""></a>
-      <a class="ds-user-link" href="/logout" title="تسجيل الخروج" aria-label="تسجيل الخروج"><img class="ds-i3d ds-i3d-sm" src="/static/icons3d/door.png" alt=""></a>
+      <a class="ds-user-link{% if request.url.path == '/account' %} is-active{% endif %}" href="/account" title="حسابي" aria-label="حسابي"><svg class="ds-line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"></path></svg></a>
+      <a class="ds-user-link" href="/logout" title="تسجيل الخروج" aria-label="تسجيل الخروج"><svg class="ds-line" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"></path></svg></a>
     </div>
   </aside>
   <div class="ds-shade" id="dsShade" hidden></div>
   <div class="ds-body">
     <header class="ds-top">
       <button type="button" class="ds-menu" id="dsMenu" aria-controls="dsSide" aria-expanded="false" aria-label="فتح القائمة"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"></path></svg></button>
-      {% set pg = ds_page(request.url.path) %}<div class="ds-top-title"><img class="ds-i3d ds-i3d-lg" src="/static/icons3d/{{ pg.img }}.png" alt="" aria-hidden="true"><span>{{ ds_titles.get(request.url.path, title) }}</span></div>
-      <label class="ds-search"><img class="ds-i3d ds-i3d-sm" src="/static/icons3d/search.png" alt="" aria-hidden="true"><input id="dsSearch" type="search" placeholder="ابحث عن مهمة أو موظف" aria-label="بحث في المهام"></label>
+      {% set pg = ds_page(request.url.path) %}<div class="ds-top-title"><svg class="ds-line lg" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ pg.icon }}"></path></svg><span>{{ ds_titles.get(request.url.path, title) }}</span></div>
+      <label class="ds-search"><svg class="ds-line" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.3-4.3"></path></svg><input id="dsSearch" type="search" placeholder="ابحث عن مهمة أو موظف" aria-label="بحث في المهام"></label>
       <span class="ds-today" id="dsToday"></span>
       {% if user['role_code'] in ('admin','deputy','supervisor') %}
       <div class="ds-bell" id="dsBell">
-        <button type="button" class="ds-bell-btn" id="dsBellBtn" aria-haspopup="true" aria-expanded="false" aria-controls="dsBellPanel" aria-label="التنبيهات"><img class="ds-i3d ds-i3d-sm" src="/static/icons3d/bell.png" alt="" aria-hidden="true"><span class="ds-bell-count" id="dsBellCount" hidden>0</span></button>
+        <button type="button" class="ds-bell-btn" id="dsBellBtn" aria-haspopup="true" aria-expanded="false" aria-controls="dsBellPanel" aria-label="التنبيهات"><svg class="ds-line" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"></path></svg><span class="ds-bell-count" id="dsBellCount" hidden>0</span></button>
         <div class="ds-bell-panel" id="dsBellPanel" role="dialog" aria-label="التنبيهات" hidden>
           <div class="ds-bell-head"><b>التنبيهات</b><button type="button" class="btn-light btn-sm" id="dsBellAll">تعليم الكل كمقروء</button></div>
           <div class="ds-bell-list" id="dsBellList"><p class="ds-bell-empty">لا توجد تنبيهات</p></div>
