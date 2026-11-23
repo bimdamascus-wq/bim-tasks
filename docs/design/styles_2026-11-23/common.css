@@ -1,0 +1,7 @@
+@font-face{font-family:P;font-weight:400;src:url(file:///home/user/bim-tasks/app/static/fonts/plex-arabic-400.woff2)}
+@font-face{font-family:P;font-weight:500;src:url(file:///home/user/bim-tasks/app/static/fonts/plex-arabic-500.woff2)}
+@font-face{font-family:P;font-weight:600;src:url(file:///home/user/bim-tasks/app/static/fonts/plex-arabic-600.woff2)}
+@font-face{font-family:P;font-weight:700;src:url(file:///home/user/bim-tasks/app/static/fonts/plex-arabic-700.woff2)}
+@font-face{font-family:C;font-weight:200 900;src:url(file:///home/user/bim-tasks/app/static/fonts/BIMArabic.woff2)}
+*{box-sizing:border-box}body{margin:0;font-family:P,sans-serif;direction:rtl}
+.logo{width:34px;height:34px}

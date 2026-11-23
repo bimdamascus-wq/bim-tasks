@@ -1,0 +1,38 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><link rel="stylesheet" href="common.css"><style>
+body{background:#FFFFFF;color:#1F2A24}
+.top{display:flex;align-items:center;gap:16px;padding:18px 36px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px}
+.pills{display:flex;gap:8px;margin-inline-start:24px}.pills a{padding:9px 18px;border-radius:999px;background:#F1F5F2;color:#3B4A42;font-weight:500}.pills a.on{background:#1F7A4D;color:#fff}
+.hello{padding:12px 36px 4px}.hello h1{margin:0;font-size:32px;font-weight:700}.hello p{margin:6px 0 0;font-size:18px;color:#56645C}
+.hello b.r{color:#C43B2E}.hello b.a{color:#B7791F}.hello b.g{color:#1F7A4D}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:24px 36px}
+.pc{border:1px solid #E3EAE5;border-radius:20px;padding:18px;background:#FBFDFB}
+.pc .h{display:flex;align-items:center;gap:12px}.av{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-size:22px;font-weight:700;background:#E2F0E8;color:#1F7A4D}
+.pc h3{margin:0;font-size:19px}.pc small{color:#6B7A71}
+.nums{display:flex;gap:8px;margin:14px 0}.nums span{flex:1;text-align:center;border-radius:12px;padding:8px 0;background:#fff;border:1px solid #E3EAE5;font-size:13px;color:#6B7A71}
+.nums b{display:block;font-size:22px;color:#1F2A24}.nums .r b{color:#C43B2E}.nums .g b{color:#1F7A4D}
+.task{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px dashed #E3EAE5;font-size:15px}
+.ck{width:22px;height:22px;border-radius:50%;border:2px solid #A8B8AE;flex:none}.task .late{margin-inline-start:auto;font-size:12.5px;color:#C43B2E;white-space:nowrap}
+.pc.alert{background:#FFF7F5;border-color:#F3D3CD}.pc.alert .av{background:#FBE3DF;color:#C43B2E}
+.fab{position:fixed;left:36px;bottom:32px;background:#1F7A4D;color:#fff;border-radius:999px;padding:16px 26px;font-size:17px;font-weight:600;box-shadow:0 10px 24px -8px rgba(31,122,77,.6)}
+</style></head><body>
+<div class="top"><div class="brand"><img class="logo" src="logo.png">بيم دمشق</div><nav class="pills"><a class="on">الفريق اليوم</a><a>كل المهام</a><a>التنبيهات</a><a>المتكررة</a><a>التقارير</a><a>الإعدادات</a></nav></div>
+<div class="hello"><h1>صباح الخير يا مدير</h1><p>الفريق عنده <b>٣٨</b> مهمة، منها <b class="r">١٦ متأخرة</b>، و<b class="a">٤</b> لازم يخلصوا اليوم. انْجز لهلأ <b class="g">٧</b>.</p></div>
+<div class="grid">
+<div class="pc"><div class="h"><span class="av">أ</span><div><h3>أحمد سليمان</h3><small>الصالة</small></div></div><div class="nums"><span>مفتوحة<b>٧</b></span><span class="r">متأخرة<b>٤</b></span><span class="g">بالأسبوع<b>٥</b></span></div>
+<div class="task"><span class="ck"></span>طباعة لافتات الأسعار<span class="late">متأخرة يوم</span></div><div class="task"><span class="ck"></span>ترتيب رف المعلبات<span class="late">متأخرة ساعة</span></div><div class="task"><span class="ck"></span>جرد البرادات</div></div>
+<div class="pc"><div class="h"><span class="av">ل</span><div><h3>لينا عيسى</h3><small>المشتريات</small></div></div><div class="nums"><span>مفتوحة<b>٥</b></span><span class="r">متأخرة<b>٣</b></span><span class="g">بالأسبوع<b>٤</b></span></div>
+<div class="task"><span class="ck"></span>استلام بضاعة الحليب<span class="late">متأخرة ٥ س</span></div><div class="task"><span class="ck"></span>جرد رف المنظفات<span class="late">متأخرة ساعتين</span></div><div class="task"><span class="ck"></span>متابعة فاتورة المورد</div></div>
+<div class="pc"><div class="h"><span class="av">ر</span><div><h3>راما راجح</h3><small>المبيعات</small></div></div><div class="nums"><span>مفتوحة<b>٤</b></span><span class="r">متأخرة<b>١</b></span><span class="g">بالأسبوع<b>٦</b></span></div>
+<div class="task"><span class="ck"></span>مراجعة الصندوق اليومي</div><div class="task"><span class="ck"></span>تجهيز عرض أسعار</div><div class="task"><span class="ck"></span>اتصال بالزبائن المتأخرين<span class="late">متأخرة يوم</span></div></div>
+<div class="pc alert"><div class="h"><span class="av">⚠</span><div><h3>التنبيهات</h3><small>من مجموعات تلغرام</small></div></div><div class="nums"><span class="r">مفتوحة<b>٣</b></span><span>بانتظار رد<b>١</b></span><span class="g">انحلّت<b>٩</b></span></div>
+<div class="task"><span class="ck"></span>الكاشير ٣ عطلان<span class="late">من ساعة</span></div><div class="task"><span class="ck"></span>الرف فاضي بالصالة</div><div class="task"><span class="ck"></span>الطلبية تأخرت عالزبون</div></div>
+<div class="pc"><div class="h"><span class="av">د</span><div><h3>دانيه دمشقي</h3><small>المحاسبة</small></div></div><div class="nums"><span>مفتوحة<b>٤</b></span><span class="r">متأخرة<b>٢</b></span><span class="g">بالأسبوع<b>٣</b></span></div>
+<div class="task"><span class="ck"></span>تنظيف الثلاجات<span class="late">متأخرة يومين</span></div><div class="task"><span class="ck"></span>تدقيق الفواتير</div></div>
+<div class="pc"><div class="h"><span class="av">ن</span><div><h3>نور حداد</h3><small>التسويق</small></div></div><div class="nums"><span>مفتوحة<b>٣</b></span><span class="r">متأخرة<b>٠</b></span><span class="g">بالأسبوع<b>٧</b></span></div>
+<div class="task"><span class="ck"></span>نشر عروض الأسبوع</div><div class="task"><span class="ck"></span>تصوير المنتجات الجديدة</div></div>
+<div class="pc"><div class="h"><span class="av">م</span><div><h3>محمد الحلبي</h3><small>المبيعات</small></div></div><div class="nums"><span>مفتوحة<b>٣</b></span><span class="r">متأخرة<b>٠</b></span><span class="g">بالأسبوع<b>٢</b></span></div>
+<div class="task"><span class="ck"></span>تجهيز طلبية المطعم</div></div>
+<div class="pc"><div class="h"><span class="av">س</span><div><h3>سامر خوري</h3><small>الصالة</small></div></div><div class="nums"><span>مفتوحة<b>٢</b></span><span class="r">متأخرة<b>٠</b></span><span class="g">بالأسبوع<b>٤</b></span></div>
+<div class="task"><span class="ck"></span>الاتصال بالزبائن</div></div>
+</div><div class="fab">+ مهمة جديدة</div></body></html>

@@ -415,3 +415,8 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   rules with long button:not() chains would win), base.html/settings_hub/profile use line icons (shell_nav.ICONS) instead
   of icons3d. Package `new_identity` (BASE 818e6d6 = group_alerts) given with screenshots — NOT confirmed. If the
   installer refuses (group_alerts not installed), rebuild with BASE f77dc69.
+- 2026-11-23: owner: v5 still "only colours"; wants SEVERAL styles to choose from. Mock-ups (static HTML, demo data) in
+  docs/design/styles_2026-11-23/: s1 = top menu + 3 board columns (متأخرة/اليوم/منجزة) + team column, blue; s2 = dark
+  "control room", dark sidebar, KPI row, dense table; s3 = people first: big employee cards with their tasks, greeting
+  sentence, pill top menu, floating add button, green; s4 = inbox: dark icon rail, task list pane + task detail pane with
+  actions/timeline/comments, warm orange. Waiting for his pick; then rebuild the shell + main pages in that layout.

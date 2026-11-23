@@ -1,0 +1,41 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><link rel="stylesheet" href="common.css"><style>
+body{background:#0E1726;color:#E6EBF5;display:flex;min-height:100vh}
+.side{width:230px;background:#0A111D;border-inline-end:1px solid #1C2840;padding:18px 12px;display:flex;flex-direction:column;gap:4px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;padding:4px 10px 18px;color:#fff}
+.side a{display:flex;gap:12px;align-items:center;padding:11px 12px;border-radius:10px;color:#9AA8C4;font-size:15.5px}
+.side a.on{background:#17233A;color:#fff;box-shadow:inset 3px 0 0 #4FD1C5}
+.side i{font-style:normal;width:20px;text-align:center}
+main{flex:1;padding:24px 28px}
+.hd{display:flex;justify-content:space-between;align-items:center}.hd h1{margin:0;font-size:24px}
+.hd small{color:#8796B3}.seg{background:#17233A;border-radius:10px;padding:3px;display:flex}.seg span{padding:7px 14px;border-radius:8px;color:#9AA8C4}.seg .on{background:#24324E;color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:20px 0}
+.k{background:#131F33;border:1px solid #1E2B45;border-radius:14px;padding:16px 18px}
+.k small{color:#8796B3;font-size:14px}.k b{display:block;font-size:34px;font-weight:700;margin-top:4px}
+.k .tr{font-size:13px;color:#8796B3}
+.r{color:#FF7A6B}.a{color:#F6C35B}.g{color:#5FD39A}.c{color:#4FD1C5}
+.grid{display:grid;grid-template-columns:1.8fr 1fr;gap:16px}
+.p{background:#131F33;border:1px solid #1E2B45;border-radius:14px;overflow:hidden}
+.p h2{margin:0;padding:14px 18px;font-size:16px;border-bottom:1px solid #1E2B45;display:flex;justify-content:space-between}
+table{width:100%;border-collapse:collapse;font-size:15px}td,th{padding:11px 18px;text-align:start;border-bottom:1px solid #1A263D}th{color:#8796B3;font-weight:500;font-size:13.5px}
+.pill{border-radius:999px;padding:2px 10px;font-size:13px;font-weight:600}.pill.r{background:#3A1F25}.pill.a{background:#3A3220}.pill.g{background:#1C3A2E}.pill.c{background:#183538}
+.t{display:flex;justify-content:space-between;align-items:center;padding:11px 18px;border-bottom:1px solid #1A263D;font-size:15px}
+.bar{width:140px;height:8px;border-radius:4px;background:#1E2B45;display:flex;overflow:hidden}.bar i{display:block;height:100%}
+.feed div{padding:10px 18px;border-bottom:1px solid #1A263D;font-size:14.5px}.feed small{display:block;color:#8796B3}
+</style></head><body>
+<aside class="side"><div class="brand"><img class="logo" src="logo.png">بيم دمشق</div>
+<a class="on"><i>◫</i>غرفة التحكم</a><a><i>☰</i>المهام</a><a><i>⚠</i>التنبيهات</a><a><i>☺</i>متابعة الفريق</a><a><i>↻</i>المتكررة</a><a><i>▤</i>الموظفون</a><a><i>📈</i>التقارير</a><a><i>⚙</i>الإعدادات</a></aside>
+<main><div class="hd"><div><h1>غرفة التحكم</h1><small>الاثنين ٢٣ تشرين الثاني، آخر تحديث قبل دقيقة</small></div><div class="seg"><span class="on">اليوم</span><span>الأسبوع</span><span>الكل</span></div></div>
+<div class="kpis"><div class="k"><small>مفتوحة</small><b class="c">٣٨</b><span class="tr">١٩ قيد الشغل</span></div><div class="k"><small>متأخرة</small><b class="r">١٦</b><span class="tr">٤٢٪ من المفتوحة</span></div><div class="k"><small>مستحقة اليوم</small><b class="a">٤</b><span class="tr">أقربها ٢:٠٠ م</span></div><div class="k"><small>أُنجزت اليوم</small><b class="g">٧</b><span class="tr">٣١ بالأسبوع</span></div><div class="k"><small>تنبيهات مفتوحة</small><b class="r">٣</b><span class="tr">من ٢ مجموعات</span></div></div>
+<div class="grid"><section class="p"><h2>بتحتاج انتباه <span class="r">١٦</span></h2><table><tr><th>المهمة</th><th>الموظف</th><th>الحالة</th><th>الموعد</th></tr>
+<tr><td>تنظيف الثلاجات</td><td>دانيه دمشقي</td><td><span class="pill r">متأخرة</span></td><td class="r">قبل يومين</td></tr>
+<tr><td>استلام بضاعة الحليب</td><td>لينا عيسى</td><td><span class="pill r">متأخرة</span></td><td class="r">قبل ٥ ساعات</td></tr>
+<tr><td>تنبيه ت-٣: الكاشير ٣ عطلان</td><td>آية نسب</td><td><span class="pill a">بانتظار رد</span></td><td>من ساعة</td></tr>
+<tr><td>طباعة لافتات الأسعار</td><td>أحمد سليمان</td><td><span class="pill r">متأخرة</span></td><td class="r">قبل يوم</td></tr>
+<tr><td>مراجعة الصندوق اليومي</td><td>راما راجح</td><td><span class="pill c">قيد التنفيذ</span></td><td class="a">اليوم ٢:٠٠ م</td></tr>
+<tr><td>نشر عروض الأسبوع</td><td>نور حداد</td><td><span class="pill c">جديدة</span></td><td class="a">اليوم ٤:٣٠ م</td></tr></table></section>
+<div style="display:flex;flex-direction:column;gap:16px"><section class="p"><h2>حمل الفريق</h2>
+<div class="t">أحمد سليمان<span class="bar"><i style="width:40%;background:#4FD1C5"></i><i style="width:50%;background:#FF7A6B"></i></span><b class="r">٧</b></div>
+<div class="t">لينا عيسى<span class="bar"><i style="width:30%;background:#4FD1C5"></i><i style="width:45%;background:#FF7A6B"></i></span><b class="r">٥</b></div>
+<div class="t">راما راجح<span class="bar"><i style="width:50%;background:#4FD1C5"></i><i style="width:20%;background:#FF7A6B"></i></span><b class="r">٤</b></div>
+<div class="t">محمد الحلبي<span class="bar"><i style="width:60%;background:#4FD1C5"></i></span><b>٠</b></div></section>
+<section class="p feed"><h2>آخر الحركات</h2><div>نور حداد أنجزت «تنظيف الثلاجات»<small>قبل ٣ دقائق</small></div><div>آية نسب سجّلت تنبيه بمجموعة الصالة<small>قبل ١٢ دقيقة</small></div><div>راما راجح بدأت «مراجعة الصندوق»<small>قبل ٢٠ دقيقة</small></div></section></div></div></main></body></html>
