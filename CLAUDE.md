@@ -401,3 +401,10 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   ROOT CAUSE: main._asset_version globbed '*.[cj]s' (= .js only), so CSS-only updates (dashboard_v3, home_v4) kept the
   same ?v= and browsers kept the cached old bim-ds.css. Fixed in 2536fd1 (css+js hashed, tests/test_asset_version.py),
   NOT shipped yet: goes with the next package. Owner also asked for EVERYTHING new from the login page to every page.
+- 2026-11-23: owner shared the separate alert bot (Sheets + Apps Script + Cloudflare, ~50 groups, «تنبيه» reply ->
+  P-xxxxx issue). Decided: rebuild in OUR bot, start fresh (no import). `app/alerts.py` + hook in the webhook's group
+  branch: allowed = linked employee in followup remind_ids, or (list empty) admin/deputy/supervisor account; task
+  source `telegram_alert`, code ALERT-n, shown as «ت-n»; table telegram_alerts (UNIQUE chat_id+message_id). Not done
+  (deliberately): storing all group messages, members/memberships, a separate «إعادة فتح» button, importing old P-alerts.
+  Needs on Telegram: bot in every group + privacy mode OFF in BotFather (/setprivacy -> Disable), then re-add the bot.
+  Package `group_alerts` (BASE f77dc69 = home_v4, includes 2536fd1 css cache fix) given — NOT confirmed.
