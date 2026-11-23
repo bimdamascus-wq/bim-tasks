@@ -420,3 +420,8 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   "control room", dark sidebar, KPI row, dense table; s3 = people first: big employee cards with their tasks, greeting
   sentence, pill top menu, floating add button, green; s4 = inbox: dark icon rail, task list pane + task detail pane with
   actions/timeline/comments, warm orange. Waiting for his pick; then rebuild the shell + main pages in that layout.
+- 2026-11-23 (cont.): owner wants pages "like Excel": clear bold font, clear columns. Excel mock-ups added
+  (docs/design/styles_2026-11-23/x1..x3): x1 = classic sheet (green bar, gridlines, row numbers + A..I letters, filters,
+  summary cells, SHEET TABS at the bottom for المهام/التنبيهات/الموظفون/...); x2 = green header, rows GROUPED by employee
+  with subtotal rows, side menu; x3 = navy header, KPI as bordered cells, big table + "ملخص حسب الموظف" pivot. Cairo/Plex
+  600-800, 17px, conditional colours on status cells. Waiting for his pick.
