@@ -7,7 +7,7 @@
     <div class="ep-meta" id="epMeta"><span class="ep-chip">جاري التحميل…</span></div>
   </div>
   <div class="ep-links">
-    {% if 'tasks.create' in permissions %}<a class="btn" href="/tasks?view=cards&new=1">＋ مهمة جديدة</a>{% endif %}
+    {% if 'tasks.create' in permissions %}<a class="btn" href="/tasks?view=cards&new=1&employee={{ employee_id }}">＋ مهمة جديدة</a>{% endif %}
     {% if 'reports.team' in permissions %}<a class="btn btn-light" href="/team-performance">تقرير أداء الفريق</a>{% endif %}
     {% if 'employees.edit' in permissions %}<button type="button" class="btn-danger" id="epDelete">🗑 حذف الموظف</button>{% endif %}
   </div>

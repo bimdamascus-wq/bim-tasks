@@ -2252,6 +2252,7 @@
    "ids": [
     "archiveTask",
     "attachments",
+    "backEmployee",
     "commentText",
     "comments",
     "detailStatusActions",
@@ -5026,6 +5027,7 @@
    "ids": [
     "archiveTask",
     "attachments",
+    "backEmployee",
     "commentText",
     "comments",
     "detailStatusActions",
@@ -7950,6 +7952,7 @@
    ],
    "ids": [
     "attachments",
+    "backEmployee",
     "commentText",
     "comments",
     "detailStatusActions",

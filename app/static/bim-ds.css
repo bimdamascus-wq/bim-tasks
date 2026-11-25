@@ -1183,3 +1183,9 @@ html body.ds main .detail-card .detail-row:not(#_){border:1px solid var(--sh-lin
 html body.ds main .detail-card .detail-row:nth-child(even):not(#_){background:var(--sh-zebra)!important}
 html body.ds main .detail-card .detail-row:not(#_)>:first-child{color:#1f5f6b!important;font-weight:700!important}
 html body.ds main .detail-card .detail-row:first-of-type:not(#_){border-top:1px solid var(--sh-line)!important}
+/* buttons react to the hand (owner 2026-11-25 «الزرار بدي إياها تفاعلية»): hover lift, press-down, keyboard ring */
+html body.ds :is(button,a.btn,.btn,[role=button]):not(:disabled):not(.bim-col-grip){cursor:pointer;transition:transform .08s ease,filter .15s ease,box-shadow .15s ease}
+html body.ds :is(button,a.btn,.btn,[role=button]):not(:disabled):not(.bim-col-grip):hover{filter:brightness(.94);box-shadow:0 3px 10px -4px rgba(15,40,50,.35)}
+html body.ds :is(button,a.btn,.btn,[role=button]):not(:disabled):not(.bim-col-grip):active{transform:translateY(1px) scale(.97);filter:brightness(.86);box-shadow:none}
+html body.ds :is(button,a.btn,.btn,[role=button]):focus-visible{outline:3px solid #f59e0b!important;outline-offset:2px}
+html body.ds button:disabled{cursor:progress;opacity:.6}

@@ -2,7 +2,7 @@
 // Double-click the edge = back to automatic widths. Widths are remembered per page + table in this browser only.
 (()=>{
 const css=document.createElement('style');
-css.textContent='th.bim-colw-th{position:relative}.bim-col-grip{position:absolute;top:0;bottom:0;inset-inline-end:-5px;width:10px;cursor:col-resize;z-index:3;touch-action:none}.bim-col-grip:hover,.bim-col-grip.on{background:rgba(255,255,255,.55)}table.bim-colw-fixed td{overflow-wrap:anywhere}';
+css.textContent='th.bim-colw-th{position:relative}.bim-col-grip{position:absolute;top:0;bottom:0;inset-inline-end:-5px;width:10px;cursor:col-resize;z-index:3;touch-action:none;background:linear-gradient(to right,transparent 4px,rgba(255,255,255,.45) 4px,rgba(255,255,255,.45) 6px,transparent 6px)}.bim-col-grip:hover,.bim-col-grip.on{background:rgba(255,255,255,.55)}table.bim-colw-fixed td{overflow-wrap:anywhere}';
 document.head.append(css);
 const heads=t=>[...t.querySelectorAll('thead tr:first-child th')];
 const key=(t,hs)=>{const v=new URLSearchParams(location.search).get('view');return 'bim-colw:'+location.pathname+(v?'?view='+v:'')+'|'+hs.map(h=>h.textContent.trim()).join('|')};
