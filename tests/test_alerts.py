@@ -72,3 +72,15 @@ def test_alert_page_and_old_options(env):
     # employees cannot open the page
     assert client(env, 'member').get('/api/alerts').status_code == 403
     assert boss.get('/alerts').status_code == 200
+
+
+def test_list_adds_people_but_managers_always_allowed(env):
+    import json
+    from app import alerts
+    m = env['m']; c = m.connect()
+    c.execute("INSERT OR REPLACE INTO settings(key,value) VALUES('followup.settings',?)", (json.dumps({'remind_ids': [env['ids']['عضو فريق']]}),))
+    assert alerts.reporter(c, '333')  # supervisor, not in the list: still allowed
+    assert alerts.reporter(c, '444')  # employee in the list: allowed
+    assert not alerts.reporter(c, '555')  # employee not in the list
+    c.execute("DELETE FROM settings WHERE key='followup.settings'")  # shared test DB: leave it as found
+    c.close()

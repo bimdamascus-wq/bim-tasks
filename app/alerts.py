@@ -25,7 +25,7 @@ def migrate(c):
 
 
 REFUSED_UNLINKED = '⚠️ ما قدرت سجّل التنبيه: حسابك على تلغرام مو مربوط بموظف بنظام BIM Tasks.\nاربط حسابك من الخاص مع البوت (زر Start) وجرّب مرة تانية.'
-REFUSED_ROLE = '⚠️ ما قدرت سجّل التنبيه: ما عندك صلاحية تسجيل تنبيهات.\nبيعطيك ياها المدير من إعدادات مجموعة المتابعة (مين بيقدر يذكّر).'
+REFUSED_ROLE = '⚠️ ما قدرت سجّل التنبيه: ما عندك صلاحية تسجيل تنبيهات.\nبيعطيك ياها المدير من: الإعدادات ← Telegram ← المجموعات ← «أشخاص محددين فقط» ← علّم اسمك ← حفظ.'
 
 
 def is_trigger(text):
@@ -42,7 +42,8 @@ def reporter(c, telegram_user_id):
     allowed = {int(x) for x in settings(c).get('remind_ids') or []}
     u = c.execute('''SELECT u.id, r.code FROM users u JOIN roles r ON r.id=u.role_id
                      WHERE u.employee_id=? AND u.deleted_at IS NULL ORDER BY u.id LIMIT 1''', (e['id'],)).fetchone()
-    ok = e['id'] in allowed if allowed else bool(u and u['code'] in ('admin', 'deputy', 'supervisor'))
+    # managers always may; the follow-up list only ADDS people (owner was refused 2026-11-25 with a list set)
+    ok = e['id'] in allowed or bool(u and u['code'] in ('admin', 'deputy', 'supervisor'))
     return (e, u['id'] if u else None) if ok else None
 
 
