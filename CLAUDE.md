@@ -449,3 +449,14 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   must be linked + in remind_ids, stop the old Apps Script bot). His bot was created on another phone number: advised to
   make the bot a group admin instead of a new bot (no token in chat; a token-change tool only if he insists).
   Session 10 ended here. Next: `docs/handoff/SESSION_11.md`.
+
+## Session 11 (2026-11-25) — details in docs/handoff/SESSION_12.md
+- Branch `claude/lucid-rubin-mwn175` (= session-10 branch + this session), draft PR bimdamascus-wq/bim-tasks#1. No status
+  report this session; `main` still 124a711. Last package `full_25nov` (d225f22, cumulative, BASE 4536fd0).
+- «تنبيه» (app/alerts.py): silent refusals caused confusion -> the bot now says why; any linked active employee may
+  log an alert; others' alerts: alerts.is_manager. Owner's old Apps Script system used REPORTER_IDS (read, not in repo).
+- tools/change_bot: switch the Telegram bot from the server (ASCII-only .cmd; Arabic in .cmd closed the window).
+- Look: SHEET v6 = last block of bim-ds.css (owner picked option 2 «جدول بخطوط» for every page). Columns resizable by
+  dragging header edges (static/bim-colresize.js, localStorage). Keep the 2026-11-02 rule: default widths fit content.
+- Employee page archive button + new task preselects the employee; task page edit dialog + back-to-employee; new-task
+  window stays open, remembers the last employee, and can add several titles in one save.
