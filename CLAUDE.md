@@ -445,3 +445,7 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   icon-512.png, new manifest (name «بيم دمشق - المهام», start_url /v2, standalone), v2/base.html links it and registers
   /service-worker.js; /v2 sends employees to /my-work. CDP Page.getInstallabilityErrors on localhost: none.
   Works only over HTTPS (task.bimdamascus.com) or localhost, NOT on http://<LAN-IP>:8797 (browser rule).
+- 2026-11-24/25: owner asked how «تنبيه» works -> explained setup (privacy off or bot ADMIN in each group, reporters
+  must be linked + in remind_ids, stop the old Apps Script bot). His bot was created on another phone number: advised to
+  make the bot a group admin instead of a new bot (no token in chat; a token-change tool only if he insists).
+  Session 10 ended here. Next: `docs/handoff/SESSION_11.md`.
