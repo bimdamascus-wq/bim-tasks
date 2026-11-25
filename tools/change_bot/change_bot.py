@@ -1,11 +1,13 @@
 """Switch BIM Tasks to another Telegram bot (owner 2026-11-25). Run by CHANGE_BOT.cmd on the server, as admin.
 The token is pasted on the server only (never in chat). Steps: check it with getMe, back up .env, write
-TELEGRAM_BOT_TOKEN, point the new bot's webhook at our server. CHANGE_BOT.cmd then restarts 8797/8798."""
-import json, os, re, shutil, sys, time, urllib.request
+TELEGRAM_BOT_TOKEN, point the new bot's webhook at our server, restart ONLY our ports 8797/8798.
+All the work and every Arabic text is here, not in the .cmd: cmd.exe misreads UTF-8 Arabic and closed the window (2026-11-25)."""
+import json, os, re, shutil, subprocess, sys, time, urllib.request
 from pathlib import Path
 
 ROOT = Path(os.environ.get('BIM_ROOT') or Path(__file__).resolve().parents[2])  # BIM_ROOT: the zip can be extracted anywhere
 ENV = ROOT / '.env'
+WINDOWS_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')  # read before any app import could load .env
 
 
 def api(token, method, payload=None):
@@ -77,9 +79,38 @@ def main():
     backup = ENV.with_name(f'.env.before_change_bot_{time.strftime("%Y%m%d_%H%M%S")}')
     shutil.copy2(ENV, backup)
     ENV.write_text('\n'.join(with_token(lines, token)) + '\n', encoding='utf-8')
-    print(f'\nتم: النظام صار على @{name}. النسخة القديمة من الإعدادات: {backup.name}')
+    print(f'\nتم: الرمز الجديد محفوظ (@{name}). النسخة القديمة من الإعدادات: {backup.name}')
+    if WINDOWS_TOKEN:  # a Windows variable beats .env (load_dotenv does not override it)
+        print('⚠️ في متغير ويندوز اسمه TELEGRAM_BOT_TOKEN عالسيرفر، وهاد بيغلب الإعدادات. صوّر هالشاشة وابعتها.')
+    restart()
     return 0
 
 
+def restart():
+    print('\nعم أطفي النظام (8797 و 8798) وأرجع شغّله...')
+    for t in ('\\BIM Tasks\\LAN', 'BIM Tasks External 8798'):
+        subprocess.run(['schtasks', '/End', '/TN', t], capture_output=True)
+    # Same stop rule as the installer: only OUR ports, never the other app.main:app systems on this server.
+    subprocess.run(['powershell', '-NoProfile', '-Command',
+                    "Get-CimInstance Win32_Process | Where-Object { $_.Name -like 'python*.exe' -and $_.CommandLine -match 'uvicorn'"
+                    " -and $_.CommandLine -match 'app\\.main:app' -and $_.CommandLine -match '--port\\s+(8797|8798)\\b' }"
+                    " | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }"], capture_output=True)
+    time.sleep(6)
+    for t, cmd in (('\\BIM Tasks\\LAN', 'RUN_LAN.cmd'), ('BIM Tasks External 8798', 'RUN_EXTERNAL.cmd')):
+        if subprocess.run(['schtasks', '/Run', '/TN', t], capture_output=True).returncode:
+            subprocess.Popen(['cmd', '/c', 'start', '', '/min', str(ROOT / cmd)], cwd=str(ROOT))
+    for _ in range(30):
+        try:
+            urllib.request.urlopen('http://127.0.0.1:8797/health', timeout=3); print('✅ خلص. النظام رجع اشتغل عالبوت الجديد.'); return
+        except Exception:
+            time.sleep(2)
+    print('⚠️ النظام لسا ما رجع. استنى دقيقتين وافتحه، وإذا ما فتح شغّل START_BIM_NOW.cmd كمسؤول.')
+
+
 if __name__ == '__main__':
-    sys.exit(main())
+    try:
+        code = main()
+    except Exception as e:  # never let the window vanish without telling what happened
+        print('صار خطأ:', repr(e)); code = 1
+    input('\nاكبس Enter لتسكّر الشاشة...')
+    sys.exit(code)
