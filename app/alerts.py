@@ -24,6 +24,15 @@ def migrate(c):
             c.execute(f'ALTER TABLE telegram_alerts ADD COLUMN {col} TEXT')
 
 
+REFUSED_UNLINKED = '⚠️ ما قدرت سجّل التنبيه: حسابك على تلغرام مو مربوط بموظف بنظام BIM Tasks.\nاربط حسابك من الخاص مع البوت (زر Start) وجرّب مرة تانية.'
+REFUSED_ROLE = '⚠️ ما قدرت سجّل التنبيه: ما عندك صلاحية تسجيل تنبيهات.\nبيعطيك ياها المدير من إعدادات مجموعة المتابعة (مين بيقدر يذكّر).'
+
+
+def is_trigger(text):
+    # owner's team types «تنبيه», «تنبية», «#تنبيه», «تنبيه!»: all count
+    return str(text or '').strip().strip('#!.؟?،, ').replace('ة', 'ه') == TRIGGER
+
+
 def reporter(c, telegram_user_id):
     """(employee, user_id or None) when this Telegram user may log alerts, else None."""
     e = c.execute('SELECT * FROM employees WHERE telegram_chat_id=? AND is_active=1', (str(telegram_user_id or ''),)).fetchone()
@@ -59,12 +68,14 @@ def _original_text(src):
 def handle(c, msg, m):
     """Called by the webhook for every group message. Returns True when it was an alert (handled), else False."""
     src = msg.get('reply_to_message') or {}
-    if str(msg.get('text') or '').strip() != TRIGGER or not src or (src.get('from') or {}).get('is_bot'):
+    if not is_trigger(msg.get('text')) or not src or (src.get('from') or {}).get('is_bot'):
         return False  # «تنبيه» on a bot message stays a follow-up comment
     chat, frm = msg.get('chat') or {}, msg.get('from') or {}
     who = reporter(c, frm.get('id'))
-    if not who:
-        return True  # not allowed: say nothing in the group
+    if not who:  # refused: say why (it used to stay silent and the owner could not tell what was wrong)
+        linked = c.execute('SELECT 1 FROM employees WHERE telegram_chat_id=? AND is_active=1', (str(frm.get('id') or ''),)).fetchone()
+        m.send(str(chat.get('id')), REFUSED_ROLE if linked else REFUSED_UNLINKED)
+        return True
     e, user_id = who
     migrate(c)
     chat_id = str(chat.get('id'))

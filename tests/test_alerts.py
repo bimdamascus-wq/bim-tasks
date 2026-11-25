@@ -27,12 +27,18 @@ def test_alert_creates_one_task_and_answers(env):
     assert any(ch == '333' for ch, _ in sent)  # private card to the reporter
     # same message again: no second task
     cl.post('/api/telegram/webhook', headers=HOOK, json=_upd(880002, 333, 50))
-    # an employee account (not allowed while remind_ids is empty): ignored
+    # an employee account (not allowed while remind_ids is empty): refused with the reason
     cl.post('/api/telegram/webhook', headers=HOOK, json=_upd(880003, 444, 51))
+    assert any('ما عندك صلاحية' in tx for _, tx in sent)
+    # a Telegram user not linked to any employee: refused with the reason
+    cl.post('/api/telegram/webhook', headers=HOOK, json=_upd(880005, 777777, 53))
+    assert any('مو مربوط' in tx for _, tx in sent)
+    # «تنبية» (ة) counts as «تنبيه»
+    cl.post('/api/telegram/webhook', headers=HOOK, json=_upd(880006, 333, 54, text='تنبية'))
     # «تنبيه» on a bot message is not an alert
     cl.post('/api/telegram/webhook', headers=HOOK, json=_upd(880004, 333, 52, src_from={'id': 1, 'is_bot': True}))
     c = m.connect()
-    assert c.execute("SELECT COUNT(*) FROM tasks WHERE source='telegram_alert'").fetchone()[0] == 1
+    assert c.execute("SELECT COUNT(*) FROM tasks WHERE source='telegram_alert'").fetchone()[0] == 2
     c.close()
     assert any('مسجّل من قبل' in tx for _, tx in sent)
 
