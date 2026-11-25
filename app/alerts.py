@@ -2,8 +2,9 @@
 An allowed person replies «تنبيه» to a message in any group our bot is in -> one task assigned to that person, holding
 the original text, its author, the group and a link. The group gets a short fixed answer with the alert number; the
 details and the status buttons go to the person in private (the normal task card). Only the alerted message is stored.
-Allowed: a linked employee (employees.telegram_chat_id = Telegram user id) who is in the follow-up «remind_ids» list,
-or, when that list is empty, whose account is a manager, deputy or supervisor. Anyone else is ignored silently.
+Allowed: ANY active employee linked to Telegram (employees.telegram_chat_id = Telegram user id); owner 2026-11-25:
+ticking names in a list was too much. The ~200 group members not in the system get a short «not linked» answer.
+The alert's status buttons: its own person, or a manager/deputy/supervisor/follow-up-list person.
 The bot sees replies to other people's messages only with privacy mode OFF in BotFather (or as a group admin)."""
 TRIGGER = 'تنبيه'
 GROUP_ANSWER = '❌ تم تسجيل تنبيه إداري، والموضوع قيد المتابعة.\nرقم التنبيه: {n}'
@@ -25,7 +26,6 @@ def migrate(c):
 
 
 REFUSED_UNLINKED = '⚠️ ما قدرت سجّل التنبيه: حسابك على تلغرام مو مربوط بموظف بنظام BIM Tasks.\nاربط حسابك من الخاص مع البوت (زر Start) وجرّب مرة تانية.'
-REFUSED_ROLE = '⚠️ ما قدرت سجّل التنبيه: ما عندك صلاحية تسجيل تنبيهات.\nبيعطيك ياها المدير من: الإعدادات ← Telegram ← المجموعات ← «أشخاص محددين فقط» ← علّم اسمك ← حفظ.'
 
 
 def is_trigger(text):
@@ -34,17 +34,21 @@ def is_trigger(text):
 
 
 def reporter(c, telegram_user_id):
-    """(employee, user_id or None) when this Telegram user may log alerts, else None."""
+    """(employee, user_id or None) when this Telegram user may log alerts (any linked active employee), else None."""
     e = c.execute('SELECT * FROM employees WHERE telegram_chat_id=? AND is_active=1', (str(telegram_user_id or ''),)).fetchone()
     if not e:
         return None
+    u = c.execute('SELECT id FROM users WHERE employee_id=? AND deleted_at IS NULL ORDER BY id LIMIT 1', (e['id'],)).fetchone()
+    return e, (u['id'] if u else None)
+
+
+def is_manager(c, e):
+    """May act on anyone's alert: manager/deputy/supervisor account, or a person in the follow-up list."""
     from .followup import settings
     allowed = {int(x) for x in settings(c).get('remind_ids') or []}
     u = c.execute('''SELECT u.id, r.code FROM users u JOIN roles r ON r.id=u.role_id
                      WHERE u.employee_id=? AND u.deleted_at IS NULL ORDER BY u.id LIMIT 1''', (e['id'],)).fetchone()
-    # managers always may; the follow-up list only ADDS people (owner was refused 2026-11-25 with a list set)
-    ok = e['id'] in allowed or bool(u and u['code'] in ('admin', 'deputy', 'supervisor'))
-    return (e, u['id'] if u else None) if ok else None
+    return e['id'] in allowed or bool(u and u['code'] in ('admin', 'deputy', 'supervisor'))
 
 
 def message_link(chat, message_id):
@@ -73,9 +77,8 @@ def handle(c, msg, m):
         return False  # «تنبيه» on a bot message stays a follow-up comment
     chat, frm = msg.get('chat') or {}, msg.get('from') or {}
     who = reporter(c, frm.get('id'))
-    if not who:  # refused: say why (it used to stay silent and the owner could not tell what was wrong)
-        linked = c.execute('SELECT 1 FROM employees WHERE telegram_chat_id=? AND is_active=1', (str(frm.get('id') or ''),)).fetchone()
-        m.send(str(chat.get('id')), REFUSED_ROLE if linked else REFUSED_UNLINKED)
+    if not who:  # say why (silence left the owner guessing)
+        m.send(str(chat.get('id')), REFUSED_UNLINKED)
         return True
     e, user_id = who
     migrate(c)
@@ -164,7 +167,7 @@ def callback(c, cb, e, m):
         return False
     tid, action = int(mo.group(1)), mo.group(2)
     t = c.execute("SELECT * FROM tasks WHERE id=? AND source='telegram_alert'", (tid,)).fetchone()
-    if not t or (t['employee_id'] != e['id'] and not reporter(c, e['telegram_chat_id'])):
+    if not t or (t['employee_id'] != e['id'] and not is_manager(c, e)):
         answer_callback(cb.get('id'), 'هذا التنبيه مو إلك', True)
         return True
     new = set_status(c, tid, action, e['id'], 'telegram')

@@ -27,9 +27,8 @@ def test_alert_creates_one_task_and_answers(env):
     assert any(ch == '333' for ch, _ in sent)  # private card to the reporter
     # same message again: no second task
     cl.post('/api/telegram/webhook', headers=HOOK, json=_upd(880002, 333, 50))
-    # an employee account (not allowed while remind_ids is empty): refused with the reason
+    # a plain linked employee: accepted (owner 2026-11-25: no list to tick)
     cl.post('/api/telegram/webhook', headers=HOOK, json=_upd(880003, 444, 51))
-    assert any('ما عندك صلاحية' in tx for _, tx in sent)
     # a Telegram user not linked to any employee: refused with the reason
     cl.post('/api/telegram/webhook', headers=HOOK, json=_upd(880005, 777777, 53))
     assert any('مو مربوط' in tx for _, tx in sent)
@@ -38,7 +37,7 @@ def test_alert_creates_one_task_and_answers(env):
     # «تنبيه» on a bot message is not an alert
     cl.post('/api/telegram/webhook', headers=HOOK, json=_upd(880004, 333, 52, src_from={'id': 1, 'is_bot': True}))
     c = m.connect()
-    assert c.execute("SELECT COUNT(*) FROM tasks WHERE source='telegram_alert'").fetchone()[0] == 2
+    assert c.execute("SELECT COUNT(*) FROM tasks WHERE source='telegram_alert'").fetchone()[0] == 3
     c.close()
     assert any('مسجّل من قبل' in tx for _, tx in sent)
 
@@ -74,13 +73,15 @@ def test_alert_page_and_old_options(env):
     assert boss.get('/alerts').status_code == 200
 
 
-def test_list_adds_people_but_managers_always_allowed(env):
+def test_who_may_act_on_other_peoples_alerts(env):
     import json
     from app import alerts
     m = env['m']; c = m.connect()
     c.execute("INSERT OR REPLACE INTO settings(key,value) VALUES('followup.settings',?)", (json.dumps({'remind_ids': [env['ids']['عضو فريق']]}),))
-    assert alerts.reporter(c, '333')  # supervisor, not in the list: still allowed
-    assert alerts.reporter(c, '444')  # employee in the list: allowed
-    assert not alerts.reporter(c, '555')  # employee not in the list
+    emp = lambda chat: alerts.reporter(c, chat)[0]
+    assert alerts.reporter(c, '555') and not alerts.reporter(c, '999999')  # any linked employee logs; strangers do not
+    assert alerts.is_manager(c, emp('333'))  # supervisor, not in the list
+    assert alerts.is_manager(c, emp('444'))  # in the list
+    assert not alerts.is_manager(c, emp('555'))
     c.execute("DELETE FROM settings WHERE key='followup.settings'")  # shared test DB: leave it as found
     c.close()
