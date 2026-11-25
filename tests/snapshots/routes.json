@@ -10,6 +10,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -77,6 +78,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js",
@@ -113,6 +115,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -156,6 +159,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js",
@@ -209,6 +213,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -1192,6 +1197,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -1226,6 +1232,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -1260,6 +1267,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -1299,6 +1307,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -1336,6 +1345,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js",
@@ -1379,6 +1389,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -1430,6 +1441,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -1485,6 +1497,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -1534,6 +1547,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js",
@@ -1583,6 +1597,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -1618,6 +1633,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -1663,6 +1679,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -1730,6 +1747,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -1776,6 +1794,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -1814,6 +1833,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -1865,6 +1885,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -1898,6 +1919,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -1932,6 +1954,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -1981,6 +2004,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -2034,6 +2058,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -2073,6 +2098,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -2140,6 +2166,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -2182,6 +2209,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -2216,6 +2244,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -2261,6 +2290,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -2321,6 +2351,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -2364,6 +2395,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -2409,6 +2441,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -2482,6 +2515,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js",
@@ -2518,6 +2552,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -2711,6 +2746,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js",
@@ -2747,6 +2783,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -2814,6 +2851,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js",
@@ -2850,6 +2888,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -2893,6 +2932,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js",
@@ -2946,6 +2986,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -3929,6 +3970,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -3963,6 +4005,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -3997,6 +4040,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4036,6 +4080,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4073,6 +4118,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js",
@@ -4116,6 +4162,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4167,6 +4214,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4222,6 +4270,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4271,6 +4320,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js",
@@ -4320,6 +4370,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4355,6 +4406,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4400,6 +4452,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4467,6 +4520,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4513,6 +4567,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4551,6 +4606,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4602,6 +4658,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4635,6 +4692,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4669,6 +4727,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4718,6 +4777,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4771,6 +4831,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4810,6 +4871,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4877,6 +4939,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4919,6 +4982,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4953,6 +5017,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -4998,6 +5063,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -5058,6 +5124,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -5101,6 +5168,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -5146,6 +5214,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -5219,6 +5288,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js",
@@ -5255,6 +5325,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -5448,6 +5519,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js",
@@ -5496,6 +5568,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -6136,6 +6209,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -6295,6 +6369,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -6373,6 +6448,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -6423,6 +6499,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -6464,6 +6541,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -6627,6 +6705,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -6677,6 +6756,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -7379,6 +7459,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -7448,6 +7529,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -7498,6 +7580,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -7547,6 +7630,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -7664,6 +7748,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -7738,6 +7823,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -7798,6 +7884,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -7854,6 +7941,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -7898,6 +7986,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"
@@ -7958,6 +8047,7 @@
     "/static/bim-arabic-date-labels-v1.js",
     "/static/bim-activity.js",
     "/static/bim-excel-filter-v2.js",
+    "/static/bim-colresize.js",
     "/static/bim-shell.js",
     "/static/bim-logo-trim.png",
     "/static/record-management.js"

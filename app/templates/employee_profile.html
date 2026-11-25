@@ -40,6 +40,7 @@
 {% endblock %}{% block scripts %}<script>
 const EID={{ employee_id }};const ST=['جديدة','بدأت','قيد التنفيذ','بانتظار','تم','ملغاة'];
 const CAN_EDIT={{ 'true' if 'tasks.edit' in permissions else 'false' }};
+const CAN_ARCHIVE={{ 'true' if 'tasks.delete' in permissions else 'false' }};
 let OPEN=[],ARCH=[],PEOPLE=[],TAB='open',UNSEEN=false;
 const isLate=t=>t.due_at&&!['تم','ملغاة'].includes(t.status)&&new Date(String(t.due_at).replace(' ','T'))<new Date();
 const weekAgo=()=>Date.now()-7*864e5;
@@ -77,12 +78,15 @@ function card(t){
   <div class="meta">${bimEsc(t.status)} · ${bimEsc(t.priority)}${t.due_at?' · ⏰ '+bimDate(t.due_at):''}${late?' · <b>متأخرة</b>':''}${t.viewed_at?'':' · 👁️ لم تُفتح'}${t.completed_at&&t.status==='تم'?' · ✅ '+bimDate(t.completed_at):''}</div>
   ${act?`<div class="row"><select aria-label="الحالة" onchange="epStatus(${t.id},this.value)">${ST.map(s=>`<option ${s===t.status?'selected':''}>${s}</option>`).join('')}</select>
   ${t.is_group?'':`<select aria-label="تحويل إلى" onchange="epAssign(${t.id},this.value)">${PEOPLE.map(e=>`<option value="${e.id}" ${+e.id===+t.employee_id?'selected':''}>${bimEsc(e.name)}</option>`).join('')}</select>`}
-  <button class="btn-sm btn-light" onclick="epRemind(${t.id},this)">🔔 تذكير</button></div>`:`<div class="row"><a class="btn btn-sm btn-light" href="/task/${t.id}">فتح</a></div>`}</div>`;
+  <button class="btn-sm btn-light" onclick="epRemind(${t.id},this)">🔔 تذكير</button>${CAN_ARCHIVE?`<button class="btn-sm btn-danger" onclick="epArchive(${t.id},this)">🗄 أرشفة</button>`:''}</div>`:`<div class="row"><a class="btn btn-sm btn-light" href="/task/${t.id}">فتح</a></div>`}</div>`;
 }
 function render(){const a=rows();epCards.innerHTML=a.map(card).join('');epEmpty.style.display=a.length?'none':'block';
   epTabs.querySelectorAll('button').forEach(b=>{const on=b.dataset.tab===TAB;b.classList.toggle('on',on);b.setAttribute('aria-selected',String(on))})}
 async function epStatus(id,status){try{await bimRequest('/api/tasks/'+id+'/status',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});bimToast('تم تغيير الحالة')}catch(e){bimToast(e.message,'err')}loadTasks();loadProfile()}
 async function epAssign(id,eid){const name=(PEOPLE.find(e=>String(e.id)===String(eid))||{}).name||'';if(!confirm('تحويل المهمة إلى '+name+'؟'))return loadTasks();try{await bimRequest('/api/tasks/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({employee_id:+eid})});bimToast('تم تحويل المهمة')}catch(e){bimToast(e.message,'err')}loadTasks();loadProfile()}
+// Archive straight from the list (owner 2026-11-25), same DELETE /api/tasks/{id} as the task page; one confirm because
+// the employee gets a «cancelled» Telegram message. Restorable from «الأرشيف».
+async function epArchive(id,btn){if(!confirm('أرشفة هالمهمة؟ الموظف بتوصله رسالة إنها انلغت، وفيك ترجّعها من «الأرشيف».'))return;btn.disabled=true;try{await bimRequest('/api/tasks/'+id,{method:'DELETE'});bimToast('انأرشفت المهمة');await Promise.all([loadTasks(),loadProfile()])}catch(e){bimToast(e.message,'err');btn.disabled=false}}
 async function epRemind(id,btn){btn.disabled=true;try{const r=await bimRequest('/api/tasks/'+id+'/telegram',{method:'POST'});bimToast(r.ok?(r.queued?'التذكير بالطابور وسيُرسل قريباً':'تم إرسال التذكير'):'تعذر الإرسال: '+(r.error||'الموظف غير مربوط بـ Telegram'),r.ok?'ok':'err')}catch(e){bimToast(e.message,'err')}finally{btn.disabled=false}}
 epTabs.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;TAB=b.dataset.tab;UNSEEN=false;render()});
 document.querySelector('.ep-kpis').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;UNSEEN=b.dataset.tab==='unseen';TAB=UNSEEN?'open':b.dataset.tab;render();epTabs.scrollIntoView({behavior:'smooth',block:'start'})});
