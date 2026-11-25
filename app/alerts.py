@@ -2,8 +2,8 @@
 An allowed person replies «تنبيه» to a message in any group our bot is in -> one task assigned to that person, holding
 the original text, its author, the group and a link. The group gets a short fixed answer with the alert number; the
 details and the status buttons go to the person in private (the normal task card). Only the alerted message is stored.
-Allowed: a linked employee (employees.telegram_chat_id = Telegram user id) who is in the follow-up «remind_ids» list,
-or, when that list is empty, whose account is a manager, deputy or supervisor. Anyone else is ignored silently.
+ANYONE in the group may reply «تنبيه», like the old bot (owner 2026-11-25: 200 staff, he will not add them to the system).
+A replier who is a linked employee gets the task and the private card; anyone else -> an unassigned task on the alerts page.
 The bot sees replies to other people's messages only with privacy mode OFF in BotFather (or as a group admin)."""
 TRIGGER = 'تنبيه'
 GROUP_ANSWER = '❌ تم تسجيل تنبيه إداري، والموضوع قيد المتابعة.\nرقم التنبيه: {n}'
@@ -19,13 +19,9 @@ def migrate(c):
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       UNIQUE(chat_id, message_id))''')
     have = {r[1] for r in c.execute('PRAGMA table_info(telegram_alerts)')}
-    for col in ('message_text', 'link', 'reason'):  # added with the alerts page (2026-11-23)
+    for col in ('message_text', 'link', 'reason', 'reporter_name'):  # added with the alerts page (2026-11-23)
         if col not in have:
             c.execute(f'ALTER TABLE telegram_alerts ADD COLUMN {col} TEXT')
-
-
-REFUSED_UNLINKED = '⚠️ ما قدرت سجّل التنبيه: حسابك على تلغرام مو مربوط بموظف بنظام BIM Tasks.\nاربط حسابك من الخاص مع البوت (زر Start) وجرّب مرة تانية.'
-REFUSED_ROLE = '⚠️ ما قدرت سجّل التنبيه: ما عندك صلاحية تسجيل تنبيهات.\nبيعطيك ياها المدير من: الإعدادات ← Telegram ← المجموعات ← «أشخاص محددين فقط» ← علّم اسمك ← حفظ.'
 
 
 def is_trigger(text):
@@ -72,12 +68,10 @@ def handle(c, msg, m):
     if not is_trigger(msg.get('text')) or not src or (src.get('from') or {}).get('is_bot'):
         return False  # «تنبيه» on a bot message stays a follow-up comment
     chat, frm = msg.get('chat') or {}, msg.get('from') or {}
-    who = reporter(c, frm.get('id'))
-    if not who:  # refused: say why (it used to stay silent and the owner could not tell what was wrong)
-        linked = c.execute('SELECT 1 FROM employees WHERE telegram_chat_id=? AND is_active=1', (str(frm.get('id') or ''),)).fetchone()
-        m.send(str(chat.get('id')), REFUSED_ROLE if linked else REFUSED_UNLINKED)
-        return True
-    e, user_id = who
+    e = c.execute('SELECT * FROM employees WHERE telegram_chat_id=? AND is_active=1', (str(frm.get('id') or ''),)).fetchone()
+    eid = e['id'] if e else None
+    u = c.execute('SELECT id FROM users WHERE employee_id=? AND deleted_at IS NULL ORDER BY id LIMIT 1', (eid,)).fetchone() if e else None
+    user_id = u['id'] if u else None
     migrate(c)
     chat_id = str(chat.get('id'))
     old = c.execute('SELECT id FROM telegram_alerts WHERE chat_id=? AND message_id=?', (chat_id, int(src['message_id']))).fetchone()
@@ -88,22 +82,23 @@ def handle(c, msg, m):
     author = _author(src.get('from') or {})
     text = _original_text(src)
     link = message_link(chat, src['message_id'])
-    cur = c.execute('''INSERT INTO telegram_alerts(chat_id,message_id,reporter_employee_id,author_name,author_telegram_id,group_title,message_text,link)
-                       VALUES(?,?,?,?,?,?,?,?)''', (chat_id, int(src['message_id']), e['id'], author, str((src.get('from') or {}).get('id') or ''), group, text[:4000], link))
+    cur = c.execute('''INSERT INTO telegram_alerts(chat_id,message_id,reporter_employee_id,reporter_name,author_name,author_telegram_id,group_title,message_text,link)
+                       VALUES(?,?,?,?,?,?,?,?,?)''', (chat_id, int(src['message_id']), eid, _author(frm), author, str((src.get('from') or {}).get('id') or ''), group, text[:4000], link))
     n = cur.lastrowid
     title = f'تنبيه ت-{n}: {group or "مجموعة"}'
-    notes = '\n'.join(x for x in (f'الرسالة: {text}', f'صاحب الرسالة: {author}', f'المجموعة: {group}',
+    notes = '\n'.join(x for x in (f'الرسالة: {text}', f'صاحب الرسالة: {author}', f'المجموعة: {group}', f'سجّله: {_author(frm)}',
                                   f'الرابط: {link}' if link else '', 'سبب المشكلة: اكتبه بزر «📝 سبب المشكلة».') if x)
     c.execute('''INSERT INTO tasks(task_code,employee_id,title,notes,priority,status,created_by,source)
-                 VALUES(?,?,?,?,'عالية','جديدة',?,'telegram_alert')''', (f'ALERT-{n}', e['id'], title[:200], notes, user_id))
+                 VALUES(?,?,?,?,'عالية','جديدة',?,'telegram_alert')''', (f'ALERT-{n}', eid, title[:200], notes, user_id))
     tid = c.execute('SELECT last_insert_rowid()').fetchone()[0]
     c.execute('UPDATE telegram_alerts SET task_id=? WHERE id=?', (tid, n))
     m._save_reminder(c, tid, {'type': 'بدون'})
     c.execute("INSERT INTO task_events(task_id,employee_id,event_type,new_status,note,source) VALUES(?,?,'created','جديدة',?,'telegram_alert')",
-              (tid, e['id'], f'تنبيه من مجموعة {group}'))
+              (tid, eid, f'تنبيه من مجموعة {group}'))
     m._touch_task_sync(c, tid, 'server', 'create')
     m.send(chat_id, GROUP_ANSWER.format(n=f'ت-{n}'))
-    m._notify_employee(c, tid, 'تنبيه جديد')  # private card with the status buttons
+    if e:
+        m._notify_employee(c, tid, 'تنبيه جديد')  # private card with the status buttons
     return True
 
 
@@ -182,7 +177,7 @@ def page_data(c, status='', group='', q=''):
     """Everything the /alerts page shows: counts, the list, groups, authors, resolution time, reopenings."""
     migrate(c)
     rows = [dict(r) for r in c.execute("""SELECT a.id n, a.task_id, a.group_title, a.author_name, a.message_text, a.link, a.reason,
-          a.created_at, t.status, t.completed_at, t.archived_at, e.name reporter,
+          a.created_at, t.status, t.completed_at, t.archived_at, COALESCE(e.name, a.reporter_name) reporter,
           (julianday(t.completed_at)-julianday(a.created_at))*24 hours,
           (SELECT COUNT(*) FROM task_events v WHERE v.task_id=t.id AND v.event_type='status' AND v.old_status='تم'
              AND v.new_status<>'تم') reopened
