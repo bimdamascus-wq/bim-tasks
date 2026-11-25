@@ -1130,3 +1130,56 @@ body.ds:has(#fw){background:#EDF1EF!important}
 #fw .fw-cmt button{height:46px!important;min-height:46px!important;padding:0 18px!important;border-radius:11px!important;background:var(--f-act)!important;border:0!important;color:#fff!important;font-weight:700!important}
 @media (max-width:1000px){#fw{padding:12px}#fw .fw-filters{grid-template-columns:repeat(3,minmax(0,1fr))}#fw .fw-body{grid-template-columns:1fr}#fw .fw-list{position:static;max-height:none}}
 @media (max-width:600px){#fw .fw-filters{grid-template-columns:repeat(2,minmax(0,1fr))}#fw .fw-f b{font-size:22px}}
+
+/* ===== SHEET v6 (owner 2026-11-25 chose option 2 «جدول بخطوط» for EVERY page): grid lines, teal header, zebra rows,
+   one line per task, no wasted space. Last layer on purpose; `:not(#_)` beats the older tiles/identity layers. ===== */
+html body.ds{--sh-head:#1f5f6b;--sh-line:#dde2e8;--sh-frame:#cfd6de;--sh-zebra:#f6f8fa;--sh-hover:#eaf4f5}
+/* tables */
+html body.ds main table:not(#_){border-collapse:collapse!important;border-spacing:0!important;border:1px solid var(--sh-frame)!important;background:#fff!important;border-radius:0!important}
+html body.ds main table:not(#_) th{background:var(--sh-head)!important;color:#fff!important;border:1px solid #2d6f7b!important;padding:8px 10px!important;font-size:14.5px!important;font-weight:700!important;white-space:nowrap}
+html body.ds main table:not(#_) th :is(button,span,a,svg,i){color:#fff!important;fill:#fff!important;background:transparent!important}
+html body.ds main table:not(#_) td{border:1px solid var(--sh-line)!important;padding:6px 10px!important;font-size:15px!important;vertical-align:middle!important;background:transparent}
+html body.ds main table:not(#_) tbody tr:nth-child(even){background:var(--sh-zebra)!important}
+html body.ds main table:not(#_) tbody tr:hover{background:var(--sh-hover)!important}
+/* frames: square sheet-like boxes instead of big rounded floating cards */
+html body.ds main :is(.panel,.bim-section):not(#_){border:1px solid var(--sh-frame)!important;border-radius:8px!important;box-shadow:none!important}
+/* number boxes: bordered cells with a colour line on top (profile had big gradient blocks) */
+html body.ds #epKpis .kpi:not(#_){background:#fff!important;color:#1f2933!important;border:1px solid var(--sh-frame)!important;border-top:4px solid var(--b,#1f5f6b)!important;border-radius:8px!important;box-shadow:none!important;padding:10px 16px!important}
+html body.ds #epKpis .kpi:not(#_) :is(span,small){color:#4b5563!important;font-size:14px!important}
+html body.ds #epKpis .kpi:not(#_) b{color:#1f2933!important;font-size:28px!important}
+html body.ds main .kpi:not(#_){border-radius:8px!important;padding:10px 16px!important}
+/* «كل المهام» (cards view): one column per employee = a small sheet, every task one row, all rows visible */
+html body.ds #cards:not(#_){gap:14px!important}
+html body.ds #cards .employee-card:not(#_){padding:0!important;gap:0!important;overflow:hidden!important;border:1px solid var(--sh-frame)!important;border-radius:8px!important;box-shadow:none!important}
+html body.ds #cards .employee-card-head:not(#_){background:var(--sh-head)!important;padding:10px 14px!important;margin:0!important;min-height:0!important;border-bottom:1px solid var(--sh-frame)!important}
+html body.ds #cards .employee-card-head button:not(#_){background:transparent!important;color:#fff!important;box-shadow:none!important;padding:0!important;font-size:17px!important}
+html body.ds #cards .employee-count:not(#_){background:rgba(255,255,255,.18)!important;color:#fff!important}
+html body.ds #cards .employee-task-list:not(#_){max-height:none!important;overflow:visible!important;padding:0!important}
+html body.ds #cards .employee-task-row:not(#_){display:grid!important;grid-template-columns:1fr 92px 70px!important;align-items:stretch!important;gap:0!important;padding:0!important;min-height:0!important;margin:0!important;border:0!important;border-bottom:1px solid var(--sh-line)!important;border-radius:0!important;background:#fff!important}
+html body.ds #cards .employee-task-row:nth-child(even):not(#_){background:var(--sh-zebra)!important}
+html body.ds #cards .employee-task-row:not(#_)>*{padding:7px 10px!important;display:flex!important;align-items:center!important}
+html body.ds #cards .employee-task-row:not(#_)>button{display:none!important} /* the title is the link */
+html body.ds #cards .employee-task-row:not(#_)>:is(.status-pill,.prio-pill){border:0!important;border-right:1px solid var(--sh-line)!important;border-radius:0!important;justify-content:center!important;font-size:13px!important;min-height:0!important;margin:0!important}
+html body.ds #cards .employee-task-title:not(#_){font-size:15px!important;font-weight:700!important;line-height:1.35!important}
+/* task lists as rows (employee profile, «متابعة الفريق»): title | details | status, move, remind */
+html body.ds .team-cards:not(#_){display:block!important;border:1px solid var(--sh-frame)!important;border-radius:8px!important;overflow:hidden!important;background:#fff!important}
+html body.ds .team-cards .team-card:not(#_){display:grid!important;grid-template-columns:minmax(220px,1.3fr) 1.7fr auto!important;align-items:stretch!important;gap:0!important;padding:0!important;margin:0!important;border:0!important;border-bottom:1px solid var(--sh-line)!important;border-radius:0!important;box-shadow:none!important;background:#fff!important}
+html body.ds .team-cards .team-card:nth-child(even):not(#_){background:var(--sh-zebra)!important}
+html body.ds .team-cards .team-card.late:not(#_){box-shadow:inset -4px 0 0 #dc2626!important}
+html body.ds .team-cards .team-card:not(#_)>*{padding:6px 12px!important;margin:0!important;display:flex!important;flex-wrap:wrap;align-items:center!important;border:0!important;border-left:1px solid var(--sh-line)!important}
+html body.ds .team-cards .team-card:not(#_)>:last-child{border-left:0!important;flex-wrap:nowrap}
+html body.ds .team-cards .team-card:not(#_) h3{font-size:15.5px!important}
+html body.ds .team-cards .team-card:not(#_) .meta{font-size:13.5px!important;color:#4b5563!important;line-height:1.5!important}
+html body.ds .team-cards .team-card:not(#_) .row{gap:6px!important}
+html body.ds .team-cards .team-card:not(#_) select{height:32px!important;min-height:0!important;padding:0 8px!important;font-size:13px!important;width:auto!important;min-width:110px!important;flex:0 0 auto!important;border-radius:4px!important}
+html body.ds .team-cards .team-card:not(#_) :is(button,.btn){height:32px!important;min-height:0!important;padding:0 10px!important;border-radius:4px!important}
+@media (max-width:800px){
+ html body.ds .team-cards .team-card:not(#_){grid-template-columns:1fr!important}
+ html body.ds .team-cards .team-card:not(#_)>*{border-left:0!important}
+}
+html body.ds main :is(.detail-card,.al-panel,.bd-panel,.kb-col):not(#_){border:1px solid var(--sh-frame)!important;border-radius:8px!important;box-shadow:none!important}
+/* task details: the «المهمة» facts as a two-column sheet */
+html body.ds main .detail-card .detail-row:not(#_){border:1px solid var(--sh-line)!important;border-top:0!important;padding:7px 12px!important;margin:0!important}
+html body.ds main .detail-card .detail-row:nth-child(even):not(#_){background:var(--sh-zebra)!important}
+html body.ds main .detail-card .detail-row:not(#_)>:first-child{color:#1f5f6b!important;font-weight:700!important}
+html body.ds main .detail-card .detail-row:first-of-type:not(#_){border-top:1px solid var(--sh-line)!important}
