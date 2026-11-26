@@ -474,3 +474,7 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   gone. /login/verify and the MFA tables stay (dead, harmless). iPhone wrong-key limit (10/15 min per IP) kept.
   Risk told to the owner: the domain is on the internet, so only the password protects accounts now.
   Package `no_lock` (2be6883, BASE 4536fd0, also_base ... d225f22, cumulative over full_25nov, 16 files) — NOT confirmed.
+- 2026-11-26: owner asked for a full PDF manual (every page/button, for a new employee or a new manager). Built
+  dist/BIM_Tasks_Manual.pdf (37 pages, 14 chapters, real screenshots of a demo copy); sources + rebuild steps in
+  docs/manual/. Subtitles of /security and /account no longer mention the login code (e7b3181); `no_lock` rebuilt
+  to include it (08f294d) and re-sent. Update the manual (docs/manual/build.py) when pages change.
