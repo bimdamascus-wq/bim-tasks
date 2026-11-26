@@ -468,3 +468,9 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   logs\uptime.log only on change: DOWN + clues (port listening, LAN task status, memory, disk, internet, last err.log
   lines), UP + minutes down, GAP when the watcher itself did not run (reboot; shows Windows boot time). Read only:
   never restarts anything. Status report shows the last 30 lines. Not run on Windows here — ask for the first report.
+- Owner asked to REMOVE the login lockout after repeated wrong passwords and the Telegram login code (both annoyed him).
+  Done in 2be6883: routes_auth.login has no lockout and no MFA branch (attempts still logged in login_attempts);
+  /account MFA panel hidden (mfa_available False), /security MFA section + checklist item removed, LOGIN_* constants
+  gone. /login/verify and the MFA tables stay (dead, harmless). iPhone wrong-key limit (10/15 min per IP) kept.
+  Risk told to the owner: the domain is on the internet, so only the password protects accounts now.
+  Package `no_lock` (2be6883, BASE 4536fd0, also_base ... d225f22, cumulative over full_25nov, 16 files) — NOT confirmed.
