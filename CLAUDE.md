@@ -460,3 +460,11 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   dragging header edges (static/bim-colresize.js, localStorage). Keep the 2026-11-02 rule: default widths fit content.
 - Employee page archive button + new task preselects the employee; task page edit dialog + back-to-employee; new-task
   window stays open, remembers the last employee, and can add several titles in one save.
+
+## Session 12 (2026-11-26)
+- Owner asked for an automatic monitor (check every minute, log down/up times). Did not exist (only /health and the
+  manual status report). Added `tools/uptime_watch/` (zip dist/BIM_Uptime_Watch.zip, standalone, no app change):
+  task `\BIM Tasks\Uptime Watch` (SYSTEM, every minute) hits 127.0.0.1:8797/health (2 tries), writes
+  logs\uptime.log only on change: DOWN + clues (port listening, LAN task status, memory, disk, internet, last err.log
+  lines), UP + minutes down, GAP when the watcher itself did not run (reboot; shows Windows boot time). Read only:
+  never restarts anything. Status report shows the last 30 lines. Not run on Windows here — ask for the first report.

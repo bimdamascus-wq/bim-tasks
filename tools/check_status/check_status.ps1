@@ -34,7 +34,7 @@ $report = & {
     $fs | ForEach-Object { "  pid $($_.ProcessId)  $($_.Name)  started $($_.CreationDate)" }
     ''
     '[scheduled tasks]'
-    foreach ($t in '\BIM Tasks\LAN', 'BIM Tasks External 8798', '\BIM Tasks\Backup Hourly', '\BIM Tasks\Backup Daily Full', 'BIM_Tasks_Full_Google_Sheets_Sync') {
+    foreach ($t in '\BIM Tasks\LAN', 'BIM Tasks External 8798', '\BIM Tasks\Uptime Watch', '\BIM Tasks\Backup Hourly', '\BIM Tasks\Backup Daily Full', 'BIM_Tasks_Full_Google_Sheets_Sync') {
         "  -- $t"
         $q = schtasks /Query /TN $t /V /FO LIST 2>&1
         if ($LASTEXITCODE -ne 0) { '     NOT FOUND'; continue }
@@ -46,6 +46,10 @@ $report = & {
     ''
     if (Test-Path "$Root\.venv\Scripts\python.exe") { & "$Root\.venv\Scripts\python.exe" -I "$Here\check_status.py" $Root 2>&1 | ForEach-Object { Mask "$_" } }
     else { 'python not found' }
+    ''
+    '[uptime watch: system down / up times, last 30 lines]'
+    if (Test-Path "$Root\logs\uptime_state.txt") { '  state|since|last check: ' + (Get-Content "$Root\logs\uptime_state.txt" -TotalCount 1) } else { '  not installed (BIM_Uptime_Watch.zip)' }
+    if (Test-Path "$Root\logs\uptime.log") { Get-Content "$Root\logs\uptime.log" -Tail 30 -ErrorAction SilentlyContinue | ForEach-Object { '  ' + $_ } }
     ''
     $sl = "$Root\sync_full_logs\scheduled.log"
     if (Test-Path $sl) { '[last lines of sync_full_logs\scheduled.log]'; Get-Content $sl -Tail 12 -Encoding UTF8 -ErrorAction SilentlyContinue | ForEach-Object { '  ' + (Mask $_) }; '' }
