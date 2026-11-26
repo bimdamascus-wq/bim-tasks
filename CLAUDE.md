@@ -478,3 +478,6 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   dist/BIM_Tasks_Manual.pdf (37 pages, 14 chapters, real screenshots of a demo copy); sources + rebuild steps in
   docs/manual/. Subtitles of /security and /account no longer mention the login code (e7b3181); `no_lock` rebuilt
   to include it (08f294d) and re-sent. Update the manual (docs/manual/build.py) when pages change.
+- 2026-11-26 13:39: owner installed the uptime watch (first lines: WATCH STARTED, UP 8797 answers). Works on Windows.
+  Launchers rebuilt (8e6a0d4): check files before elevating + pause on refused UAC (the window had vanished).
+  `no_lock` (8e6a0d4) re-sent — NOT confirmed installed.
