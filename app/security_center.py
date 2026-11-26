@@ -331,8 +331,6 @@ def review(m, c):
          'المفتاح المشترك القديم ضعيف أو افتراضي؛ استبدله أو اعتمد مفاتيح الحسابات الفردية.' if iph and (len(iph) < 32 or iph == 'CHANGE_ME_LONG_RANDOM_SECRET') else 'مفاتيح فردية لكل حساب + حد محاولات خاطئة لكل عنوان.'),
         ('sheet', len(env.get('BIM_SYNC_SECRET', '')) >= 24, 'Google Sheet: سر المزامنة قوي',
          'سر المزامنة أقل من 24 حرفاً أو غير مضبوط.' if len(env.get('BIM_SYNC_SECRET', '')) < 24 else 'المزامنة لا تستطيع تغيير ربط Telegram لموظف موجود أو تعطيل موظف مرتبط بحساب إدارة.'),
-        ('mfa', all(r['mfa'] for r in managers) and bool(managers), 'تأكيد الدخول من الخارج مفعّل لكل حسابات الإدارة',
-         'غير مفعّل لـ: ' + '، '.join(r['username'] for r in managers if not r['mfa']) if any(not r['mfa'] for r in managers) else 'مفعّل.'),
         ('admin_name', not weak_admin, 'لا يوجد حساب باسم admin الافتراضي', 'غيّر اسم الدخول admin لاسم غير متوقع.' if weak_admin else 'جيد.'),
         ('backup_folder', bool(cfg['folder'] or (cfg['telegram'] and admin_chats(c))), 'وجهة النسخ خارج السيرفر محددة',
          '، '.join(x for x in (('Telegram (' + str(len(admin_chats(c))) + ' مدير)') if cfg['telegram'] else '', cfg['folder']) if x)
@@ -358,8 +356,6 @@ def register(app, m):
         resp = RedirectResponse('/login/verify', 303)
         resp.set_cookie(MFA_COOKIE, cid, httponly=True, secure=True if gw == 'external' else m.COOKIE_SECURE, samesite='strict', max_age=MFA_TTL_MINUTES * 60, path='/login')
         return resp
-    m.mfa_login_challenge = login_challenge
-    m.mfa_required = lambda c, uid: mfa_enabled(c, uid)
 
     @app.get('/login/verify', response_class=HTMLResponse)
     def verify_page(req: Request, error: str | None = None):
@@ -410,7 +406,8 @@ def register(app, m):
         if not u: raise HTTPException(401)
         c = connect()
         try:
-            return {'role_code': u['role_code'], 'mfa_available': u['role_code'] in access.MANAGERS,
+            return {'role_code': u['role_code'], 'mfa_available': False,  # Telegram login code removed (owner 2026-11-26)
+                   
                     'mfa_enabled': mfa_enabled(c, u['user_id']), 'telegram_linked': bool(telegram_chat(c, u['user_id'])),
                     'gateway': m.gateway_of(req)}
         finally:

@@ -2037,7 +2037,6 @@
     "dsSide",
     "dsState",
     "dsToday",
-    "mfa",
     "sens"
    ],
    "status": 200,
@@ -4813,7 +4812,6 @@
     "dsSide",
     "dsState",
     "dsToday",
-    "mfa",
     "sens"
    ],
    "status": 200,

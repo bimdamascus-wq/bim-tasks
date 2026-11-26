@@ -10,7 +10,7 @@ from .security import iso, new_csrf_token, new_session_id, now, session_expiry, 
 from .universal import channel
 from . import main as _main  # settings that tests or plugins may change at run time are read from main
 from .main import (
-    APP_VERSION, COOKIE, DOMAIN, LOGIN_MAX_FAILS_IP, LOGIN_MAX_FAILS_USER, LOGIN_WINDOW_MINUTES, ROOT, app,
+    APP_VERSION, COOKIE, DOMAIN, ROOT, app,
     ctx, gateway_of, ip, session, templates
 )
 
@@ -39,16 +39,7 @@ def login_page(req: Request, error: Optional[str]=None):
 @app.post('/login')
 def login(req: Request, username: str=Form(...), password: str=Form(...)):
     c = connect(); uname = username.strip()[:150]; gw = gateway_of(req)
-    window = f'-{LOGIN_WINDOW_MINUTES} minutes'
-    fails_user = c.execute('''SELECT COUNT(*) FROM login_attempts WHERE lower(username)=lower(?) AND success=0
-      AND attempted_at>datetime('now',?) AND id>COALESCE((SELECT MAX(id) FROM login_attempts WHERE lower(username)=lower(?) AND success=1),0)''',
-      (uname, window, uname)).fetchone()[0]
-    fails_ip = c.execute("SELECT COUNT(*) FROM login_attempts WHERE ip_address=? AND success=0 AND attempted_at>datetime('now',?)",
-      (ip(req), window)).fetchone()[0]
-    if fails_user >= LOGIN_MAX_FAILS_USER or fails_ip >= LOGIN_MAX_FAILS_IP:
-        from .activity_log import failed_login
-        failed_login(c,req,None,uname,gw,ip(req),status=429)
-        c.close(); return templates.TemplateResponse(request=req, name='login.html', context={**ctx(req,'تسجيل الدخول'), 'error':f'تم إيقاف الدخول مؤقتاً بسبب محاولات خاطئة متكررة. حاول بعد {LOGIN_WINDOW_MINUTES} دقيقة.'}, status_code=429)
+    # No lockout after repeated wrong passwords (owner decision 2026-11-26); attempts are still logged.
     u = c.execute('''SELECT u.*,r.code role_code,r.external_access_allowed FROM users u JOIN roles r ON r.id=u.role_id
       WHERE lower(u.username)=lower(?)''', (uname,)).fetchone()
     ok = bool(u and u['is_active'] and not u['deleted_at'] and verify_password(u['password_hash'], password))
@@ -65,9 +56,6 @@ def login(req: Request, username: str=Form(...), password: str=Form(...)):
         from .activity_log import failed_login
         failed_login(c,req,u,uname,gw,ip(req),status=403)
         c.close();return templates.TemplateResponse(request=req,name='login.html',context={**ctx(req,'تسجيل الدخول'),'error':'هذا الحساب مضبوط لاستخدام Telegram فقط؛ راجع الإدارة لتفعيل الويب'},status_code=403)
-    if gw == 'external' and _main.mfa_required(c, u['id']):
-        try: return _main.mfa_login_challenge(c, req, u, gw)
-        finally: c.close()
     try: return _open_session(c, req, u, gw)
     finally: c.close()
 

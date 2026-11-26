@@ -54,9 +54,6 @@ def _release():
     try: return json.loads((ROOT / 'app' / 'release.json').read_text(encoding='utf-8'))
     except Exception: return {}
 RELEASE = _release()
-LOGIN_WINDOW_MINUTES = 15
-LOGIN_MAX_FAILS_USER = 8
-LOGIN_MAX_FAILS_IP = 25
 CSRF_EXEMPT_PREFIXES = ('/api/telegram/webhook', '/api/iphone/', '/api/sync/')
 
 app = FastAPI(title='BIM Damascus Tasks', version=APP_VERSION)

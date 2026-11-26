@@ -5,10 +5,6 @@
 
 <section class="panel"><h2>فحص نقاط الدخول</h2><div id="checks">جاري الفحص…</div></section>
 
-<section class="panel"><h2>تأكيد الدخول لحسابات الإدارة</h2>
-<p><small>كل مدير أو نائب بيفعّله لحسابه من صفحة «حسابي». هون بتشوف الحالة، والمدير بيقدر يصفّره إذا حدا ضيّع موبايله.</small></p>
-<div id="mfa"></div></section>
-
 <section class="panel"><h2>النسخ الاحتياطي خارج السيرفر</h2>
 <div class="kpi-grid">
   <div class="kpi"><span>آخر نسخة ناجحة</span><b id="bkLast">—</b></div>
@@ -42,7 +38,6 @@ async function call(url,method='GET',data){const r=await fetch(url,{method,crede
 const gw=r=>`${r.gateway==='external'?'خارجي':'داخلي'} · <span dir="ltr">${esc(r.ip_address||'')}</span>`;
 async function load(){const d=await call('/api/security/overview');CAN=d.can_change;
  $('checks').innerHTML='<table><tbody>'+d.checks.map(c=>`<tr><td style="width:32px;font-size:18px">${c.ok?'✅':'⚠️'}</td><td><b>${esc(c.title)}</b><br><small>${esc(c.detail)}</small></td></tr>`).join('')+'</tbody></table>';
- $('mfa').innerHTML='<table><thead><tr><th>الحساب</th><th>الدور</th><th>Telegram</th><th>الحالة</th><th></th></tr></thead><tbody>'+d.mfa.map(u=>`<tr><td>${esc(u.username)}</td><td>${u.role_code==='admin'?'المدير':'نائب المدير'}</td><td>${u.telegram_linked?'مربوط':'غير مربوط'}</td><td>${u.enabled?'✅ مفعّل':'⚠️ غير مفعّل'}</td><td>${CAN&&u.enabled?`<button class="btn-sm btn-light" onclick="resetMfa(${u.id})">تصفير</button>`:''}</td></tr>`).join('')+'</tbody></table>';
  const b=d.backup,l=b.last||{};$('bkLast').textContent=l.last_ok_at?bimDate(l.last_ok_at):'لا يوجد';$('bkAttempt').textContent=l.last_attempt_at?(l.ok?'✅ ':'❌ ')+bimDate(l.last_attempt_at):'—';$('bkFolder').textContent=[b.telegram?'Telegram':'',b.folder||''].filter(Boolean).join(' + ')||'غير محددة';
  $('bkError').hidden=!(l.ok===false);$('bkError').textContent=l.error||'';$('bkDir').value=b.folder||'';$('bkTg').checked=!!b.telegram;$('bkTg').disabled=!CAN;$('bkHour').value=b.hour;$('bkKeep').value=b.keep;
  for(const el of $('bkForm').querySelectorAll('input,#bkSave'))el.disabled=!CAN;
@@ -53,6 +48,5 @@ async function load(){const d=await call('/api/security/overview');CAN=d.can_cha
 async function saveBackup(ev){ev.preventDefault();try{await call('/api/security/backup-settings','PUT',{folder:$('bkDir').value.trim(),hour:+$('bkHour').value,keep:+$('bkKeep').value});bimToast('تم الحفظ');load()}catch(e){bimToast(e.message,'err')}}
 async function saveTelegram(){try{await call('/api/security/backup-telegram','PUT',{enabled:$('bkTg').checked});bimToast($('bkTg').checked?'تم تفعيل الإرسال على Telegram':'تم الإيقاف');load()}catch(e){bimToast(e.message,'err');load()}}
 async function backupNow(){bimToast('جاري إنشاء النسخة والتحقق منها…','warn');try{const r=await call('/api/security/backup-now','POST');bimToast('تمت النسخة: '+r.file);load()}catch(e){bimToast(e.message,'err');load()}}
-async function resetMfa(id){if(!confirm('تصفير تأكيد الدخول لهالحساب؟ لازم يرجع يفعّله من «حسابي».'))return;try{await call('/api/security/mfa/'+id+'/reset','POST');bimToast('تم التصفير');load()}catch(e){bimToast(e.message,'err')}}
 load().catch(e=>bimToast(e.message,'err'));
 </script>{% endblock %}
