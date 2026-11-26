@@ -1,14 +1,24 @@
 @echo off
-rem ASCII only on purpose: Arabic text in a .cmd breaks cmd.exe and the window closes at once.
-net session >nul 2>&1
-if errorlevel 1 (
-  powershell -NoProfile -Command "Start-Process -FilePath '%~f0' -Verb RunAs"
-  exit /b
-)
+chcp 65001 >nul
+rem ASCII only: Arabic text in a .cmd makes cmd.exe close the window at once.
+rem Check BEFORE asking for admin: run from inside the ZIP, the files next to this one do not exist.
 if not exist "%~dp0uptime_watch.ps1" (
   echo.
-  echo  ERROR: extract the ZIP first: right click the ZIP - Extract All - then run INSTALL_UPTIME_WATCH.cmd
+  echo  ERROR: the ZIP is not extracted.
+  echo  Close this window. Right click the ZIP - Extract All - open the new folder - run INSTALL_UPTIME_WATCH.cmd again.
+  echo.
   pause
+  exit /b 1
+)
+net session >nul 2>&1
+if errorlevel 1 (
+  powershell -NoProfile -Command "try { Start-Process -FilePath '%~f0' -Verb RunAs -ErrorAction Stop } catch { exit 1 }"
+  if errorlevel 1 (
+    echo.
+    echo  Administrator permission was not given. Run it again and press Yes.
+    echo.
+    pause
+  )
   exit /b
 )
 set DEST=C:\BIM_Tasks_Server\tools\uptime_watch

@@ -468,3 +468,22 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
   logs\uptime.log only on change: DOWN + clues (port listening, LAN task status, memory, disk, internet, last err.log
   lines), UP + minutes down, GAP when the watcher itself did not run (reboot; shows Windows boot time). Read only:
   never restarts anything. Status report shows the last 30 lines. Not run on Windows here — ask for the first report.
+- Owner asked to REMOVE the login lockout after repeated wrong passwords and the Telegram login code (both annoyed him).
+  Done in 2be6883: routes_auth.login has no lockout and no MFA branch (attempts still logged in login_attempts);
+  /account MFA panel hidden (mfa_available False), /security MFA section + checklist item removed, LOGIN_* constants
+  gone. /login/verify and the MFA tables stay (dead, harmless). iPhone wrong-key limit (10/15 min per IP) kept.
+  Risk told to the owner: the domain is on the internet, so only the password protects accounts now.
+  Package `no_lock` (2be6883, BASE 4536fd0, also_base ... d225f22, cumulative over full_25nov, 16 files) — NOT confirmed.
+- 2026-11-26: owner asked for a full PDF manual (every page/button, for a new employee or a new manager). Built
+  dist/BIM_Tasks_Manual.pdf (37 pages, 14 chapters, real screenshots of a demo copy); sources + rebuild steps in
+  docs/manual/. Subtitles of /security and /account no longer mention the login code (e7b3181); `no_lock` rebuilt
+  to include it (08f294d) and re-sent. Update the manual (docs/manual/build.py) when pages change.
+- 2026-11-26 13:39: owner installed the uptime watch (first lines: WATCH STARTED, UP 8797 answers). Works on Windows.
+  Launchers rebuilt (8e6a0d4): check files before elevating + pause on refused UAC (the window had vanished).
+  `no_lock` (8e6a0d4) re-sent — NOT confirmed installed.
+- Report 13:48 (2026-11-26): `no_lock` installed 12:54 (first build 2be6883); 8797 lan+workers and 8798 external on
+  2be6883. `main` fast-forwarded to 2be6883 (later commits e7b3181 subtitles + 8e6a0d4 launchers not on the server yet).
+  Uptime watch Ready/0. Sync incremental OK. NEW: since 2026-11-26 ~02:00 Telegram «chat not found» for many people
+  (off-site backup to admin ابومحمدكريم, task cards to آية نسب / نور قاوقجي / سدرة محايري) + «message to edit not found»:
+  matches a BOT CHANGE (users never pressed Start on the new bot; old bot's messages cannot be edited). Off-site backup
+  last OK 2026-11-25 02:00. Asked the owner to confirm and to have each person press Start on the new bot.
