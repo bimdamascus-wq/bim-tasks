@@ -481,3 +481,9 @@ Known pre-existing issue: on a completely empty database `delegation.py` reads `
 - 2026-11-26 13:39: owner installed the uptime watch (first lines: WATCH STARTED, UP 8797 answers). Works on Windows.
   Launchers rebuilt (8e6a0d4): check files before elevating + pause on refused UAC (the window had vanished).
   `no_lock` (8e6a0d4) re-sent — NOT confirmed installed.
+- Report 13:48 (2026-11-26): `no_lock` installed 12:54 (first build 2be6883); 8797 lan+workers and 8798 external on
+  2be6883. `main` fast-forwarded to 2be6883 (later commits e7b3181 subtitles + 8e6a0d4 launchers not on the server yet).
+  Uptime watch Ready/0. Sync incremental OK. NEW: since 2026-11-26 ~02:00 Telegram «chat not found» for many people
+  (off-site backup to admin ابومحمدكريم, task cards to آية نسب / نور قاوقجي / سدرة محايري) + «message to edit not found»:
+  matches a BOT CHANGE (users never pressed Start on the new bot; old bot's messages cannot be edited). Off-site backup
+  last OK 2026-11-25 02:00. Asked the owner to confirm and to have each person press Start on the new bot.
